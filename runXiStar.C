@@ -1,5 +1,10 @@
-void runXiStar(int Nevents=100, bool batchmode=kTRUE,  bool MCcase=kFALSE, bool AODcase=kFALSE, const char* collectionfile="collection.xml", const char* outfilename="MyOutput.root") {
-    
+void runXiStar(const char *dataset = "test1.list") {
+    int Nevents=100;
+    bool batchmode=kFALSE;  
+    bool MCcase=kFALSE; 
+    bool AODcase=kFALSE; 
+    const char* collectionfile="collection.xml";
+    const char* outfilename="MyOutput.root";
     
     gSystem->Load("libTree.so");
     gSystem->Load("libGeom.so");
@@ -27,7 +32,7 @@ void runXiStar(int Nevents=100, bool batchmode=kTRUE,  bool MCcase=kFALSE, bool 
     if(batchmode==kFALSE) {// local pc mode; gets AOD or ESD files from my machine
         if(MCcase==kFALSE) {
             if(AODcase==kTRUE) {chain = CreateChain("filelistAOD.txt",AODcase);}//My Personal list
-            else {chain = CreateChain("filelistESD.txt",AODcase);}//My Personal list
+            else {chain = CreateChain(dataset,AODcase);}//My Personal list
         }else{
             if(AODcase==kTRUE) chain = CreateChain("filelistAOD_MC.txt",AODcase);
             else chain = CreateChain("filelistESD_MC.txt",AODcase);//Simulation list
