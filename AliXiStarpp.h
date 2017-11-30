@@ -39,7 +39,6 @@ public:
 
     virtual ~AliXiStarpp();
     AliXiStarpp(const AliXiStarpp &obj);
-    AliXiStarpp &operator=(const AliXiStarpp &obj);
     
 private:
     

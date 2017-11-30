@@ -26,13 +26,15 @@ void runXiStar(const char *dataset = "test1.list") {
     
     // Make the analysis manager
     AliAnalysisManager *mgr = new AliAnalysisManager("My Manager","My Manager");
-    
-    TChain* chain;
+    gROOT->LoadMacro("$ALICE_PHYSICS/PWG/EMCAL/macros/CreateESDChain.C");
+    //TChain* chain;
+    TChain *chain = new TChain("ESDTree");
     
     if(batchmode==kFALSE) {// local pc mode; gets AOD or ESD files from my machine
         if(MCcase==kFALSE) {
             if(AODcase==kTRUE) {chain = CreateChain("filelistAOD.txt",AODcase);}//My Personal list
-            else {chain = CreateChain(dataset,AODcase);}//My Personal list
+            //else {chain = CreateChain(dataset,AODcase);}//My Personal list
+            chain = CreateESDChain(dataset);
         }else{
             if(AODcase==kTRUE) chain = CreateChain("filelistAOD_MC.txt",AODcase);
             else chain = CreateChain("filelistESD_MC.txt",AODcase);//Simulation list

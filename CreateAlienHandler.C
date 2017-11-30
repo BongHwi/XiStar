@@ -18,7 +18,7 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     // Overwrite all generated files, datasets and output results from a previous session
     plugin->SetOverwriteMode(kTRUE);
     // Set the run mode (can be "full", "test", "offline", "submit" or "terminate")
-    plugin->SetRunMode("full");  // VERY IMPORTANT
+    plugin->SetRunMode("test");  // VERY IMPORTANT
     // Set versions of used packages
     plugin->SetAPIVersion("V1.1x");
     //    plugin->SetROOTVersion("v5-34-05");
