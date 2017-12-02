@@ -173,7 +173,7 @@ AliXiStarppEventCollection::AliXiStarppEventCollection(short a):
     (fEvtStr + ii)->fTracks = NULL;
     (fEvtStr + ii)->fNTracks = 0;
      
-    (fEvtStr + ii)->fTracks = new AliXiStarppTrackStruct[2000];
+    (fEvtStr + ii)->fTracks = new AliXiStarppTrackStruct[300];
   }
   
 }

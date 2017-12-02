@@ -13,12 +13,11 @@ AliAnalysisGrid* CreateAlienHandler(bool MCcase)
     // 2016 Jan 6 : gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
    // gSystem->Setenv("alien_CLOSE_SE","ALICE::Trieste::SE");
 gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
-    
-    
+    plugin->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
     // Overwrite all generated files, datasets and output results from a previous session
     plugin->SetOverwriteMode(kTRUE);
     // Set the run mode (can be "full", "test", "offline", "submit" or "terminate")
-    plugin->SetRunMode("test");  // VERY IMPORTANT
+    plugin->SetRunMode("full");  // VERY IMPORTANT
     // Set versions of used packages
     plugin->SetAPIVersion("V1.1x");
     //    plugin->SetROOTVersion("v5-34-05");
@@ -100,7 +99,7 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     // Define alien work directory where all files will be copied. Relative to alien $HOME.
 
   //  if(!MCcase) plugin->SetGridWorkingDir("pp276TeV_LHC11a_withoutSDD-24Runs-EM10-2017-woPID");
-    if(!MCcase) plugin->SetGridWorkingDir("pp13TeV_LHC15f_Goodrun_20171120_02");
+    if(!MCcase) plugin->SetGridWorkingDir("pp13TeV_LHC15f_Goodrun_20171201");
 
  //   else plugin->SetGridWorkingDir("pp276TeV_LHC11a_withoutSDD-LHC12f1a-Pythia8-TPCPID");
     else plugin->SetGridWorkingDir("pp13TeV_LHC15f");
@@ -164,9 +163,8 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase=kFALSE)
          Int_t runlist[16]={146746, 146747, 146748, 146801, 146802, 146803, 146804, 146805, 146806, 146807, 146817, 146824, 146856, 146858, 146859, 146860};
          }else{
              //data list
-             nruns=1; // 48
-             Int_t runlist[1] = {226500};
-             //Int_t runlist[48]={226500, 226495, 226483, 226476, 226472, 226468, 226466, 226452, 226445, 226444, 226225, 226220, 226170, 226062, 225768, 225766, 225763, 225762, 225757, 225753, 225719, 225717, 225716, 225710, 225709, 225708, 225707, 225587, 225586, 225579, 225578, 225576, 225322, 225314, 225313, 225309, 225307, 225305, 225106, 225052, 225051, 225050, 225043, 225041, 225037, 225035, 225031, 225026};
+             nruns=48; // 48
+             Int_t runlist[48]={226500, 226495, 226483, 226476, 226472, 226468, 226466, 226452, 226445, 226444, 226225, 226220, 226170, 226062, 225768, 225766, 225763, 225762, 225757, 225753, 225719, 225717, 225716, 225710, 225709, 225708, 225707, 225587, 225586, 225579, 225578, 225576, 225322, 225314, 225313, 225309, 225307, 225305, 225106, 225052, 225051, 225050, 225043, 225041, 225037, 225035, 225031, 225026};
          }
          
         // nruns=55; //pass1

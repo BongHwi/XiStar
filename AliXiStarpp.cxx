@@ -263,7 +263,7 @@ fCutList(obj.fCutList)
     
 }
 //________________________________________________________________________
-/*
+
 AliXiStarpp &AliXiStarpp::operator=(const AliXiStarpp &obj)
 {
     // Assignment operator
@@ -314,7 +314,6 @@ AliXiStarpp &AliXiStarpp::operator=(const AliXiStarpp &obj)
     
     return (*this);
 }
-*/
 //________________________________________________________________________
 AliXiStarpp::~AliXiStarpp()
 {

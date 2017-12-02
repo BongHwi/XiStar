@@ -1,6 +1,12 @@
+#if !defined (__CINT__) || defined (__CLING__)
+#include "AliAnalysisAlien.h"
+#include "AliAnalysisManager.h"
+#include "AliAODInputHandler.h"
+#include "AliAnalysisTaskMyTask.h"
+#endif
 void runXiStar(const char *dataset = "test1.list") {
     int Nevents=100;
-    bool batchmode=kFALSE;  
+    bool batchmode=kTRUE;  
     bool MCcase=kFALSE; 
     bool AODcase=kFALSE; 
     const char* collectionfile="collection.xml";
@@ -17,12 +23,15 @@ void runXiStar(const char *dataset = "test1.list") {
     gSystem->Load("libOADB.so");
     gSystem->Load("libANALYSISalice.so");
     
-    gSystem->SetIncludePath("-I. -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS -I$ALICE_PHYSICS/include -I$ALICE_ROOT/STEER -I$ALICE_ROOT/ANALYSIS -g");
+    gSystem->SetIncludePath("-I. -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS -I$ALICE_PHYSICS/include -I$ALICE_ROOT/STEER -I$ALICE_ROOT/ANALYSIS -I$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY -g");
     
-    
+    #if !defined (__CINT__) || defined (__CLING__)
+    gInterpreter->ProcessLine(".include $ROOTSYS/include");
+    gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
+    #else
+    gROOT->ProcessLine(".include $ROOTSYS/include");
     gROOT->ProcessLine(".include $ALICE_ROOT/include");
-    gROOT->ProcessLine(".include $ALICE_PHYSICS/include");
-
+    #endif
     
     // Make the analysis manager
     AliAnalysisManager *mgr = new AliAnalysisManager("My Manager","My Manager");
