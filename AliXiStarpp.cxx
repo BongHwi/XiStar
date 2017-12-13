@@ -1763,8 +1763,6 @@ void AliXiStarpp::Exec(Option_t *)
                         else CutVar[cv].fXiPlusPiPlusbkg->Fill(xiStarPt, lPerc, xiStarMass);
                     }
                     
-                    
-                    
                                       // MC associaton ESD
                     if(fMCcase && mcXiFilled && EN==0){// ESD MC's
                         MCXiStarD2esd = (TParticle*)mcstack->Particle(abs((fEvt)->fTracks[l].fLabel));
@@ -1785,29 +1783,13 @@ void AliXiStarpp::Exec(Option_t *)
                             }
                         }
                     }
-                    
-                    
                 }// Cut Variation loop
             }// 3rd pion loop
-            
-            
         }// Event mixing loop
-        
-        
-        
-        
-        
-        
-        
     }// Xi loop
-    
-    
     
     // Post output data.
     PostData(1, fOutputList);
-  
-    
-    
 }
 //________________________________________________________________________
 void AliXiStarpp::Terminate(Option_t *)

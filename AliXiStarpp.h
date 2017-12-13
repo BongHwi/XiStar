@@ -40,6 +40,27 @@ public:
     virtual ~AliXiStarpp();
     AliXiStarpp(const AliXiStarpp &obj);
     AliXiStarpp &operator=(const AliXiStarpp &obj);
+    struct St_CutType {
+        TH3F *fXi; //!
+        TH3F *fXibar; //!
+        //
+        TH3F *fXiMinusPiPlus; //!
+        TH3F *fXiMinusPiMinus; //!
+        TH3F *fXiPlusPiPlus; //!
+        TH3F *fXiPlusPiMinus; //!
+        
+        TH3F *fXiMinusPiPlusbkg; //!
+        TH3F *fXiMinusPiMinusbkg; //!
+        TH3F *fXiPlusPiPlusbkg; //!
+        TH3F *fXiPlusPiMinusbkg; //!
+        //
+        TH3F *fMCrecXi; //!
+        TH3F *fMCrecXibar; //!
+        
+        TH3F *fMCrecXiMinusPiPlus; //!
+        TH3F *fMCrecXiPlusPiMinus; //!
+       
+    };
 private:
     
     virtual void   UserCreateOutputObjects();
@@ -103,27 +124,7 @@ private:
     //generated Histograms//
     //=================================================================================//
     
-    struct St_CutType {
-        TH3F *fXi; //!
-        TH3F *fXibar; //!
-        //
-        TH3F *fXiMinusPiPlus; //!
-        TH3F *fXiMinusPiMinus; //!
-        TH3F *fXiPlusPiPlus; //!
-        TH3F *fXiPlusPiMinus; //!
-        
-        TH3F *fXiMinusPiPlusbkg; //!
-        TH3F *fXiMinusPiMinusbkg; //!
-        TH3F *fXiPlusPiPlusbkg; //!
-        TH3F *fXiPlusPiMinusbkg; //!
-        //
-        TH3F *fMCrecXi; //!
-        TH3F *fMCrecXibar; //!
-        
-        TH3F *fMCrecXiMinusPiPlus; //!
-        TH3F *fMCrecXiPlusPiMinus; //!
-       
-    };
+    
     struct St_CutType CutVar[kNCutVariations]; //!
     
     
