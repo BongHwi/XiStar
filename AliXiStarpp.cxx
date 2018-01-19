@@ -534,7 +534,11 @@ void AliXiStarpp::UserCreateOutputObjects()
     hEventSelecInfo->GetXaxis()->SetBinLabel(8,"kAny");
     hEventSelecInfo->GetXaxis()->SetBinLabel(9,"kAndMB");
 
-    
+   TH1F *hNumberOfEvent = new TH1F("hNumberOfEvent","hNumberOfEvent",10,0,10);
+    fOutputList->Add(hNumberOfEvent);
+    hNumberOfEvent->GetXaxis()->SetBinLabel(1,"Original");
+    hNumberOfEvent->GetXaxis()->SetBinLabel(2,"AfterMulti");
+    hNumberOfEvent->GetXaxis()->SetBinLabel(3,"0-100Cut"); 
    // TH3F *fPtEtaDist = new TH3F("fPtEtaDist","PtEtaDist",2,-1.1,1.1, 300,0,3., 28,-1.4,1.4);
    // fOutputList->Add(fPtEtaDist);
     
@@ -1025,8 +1029,9 @@ void AliXiStarpp::Exec(Option_t *)
     }
     
     
-    
- 
+        // Before the AliMulti    
+        ((TH1F*)fOutputList->FindObject("hNumberOfEvent"))->Fill(0);
+
     // ESDs
         AliMultSelection *MultSelection = (AliMultSelection*) fESD->FindListObject("MultSelection");
 
@@ -1044,7 +1049,13 @@ void AliXiStarpp::Exec(Option_t *)
         cout << "Multiplicity: " << lPerc << endl;
         ((TH1F*)fOutputList->FindObject("fMultDist_pp"))->Fill(lPerc);
         
+	// After the AliMulti
+	((TH1F*)fOutputList->FindObject("hNumberOfEvent"))->Fill(1);
         
+        //if(lPerc > 100) return;
+        
+	// After the AliMulti 0-100 cut
+	//((TH1F*)fOutputList->FindObject("hNumberOfEvent"))->Fill(2);
         
         ((TH1F*)fOutputList->FindObject("fMultDist1"))->Fill(fESD->GetNumberOfTracks());
         PrimaryVertexESD = fESD->GetPrimaryVertex();

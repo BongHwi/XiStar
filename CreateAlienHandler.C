@@ -17,7 +17,7 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     // Overwrite all generated files, datasets and output results from a previous session
     plugin->SetOverwriteMode(kTRUE);
     // Set the run mode (can be "full", "test", "offline", "submit" or "terminate")
-    plugin->SetRunMode("full");  // VERY IMPORTANT
+    plugin->SetRunMode("test");  // VERY IMPORTANT
     // Set versions of used packages
     plugin->SetAPIVersion("V1.1x");
     //    plugin->SetROOTVersion("v5-34-05");
@@ -71,10 +71,10 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
             totruns += AddGoodRuns(plugin,"LHC15f");
         }
     }else {// MC data
-        if(Production->Contains("11a")){// AODs
-            plugin->SetGridDataDir("/alice/sim/2012/LHC12f1b"); //1a : Pythia8, 1b : Phojet
+        if(Production->Contains("15f")){// AODs
+            plugin->SetGridDataDir("/alice/sim/2015/LHC18a2c"); //1a : Pythia8, 1b : Phojet
             plugin->SetDataPattern("*AliESDs.root");
-            totruns += AddGoodRuns(plugin,"LHC11a",MCcase);
+            totruns += AddGoodRuns(plugin,"LHC15f",MCcase);
         }
         if(Production->Contains("10h")){// ESDs
             plugin->SetGridDataDir("/alice/sim/LHC11a10a_bis");
@@ -102,7 +102,7 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     if(!MCcase) plugin->SetGridWorkingDir("pp13TeV_LHC15f_Goodrun_20171201");
 
  //   else plugin->SetGridWorkingDir("pp276TeV_LHC11a_withoutSDD-LHC12f1a-Pythia8-TPCPID");
-    else plugin->SetGridWorkingDir("pp13TeV_LHC15f");
+    else plugin->SetGridWorkingDir("pp13TeV_LHC15f_goodrun_20180118");
 
     // Declare alien output directory. Relative to working directory.
     plugin->SetGridOutputDir("output"); // In this case will be $HOME/work/output
@@ -159,12 +159,12 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase=kFALSE)
          
          if(MCcase){
          //mc list
-         nruns=16;
-         Int_t runlist[16]={146746, 146747, 146748, 146801, 146802, 146803, 146804, 146805, 146806, 146807, 146817, 146824, 146856, 146858, 146859, 146860};
+         nruns=48;
+         Int_t runlist[16]={226500, 226495, 226483, 226476, 226472, 226468, 226466, 226452, 226445, 226444, 226225, 226220, 226170, 226062, 225768, 225766, 225763, 225762, 225757, 225753, 225719, 225717, 225716, 225710, 225709, 225708, 225707, 225587, 225586, 225579, 225578, 225576, 225322, 225314, 225313, 225309, 225307, 225305, 225106, 225052, 225051, 225050, 225043, 225041, 225037, 225035, 225031, 225026};
          }else{
              //data list
-             nruns=48; // 48
-             Int_t runlist[48]={226500, 226495, 226483, 226476, 226472, 226468, 226466, 226452, 226445, 226444, 226225, 226220, 226170, 226062, 225768, 225766, 225763, 225762, 225757, 225753, 225719, 225717, 225716, 225710, 225709, 225708, 225707, 225587, 225586, 225579, 225578, 225576, 225322, 225314, 225313, 225309, 225307, 225305, 225106, 225052, 225051, 225050, 225043, 225041, 225037, 225035, 225031, 225026};
+             nruns=1; // 51
+	     Int_t runlist[51]={225000, 225011, 225016, 225026, 225031, 225035, 225037, 225041, 225043, 225050, 225051, 225052, 225106, 225305, 225307, 225309, 225313, 225314, 225322, 225576, 225578, 225579, 225586, 225587, 225707, 225708, 225709, 225710, 225716, 225717, 225719, 225753, 225757, 225762, 225763, 225766, 225768, 226062, 226170, 226220, 226225, 226444, 226445, 226452, 226466, 226468, 226472, 226476, 226483, 226495, 226500};
          }
          
         // nruns=55; //pass1

@@ -10,7 +10,6 @@ void runXiStar(const char *dataset = "test1.list") {
     bool MCcase=kFALSE; 
     bool AODcase=kFALSE; 
     const char* collectionfile="collection.xml";
-    const char* outfilename="MyOutput.root";
     
     gSystem->Load("libTree.so");
     gSystem->Load("libGeom.so");
@@ -107,27 +106,9 @@ void runXiStar(const char *dataset = "test1.list") {
     // Create tasks
     gROOT->LoadMacro("AliXiStarppEventCollection.cxx+g");
     gROOT->LoadMacro("AliXiStarpp.cxx+g");
-    
-    AliXiStarpp *myTask = new AliXiStarpp("MyTask", AODcase, MCcase);
-    
-     if(!myTask) exit(-1);
-    mgr->AddTask(myTask);
-    
-    
-    
-    // Create containers for input/output
-    
-    AliAnalysisDataContainer *cinput = mgr->GetCommonInputContainer();
-    AliAnalysisDataContainer *coutput = mgr->CreateContainer("MyList", TList::Class(),AliAnalysisManager::kOutputContainer,outfilename);
-   
-    mgr->ConnectInput(physSelTask,0,cinput);
-
-    //____________________________________________//
-    mgr->ConnectInput(myTask, 0, cinput);
-    
-    
-    mgr->ConnectOutput(myTask, 1, coutput);
-    
+    // Add Task
+    gROOT->LoadMacro("AddTaskXiStar.C");
+    AliXiStarpp *myTask = AddTaskXiStar(MCcase,AODcase);
     
     if (!mgr->InitAnalysis()) return;
     mgr->PrintStatus();
