@@ -104,11 +104,11 @@ void runXiStar(const char *dataset = "test1.list") {
     
     //____________________________________________//
     // Create tasks
-    gROOT->LoadMacro("AliXiStarppEventCollection.cxx+g");
-    gROOT->LoadMacro("AliXiStarpp.cxx+g");
+    gROOT->LoadMacro("AliXiStarpp13TeVEventCollection.cxx+g");
+    gROOT->LoadMacro("AliXiStarpp13TeV.cxx+g");
     // Add Task
     gROOT->LoadMacro("AddTaskXiStar.C");
-    AliXiStarpp *myTask = AddTaskXiStar(MCcase,AODcase);
+    AliXiStarpp13TeV *myTask = AddTaskXiStar(MCcase,AODcase);
     
     if (!mgr->InitAnalysis()) return;
     mgr->PrintStatus();

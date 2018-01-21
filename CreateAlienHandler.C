@@ -11,13 +11,13 @@ AliAnalysisGrid* CreateAlienHandler(bool MCcase)
     plugin->SetUser("blim");
     
     // 2016 Jan 6 : gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
-   // gSystem->Setenv("alien_CLOSE_SE","ALICE::Trieste::SE");
-gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
+    // gSystem->Setenv("alien_CLOSE_SE","ALICE::Trieste::SE");
+    // gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     plugin->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
     // Overwrite all generated files, datasets and output results from a previous session
     plugin->SetOverwriteMode(kTRUE);
     // Set the run mode (can be "full", "test", "offline", "submit" or "terminate")
-    plugin->SetRunMode("test");  // VERY IMPORTANT
+    plugin->SetRunMode("full");  // VERY IMPORTANT
     // Set versions of used packages
     plugin->SetAPIVersion("V1.1x");
     //    plugin->SetROOTVersion("v5-34-05");
@@ -38,7 +38,7 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     if(!MCcase) plugin->SetRunPrefix("000");   // real or MC data
     
    
-     TString *Production=new TString("15f");
+     TString *Production=new TString("16k");
    
     
     Int_t totruns=0;
@@ -65,10 +65,10 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
             plugin->SetDataPattern("ESDs/pass4_without_SDD/*AliESDs.root");
             totruns += AddGoodRuns(plugin,"LHC11a");
         }
-        if(Production->Contains("15f")){// ESDs
-            plugin->SetGridDataDir("/alice/data/2015/LHC15f");
-            plugin->SetDataPattern("pass2/*AliESDs.root");
-            totruns += AddGoodRuns(plugin,"LHC15f");
+        if(Production->Contains("16k")){// ESDs
+            plugin->SetGridDataDir("/alice/data/2016/LHC16k");
+            plugin->SetDataPattern("pass1/*AliESDs.root");
+            totruns += AddGoodRuns(plugin,"LHC16k");
         }
     }else {// MC data
         if(Production->Contains("15f")){// AODs
@@ -99,10 +99,10 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     // Define alien work directory where all files will be copied. Relative to alien $HOME.
 
   //  if(!MCcase) plugin->SetGridWorkingDir("pp276TeV_LHC11a_withoutSDD-24Runs-EM10-2017-woPID");
-    if(!MCcase) plugin->SetGridWorkingDir("pp13TeV_LHC15f_Goodrun_20171201");
+    if(!MCcase) plugin->SetGridWorkingDir("pp13TeV_LHC16kf_goodrun_20180120");
 
  //   else plugin->SetGridWorkingDir("pp276TeV_LHC11a_withoutSDD-LHC12f1a-Pythia8-TPCPID");
-    else plugin->SetGridWorkingDir("pp13TeV_LHC15f_goodrun_20180118");
+    else plugin->SetGridWorkingDir("pp13TeV_LHC16kf_goodrun_20180118");
 
     // Declare alien output directory. Relative to working directory.
     plugin->SetGridOutputDir("output"); // In this case will be $HOME/work/output
@@ -114,10 +114,10 @@ gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
     
     // Declare the analysis source files names separated by blancs. To be compiled runtime
     // using ACLiC on the worker nodes.
-    plugin->SetAnalysisSource("AliXiStarppEventCollection.cxx AliXiStarpp.cxx");
+    plugin->SetAnalysisSource("AliXiStarpp13TeVEventCollection.cxx AliXiStarpp.cxx");
     // Declare all libraries (other than the default ones for the framework. These will be
     // loaded by the generated analysis macro. Add all extra files (task .cxx/.h) here.
-    plugin->SetAdditionalLibs("AliXiStarppEventCollection.h AliXiStarppEventCollection.cxx AliXiStarpp.h AliXiStarpp.cxx");
+    plugin->SetAdditionalLibs("AliXiStarpp13TeVEventCollection.h AliXiStarppEventCollection.cxx AliXiStarpp.h AliXiStarpp.cxx");
     
     // No need for output file names. Procedure is automatic.
     plugin->SetDefaultOutputs(kTRUE);
@@ -155,7 +155,7 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase=kFALSE)
 
     
     Int_t nruns=0,ngoodruns=0;
-     if(lhcPeriod=="LHC15f") {
+     if(lhcPeriod=="LHC16k") {
          
          if(MCcase){
          //mc list
@@ -163,8 +163,8 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase=kFALSE)
          Int_t runlist[16]={226500, 226495, 226483, 226476, 226472, 226468, 226466, 226452, 226445, 226444, 226225, 226220, 226170, 226062, 225768, 225766, 225763, 225762, 225757, 225753, 225719, 225717, 225716, 225710, 225709, 225708, 225707, 225587, 225586, 225579, 225578, 225576, 225322, 225314, 225313, 225309, 225307, 225305, 225106, 225052, 225051, 225050, 225043, 225041, 225037, 225035, 225031, 225026};
          }else{
              //data list
-             nruns=1; // 51
-	     Int_t runlist[51]={225000, 225011, 225016, 225026, 225031, 225035, 225037, 225041, 225043, 225050, 225051, 225052, 225106, 225305, 225307, 225309, 225313, 225314, 225322, 225576, 225578, 225579, 225586, 225587, 225707, 225708, 225709, 225710, 225716, 225717, 225719, 225753, 225757, 225762, 225763, 225766, 225768, 226062, 226170, 226220, 226225, 226444, 226445, 226452, 226466, 226468, 226472, 226476, 226483, 226495, 226500};
+             nruns=202; // 51
+	     Int_t runlist[202]={258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258048, 258045, 258042, 258041, 258039, 258019, 258017, 258014, 258012, 258008, 258003, 257992, 257989, 257986, 257979, 257963, 257960, 257958, 257957, 257939, 257937, 257936, 257893, 257892, 257855, 257853, 257851, 257850, 257804, 257803, 257800, 257799, 257798, 257797, 257773, 257765, 257757, 257754, 257737, 257735, 257734, 257733, 257727, 257725, 257724, 257697, 257694, 257692, 257691, 257689, 257688, 257687, 257685, 257684, 257682, 257644, 257642, 257636, 257635, 257632, 257630, 257606, 257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474, 257468, 257457, 257433, 257364, 257358, 257330, 257322, 257320, 257318, 257260, 257224, 257209, 257206, 257204, 257145, 257144, 257142, 257141, 257140, 257139, 257138, 257137, 257136, 257100, 257095, 257092, 257086, 257084, 257083, 257082, 257080, 257077, 257028, 257026, 257021, 257012, 257011, 256944, 256942, 256941, 256697, 256695, 256694, 256692, 256691, 256684, 256681, 256677, 256676, 256658, 256620, 256619, 256592, 256591, 256589, 256567, 256565, 256564, 256562, 256561, 256560, 256557, 256556, 256554, 256552, 256514, 256512, 256510, 256506, 256504};
          }
          
         // nruns=55; //pass1
