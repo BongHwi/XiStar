@@ -1,4 +1,4 @@
-AliXiStarpp *AddTaskXiStar(bool MCcase=kFALSE, bool AODcase=kFALSE, int CutList=0) {
+AliXiStarpp13TeV *AddTaskXiStar(bool MCcase=kFALSE, bool AODcase=kFALSE, int CutList=0) {
 
   //===========================================================================
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
@@ -9,7 +9,7 @@ AliXiStarpp *AddTaskXiStar(bool MCcase=kFALSE, bool AODcase=kFALSE, int CutList=
 
   //____________________________________________//
   // Create tasks
-  AliXiStarpp *XiStarTask = new AliXiStarpp("XiStarTask", AODcase, MCcase, CutList);
+  AliXiStarpp13TeV *XiStarTask = new AliXiStarpp("XiStarTask", AODcase, MCcase, CutList);
   if(!XiStarTask) exit(-1);
   mgr->AddTask(XiStarTask);
 
