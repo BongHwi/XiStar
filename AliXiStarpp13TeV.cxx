@@ -270,7 +270,7 @@ fCutList(obj.fCutList)
 }
 //________________________________________________________________________
 
-AliXiStarpp13TeV &AliXiStarpp::operator=(const AliXiStarpp13TeV &obj )
+AliXiStarpp13TeV &AliXiStarpp13TeV::operator=(const AliXiStarpp13TeV &obj )
 {
     // Assignment operator
     if (this == &obj )
