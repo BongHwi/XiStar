@@ -1,13 +1,13 @@
-#ifndef ALIXISTAR_H
-#define ALIXISTAR_H
+#ifndef ALIXISTARPP13TEV_H
+#define ALIXISTARPP13TEV_H
 //
-// Class AliXiStar
+// Class AliXiStarpp13TeV
 //
-// AliXiStar
+// AliXiStarpp13TeV
 // author:
-//        Dhevan Gangadharan (dhevan.raja.gangadharan@cern.ch)
-//
-
+//  (Original Code) Dhevan Gangadharan (dhevan.raja.gangadharan@cern.ch)
+//  (1st Modification) Jihye Song (jihye.song@cern.ch)
+//  (last Modification) Bong-Hwi Lim (bong-hwi.lim@cern.ch)
 
 
 class TH1F;
@@ -38,8 +38,8 @@ public:
     AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0);
 
     virtual ~AliXiStarpp13TeV();
-    AliXiStarpp13TeV(const AliXiStarpp &obj);
-    AliXiStarpp13TeV &operator=(const AliXiStarpp &obj);
+    AliXiStarpp13TeV(const AliXiStarpp13TeV &obj);
+    AliXiStarpp13TeV &operator=(const AliXiStarpp13TeV &obj);
 private:
     
     virtual void   UserCreateOutputObjects();

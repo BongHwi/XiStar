@@ -1,26 +1,30 @@
-
-/**************************************************************************
- * Copyright(c) 1998-1999, ALICE Experiment at CERN, All rights reserved. *
- *                                                                        *
- * Author: The ALICE Off-line Project.                                    *
- * Contributors are mentioned in the code where appropriate.              *
- *                                                                        *
- * Permission to use, copy, modify and distribute this software and its   *
- * documentation strictly for non-commercial purposes is hereby granted   *
- * without fee, provided that the above copyright notice appears in all   *
- * copies and that both the copyright notice and this permission notice   *
- * appear in the supporting documentation. The authors make no claims     *
- * about the suitability of this software for any purpose. It is          *
- * provided "as is" without express or implied warranty.                  *
- **************************************************************************/
+/*************************************************************************
+* Copyright(c) 1998-2008, ALICE Experiment at CERN, All rights reserved. *
+*                                                                        *
+* Author: The ALICE Off-line Project.                                    *
+* Contributors are mentioned in the code where appropriate.              *
+*                                                                        *
+* Permission to use, copy, modify and distribute this software and its   *
+* documentation strictly for non-commercial purposes is hereby granted   *
+* without fee, provided that the above copyright notice appears in all   *
+* copies and that both the copyright notice and this permission notice   *
+* appear in the supporting documentation. The authors make no claims     *
+* about the suitability of this software for any purpose. It is          *
+* provided "as is" without express or implied warranty.                  *
+**************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  This class is used to reconstruct the neutral Xi(1530) resonance.
+//  This class is used to reconstruct the neutral Xi(1530) resonance in pp 13TeV System.
 //  This class essentially combines charged Xi candidates from the Xi Vertexer
 //  with primary charged pions.
+//  Multiplicity Information added(Bong-Hwi)
 //
-//  authors: Dhevan Gangadharan (dhevan.raja.gangadharan@cern.ch)
+//  Original author: Dhevan Gangadharan (dhevan.raja.gangadharan@cern.ch)
+//  Modified by: Jihye Song (jihye.song@cern.ch)
+//  Last Modified by: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
+//
+//  Last Modified Date: 2018/01/21
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -73,12 +77,12 @@
 #define PI 3.1415927
 
 
-// Author: Dhevan Gangadharan
+// Author: Bong-Hwi Lim
 
 ClassImp(AliXiStarpp13TeV)
 
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp():
+AliXiStarpp13TeV::AliXiStarpp13TeV():
 AliAnalysisTaskSE(),
 fname(0),
 fESD(0x0),
@@ -146,7 +150,7 @@ fCutList(0)
     
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption)
+AliXiStarpp13TeV::AliXiStarpp13TeV(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption)
 : AliAnalysisTaskSE(name),
 fname(name),
 fESD(0x0),
@@ -219,7 +223,7 @@ fCutList(CutListOption)
     
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp(const AliXiStarpp &obj)
+AliXiStarpp13TeV::AliXiStarpp13TeV(const AliXiStarpp13TeV &obj)
 : AliAnalysisTaskSE(obj.fname),
 fname(obj.fname),
 fESD(obj.fESD),
@@ -264,7 +268,7 @@ fCutList(obj.fCutList)
 }
 //________________________________________________________________________
 
-AliXiStarpp13TeV &AliXiStarpp::operator=(const AliXiStarpp &obj)
+AliXiStarpp13TeV &AliXiStarpp::operator=(const AliXiStarpp13TeV &obj)
 {
     // Assignment operator
     if (this == &obj)
@@ -315,7 +319,7 @@ AliXiStarpp13TeV &AliXiStarpp::operator=(const AliXiStarpp &obj)
     return (*this);
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::~AliXiStarpp()
+AliXiStarpp13TeV::~AliXiStarpp13TeV()
 {
     // Destructor
 
@@ -356,9 +360,9 @@ void AliXiStarpp13TeV::XiStarInit()
     //
     //Inits cuts and analysis settings
     //
-    
+    Bool_t DevelopeMode = kTRUE;
     fEventCounter=0;// event counter initialization
-    cout<<"AliXiStarpp13TeV XiStarInit() call"<<endl;
+    if(DevelopeMode)std::cout<<"AliXiStarpp13TeV XiStarInit() call"<<std::endl;
     
     
     ///////////////////////////////////////////////
@@ -934,7 +938,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
     // Main loop
     // Called for each event
     
-    cout<<"===========  Event # "<<fEventCounter+1<<"  ==========="<<endl;
+    if(DevelopeMode)std::cout<<"===========  Event # "<<fEventCounter+1<<"  ==========="<<std::endl;
     fEventCounter++;
     
     
@@ -961,7 +965,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
             if(isSelected) ((TH1F*)fOutputList->FindObject("hEventSelecInfo"))->Fill(8);
     
         
-        if(!isSelected) {cout<<"Event Rejected"<<endl; return;}
+        if(!isSelected) {if(DevelopeMode)std::cout<<"Event Rejected"<<std::endl; return;}
 
     
     ///////////////////////////////////////////////////////////
@@ -1046,7 +1050,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
          //If this happens, re-check if AliMultSelectionTask ran before your task!
         AliInfo("Didn't find MultSelection!");
         }
-        cout << "Multiplicity: " << lPerc << endl;
+        if(DevelopeMode)std::cout << "Multiplicity: " << lPerc << std::endl;
         ((TH1F*)fOutputList->FindObject("fMultDist_pp"))->Fill(lPerc);
         
 	// After the AliMulti
@@ -1229,7 +1233,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
         ((TH3F*)fOutputList->FindObject("fMultDist3d"))->Fill(positiveTracks+negativeTracks, positiveTracks, negativeTracks);
     }
     
-    cout<<"There are "<<myTracks<<"  myTracks"<<endl;
+    if(DevelopeMode)std::cout<<"There are "<<myTracks<<"  myTracks"<<std::endl;
     
     // set Z Vertex bin
     for(Int_t i=0; i<fZvertexBins; i++){
@@ -1823,7 +1827,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
 //________________________________________________________________________
 void AliXiStarpp13TeV::Terminate(Option_t *)
 {
-    cout<<"Done"<<endl;
+    if(DevelopeMode)std::cout<<"Done"<<std::endl;
 }
 //________________________________________________________________________
 /*

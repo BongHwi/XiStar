@@ -1,31 +1,34 @@
-/**************************************************************************
- * Copyright(c) 1998-1999, ALICE Experiment at CERN, All rights reserved. *
- *                                                                        *
- * Author: The ALICE Off-line Project.                                    *
- * Contributors are mentioned in the code where appropriate.              *
- *                                                                        *
- * Permission to use, copy, modify and distribute this software and its   *
- * documentation strictly for non-commercial purposes is hereby granted   *
- * without fee, provided that the above copyright notice appears in all   *
- * copies and that both the copyright notice and this permission notice   *
- * appear in the supporting documentation. The authors make no claims     *
- * about the suitability of this software for any purpose. It is          *
- * provided "as is" without express or implied warranty.                  *
- **************************************************************************/
+/*************************************************************************
+* Copyright(c) 1998-2008, ALICE Experiment at CERN, All rights reserved. *
+*                                                                        *
+* Author: The ALICE Off-line Project.                                    *
+* Contributors are mentioned in the code where appropriate.              *
+*                                                                        *
+* Permission to use, copy, modify and distribute this software and its   *
+* documentation strictly for non-commercial purposes is hereby granted   *
+* without fee, provided that the above copyright notice appears in all   *
+* copies and that both the copyright notice and this permission notice   *
+* appear in the supporting documentation. The authors make no claims     *
+* about the suitability of this software for any purpose. It is          *
+* provided "as is" without express or implied warranty.                  *
+**************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  This class provides storage for event and track information which 
 //  are used for same-event as well as mixed-event analyses in AliXiStar 
 //
-//  authors: Dhevan Gangadharan (dhevan.raja.gangadharan@cern.ch)
+//  Original author: Dhevan Gangadharan (dhevan.raja.gangadharan@cern.ch)
+//  Modified by: Jihye Song (jihye.song@cern.ch)
+//  Last Modified by: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
+//  
+//  Last Modified Date: 2018/01/21
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #include "AliXiStarpp13TeVEventCollection.h"
 
-AliXiStarpp13TeVTrackStruct::AliXiStarppTrackStruct():
+AliXiStarpp13TeVTrackStruct::AliXiStarpp13TeVTrackStruct():
   fStatus(0),
   fFilterMap(0),
   fID(0),
@@ -50,7 +53,7 @@ AliXiStarpp13TeVTrackStruct::AliXiStarppTrackStruct():
   //Default constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVTrackStruct::AliXiStarppTrackStruct(const AliXiStarppTrackStruct &obj) 
+AliXiStarpp13TeVTrackStruct::AliXiStarpp13TeVTrackStruct(const AliXiStarpp13TeVTrackStruct &obj) 
   : fStatus(obj.fStatus),
     fFilterMap(obj.fFilterMap),
     fID(obj.fID),
@@ -76,7 +79,7 @@ AliXiStarpp13TeVTrackStruct::AliXiStarppTrackStruct(const AliXiStarppTrackStruct
 }
 
 //_____________________________________________________________________________
-AliXiStarpp13TeVTrackStruct &AliXiStarppTrackStruct::operator=(const AliXiStarppTrackStruct &obj) 
+AliXiStarpp13TeVTrackStruct &AliXiStarpp13TeVTrackStruct::operator=(const AliXiStarpp13TeVTrackStruct &obj) 
 {
   // Assignment operator  
   if (this == &obj)
@@ -117,26 +120,26 @@ AliXiStarpp13TeVTrackStruct &AliXiStarppTrackStruct::operator=(const AliXiStarpp
 }
 
 //_____________________________________________________________________________
-AliXiStarpp13TeVTrackStruct::~AliXiStarppTrackStruct()
+AliXiStarpp13TeVTrackStruct::~AliXiStarpp13TeVTrackStruct()
 {
   // Destructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventStruct::AliXiStarppEventStruct():
+AliXiStarpp13TeVEventStruct::AliXiStarpp13TeVEventStruct():
   fNTracks(0),
   fTracks(0)
 {
   //Default constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventStruct::AliXiStarppEventStruct(const AliXiStarppEventStruct &obj) 
+AliXiStarpp13TeVEventStruct::AliXiStarpp13TeVEventStruct(const AliXiStarpp13TeVEventStruct &obj) 
   :  fNTracks(obj.fNTracks),
      fTracks(obj.fTracks)
 {
   // copy constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventStruct &AliXiStarppEventStruct::operator=(const AliXiStarppEventStruct &obj) 
+AliXiStarpp13TeVEventStruct &AliXiStarpp13TeVEventStruct::operator=(const AliXiStarpp13TeVEventStruct &obj) 
 {
   // Assignment operator  
   if (this == &obj)
@@ -148,20 +151,20 @@ AliXiStarpp13TeVEventStruct &AliXiStarppEventStruct::operator=(const AliXiStarpp
   return (*this);
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventStruct::~AliXiStarppEventStruct()
+AliXiStarpp13TeVEventStruct::~AliXiStarpp13TeVEventStruct()
 {
   // Destructor
   if(fTracks) delete fTracks;
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventCollection::AliXiStarppEventCollection():
+AliXiStarpp13TeVEventCollection::AliXiStarpp13TeVEventCollection():
   fFIFO(0),
   fEvtStr(0)
 {
 //Default constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventCollection::AliXiStarppEventCollection(short a):
+AliXiStarpp13TeVEventCollection::AliXiStarpp13TeVEventCollection(short a):
   fFIFO(0),
   fEvtStr(0x0)
 {
@@ -178,14 +181,14 @@ AliXiStarpp13TeVEventCollection::AliXiStarppEventCollection(short a):
   
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventCollection::AliXiStarppEventCollection(const AliXiStarppEventCollection &obj) 
+AliXiStarpp13TeVEventCollection::AliXiStarpp13TeVEventCollection(const AliXiStarpp13TeVEventCollection &obj) 
   :  fFIFO(obj.fFIFO),
      fEvtStr(obj.fEvtStr)
 {
   // copy constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventCollection &AliXiStarppEventCollection::operator=(const AliXiStarppEventCollection &obj) 
+AliXiStarpp13TeVEventCollection &AliXiStarpp13TeVEventCollection::operator=(const AliXiStarpp13TeVEventCollection &obj) 
 {
   // Assignment operator  
   if (this == &obj)
@@ -198,7 +201,7 @@ AliXiStarpp13TeVEventCollection &AliXiStarppEventCollection::operator=(const Ali
 }
 
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventCollection::~AliXiStarppEventCollection(){
+AliXiStarpp13TeVEventCollection::~AliXiStarpp13TeVEventCollection(){
 
     for(Int_t i = 0; i < fFIFO; i++){
 

@@ -114,10 +114,10 @@ AliAnalysisGrid* CreateAlienHandler(bool MCcase)
     
     // Declare the analysis source files names separated by blancs. To be compiled runtime
     // using ACLiC on the worker nodes.
-    plugin->SetAnalysisSource("AliXiStarpp13TeVEventCollection.cxx AliXiStarpp.cxx");
+    plugin->SetAnalysisSource("AliXiStarpp13TeVEventCollection.cxx AliXiStarpp13TeV.cxx");
     // Declare all libraries (other than the default ones for the framework. These will be
     // loaded by the generated analysis macro. Add all extra files (task .cxx/.h) here.
-    plugin->SetAdditionalLibs("AliXiStarpp13TeVEventCollection.h AliXiStarppEventCollection.cxx AliXiStarpp.h AliXiStarpp.cxx");
+    plugin->SetAdditionalLibs("AliXiStarpp13TeVEventCollection.h AliXiStarpp13TeVEventCollection.cxx AliXiStarpp13TeV.h AliXiStarpp13TeV.cxx");
     
     // No need for output file names. Procedure is automatic.
     plugin->SetDefaultOutputs(kTRUE);
