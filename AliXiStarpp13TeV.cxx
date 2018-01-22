@@ -966,7 +966,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
             if(isSelected) ((TH1F*)fOutputList->FindObject("hEventSelecInfo"))->Fill(8);
     
         
-        if(!isSelected) {if(fDevelopeMode)std::cout<<"Event Rejected"<<std::endl; return;}
+        if(!isSelectedkINT7) {if(fDevelopeMode)std::cout<<"Event Rejected"<<std::endl; return;}
 
     
     ///////////////////////////////////////////////////////////
