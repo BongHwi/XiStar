@@ -1133,7 +1133,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
     if(PrimaryVertexESD->GetNContributors() >= 1) ((TH1F*)fOutputList->FindObject("fMultDist4"))->Fill(fESD->GetNumberOfTracks());
     if(PrimaryVertexESD->GetNContributors() < 1) return; // Enrico cut
 
-        Printf("There are %d tracks in this event", fESD->GetNumberOfTracks());
+        if(fDevelopeMode)std::cout << "There are " << fESD->GetNumberOfTracks() << " tracks in this event" << std::endl;;
         
         bField = fESD->GetMagneticField();
         
