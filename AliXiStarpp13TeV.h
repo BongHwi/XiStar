@@ -35,7 +35,7 @@ class AliXiStarpp13TeV : public AliAnalysisTaskSE {
 public:
     
     AliXiStarpp13TeV();
-    AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0);
+    AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0, Bool_t MCdecision = kFALSE);
 
     virtual ~AliXiStarpp13TeV();
     AliXiStarpp13TeV(const AliXiStarpp13TeV &obj );

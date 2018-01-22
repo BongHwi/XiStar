@@ -92,7 +92,7 @@ fPIDResponse(0x0),
 
 fEC(0x0),
 fEvt(0x0),
-fDevelopeMode(1),
+fDevelopeMode(0),
 
 fTempStruct(0x0),
 fZvertexBins(0),
@@ -151,7 +151,7 @@ fCutList(0)
     
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp13TeV(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption)
+AliXiStarpp13TeV::AliXiStarpp13TeV(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption, Bool_t DevelopmentMode)
 : AliAnalysisTaskSE(name),
 fname(name),
 fESD(0x0),
@@ -160,7 +160,7 @@ fTrackCut(0x0),
 fPIDResponse(0x0),
 fEC(0x0),
 fEvt(0x0),
-fDevelopeMode(1),
+fDevelopeMode(DevelopmentMode),
 fTempStruct(0x0),
 fZvertexBins(0),
 fEventsToMix(0),

@@ -9,6 +9,8 @@ void runXiStar(const char *dataset = "test1.list") {
     bool batchmode=kTRUE;  
     bool MCcase=kFALSE; 
     bool AODcase=kFALSE; 
+    int CutList = 0;
+    bool DevelopmentMode=kFALSE;
     const char* collectionfile="collection.xml";
     
     gSystem->Load("libTree.so");
@@ -108,7 +110,7 @@ void runXiStar(const char *dataset = "test1.list") {
     gROOT->LoadMacro("AliXiStarpp13TeV.cxx+g");
     // Add Task
     gROOT->LoadMacro("AddTaskXiStarpp13TeV.C");
-    AliXiStarpp13TeV *myTask = AddTaskXiStarpp13TeV(MCcase,AODcase);
+    AliXiStarpp13TeV *myTask = AddTaskXiStarpp13TeV(MCcase,AODcase,CutList,DevelopmentMode);
     
     if (!mgr->InitAnalysis()) return;
     mgr->PrintStatus();
