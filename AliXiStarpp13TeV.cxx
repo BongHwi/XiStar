@@ -92,6 +92,7 @@ fPIDResponse(0x0),
 
 fEC(0x0),
 fEvt(0x0),
+fDevelopeMode(1),
 
 fTempStruct(0x0),
 fZvertexBins(0),
@@ -159,6 +160,7 @@ fTrackCut(0x0),
 fPIDResponse(0x0),
 fEC(0x0),
 fEvt(0x0),
+fDevelopeMode(1),
 fTempStruct(0x0),
 fZvertexBins(0),
 fEventsToMix(0),
@@ -223,7 +225,7 @@ fCutList(CutListOption)
     
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp13TeV(const AliXiStarpp13TeV &obj)
+AliXiStarpp13TeV::AliXiStarpp13TeV(const AliXiStarpp13TeV &obj )
 : AliAnalysisTaskSE(obj.fname),
 fname(obj.fname),
 fESD(obj.fESD),
@@ -268,10 +270,10 @@ fCutList(obj.fCutList)
 }
 //________________________________________________________________________
 
-AliXiStarpp13TeV &AliXiStarpp::operator=(const AliXiStarpp13TeV &obj)
+AliXiStarpp13TeV &AliXiStarpp::operator=(const AliXiStarpp13TeV &obj )
 {
     // Assignment operator
-    if (this == &obj)
+    if (this == &obj )
         return *this;
     
     fname = obj.fname;
@@ -360,9 +362,8 @@ void AliXiStarpp13TeV::XiStarInit()
     //
     //Inits cuts and analysis settings
     //
-    Bool_t DevelopeMode = kTRUE;
     fEventCounter=0;// event counter initialization
-    if(DevelopeMode)std::cout<<"AliXiStarpp13TeV XiStarInit() call"<<std::endl;
+    if(fDevelopeMode)std::cout<<"AliXiStarpp13TeV XiStarInit() call"<<std::endl;
     
     
     ///////////////////////////////////////////////
@@ -938,7 +939,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
     // Main loop
     // Called for each event
     
-    if(DevelopeMode)std::cout<<"===========  Event # "<<fEventCounter+1<<"  ==========="<<std::endl;
+    if(fDevelopeMode)std::cout<<"===========  Event # "<<fEventCounter+1<<"  ==========="<<std::endl;
     fEventCounter++;
     
     
@@ -965,7 +966,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
             if(isSelected) ((TH1F*)fOutputList->FindObject("hEventSelecInfo"))->Fill(8);
     
         
-        if(!isSelected) {if(DevelopeMode)std::cout<<"Event Rejected"<<std::endl; return;}
+        if(!isSelected) {if(fDevelopeMode)std::cout<<"Event Rejected"<<std::endl; return;}
 
     
     ///////////////////////////////////////////////////////////
@@ -1050,7 +1051,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
          //If this happens, re-check if AliMultSelectionTask ran before your task!
         AliInfo("Didn't find MultSelection!");
         }
-        if(DevelopeMode)std::cout << "Multiplicity: " << lPerc << std::endl;
+        if(fDevelopeMode)std::cout << "Multiplicity: " << lPerc << std::endl;
         ((TH1F*)fOutputList->FindObject("fMultDist_pp"))->Fill(lPerc);
         
 	// After the AliMulti
@@ -1233,7 +1234,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
         ((TH3F*)fOutputList->FindObject("fMultDist3d"))->Fill(positiveTracks+negativeTracks, positiveTracks, negativeTracks);
     }
     
-    if(DevelopeMode)std::cout<<"There are "<<myTracks<<"  myTracks"<<std::endl;
+    if(fDevelopeMode)std::cout<<"There are "<<myTracks<<"  myTracks"<<std::endl;
     
     // set Z Vertex bin
     for(Int_t i=0; i<fZvertexBins; i++){
@@ -1827,7 +1828,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
 //________________________________________________________________________
 void AliXiStarpp13TeV::Terminate(Option_t *)
 {
-    if(DevelopeMode)std::cout<<"Done"<<std::endl;
+    if(fDevelopeMode)std::cout<<"Done"<<std::endl;
 }
 //________________________________________________________________________
 /*

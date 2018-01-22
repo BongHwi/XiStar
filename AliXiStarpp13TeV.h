@@ -38,8 +38,8 @@ public:
     AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0);
 
     virtual ~AliXiStarpp13TeV();
-    AliXiStarpp13TeV(const AliXiStarpp13TeV &obj);
-    AliXiStarpp13TeV &operator=(const AliXiStarpp13TeV &obj);
+    AliXiStarpp13TeV(const AliXiStarpp13TeV &obj );
+    AliXiStarpp13TeV &operator=(const AliXiStarpp13TeV &obj );
 private:
     
     virtual void   UserCreateOutputObjects();
@@ -86,6 +86,7 @@ private:
     Int_t fMultLimits[11+1];// the multiplicity edges of the mult bins
     Bool_t fMCcase;// switch for MC data or real data
     Bool_t fAODcase;// switch for AODs or ESDs
+    Bool_t fDevelopeMode;
     Int_t fEventCounter;// The event counter
     ULong64_t fEventNumber; // calcuate event number
 

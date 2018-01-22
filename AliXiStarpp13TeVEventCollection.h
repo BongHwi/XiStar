@@ -27,8 +27,8 @@ class AliXiStarpp13TeVTrackStruct{
 
   AliXiStarpp13TeVTrackStruct();
   virtual ~AliXiStarpp13TeVTrackStruct();
-  AliXiStarpp13TeVTrackStruct(const AliXiStarpp13TeVTrackStruct &obj); 
-  AliXiStarpp13TeVTrackStruct &operator=(const AliXiStarpp13TeVTrackStruct &obj);
+  AliXiStarpp13TeVTrackStruct(const AliXiStarpp13TeVTrackStruct &obj ); 
+  AliXiStarpp13TeVTrackStruct &operator=(const AliXiStarpp13TeVTrackStruct &obj );
 
   UInt_t fStatus;// track status
   UInt_t fFilterMap;// filter map for AOD filterbits
@@ -59,8 +59,8 @@ class AliXiStarpp13TeVEventStruct{
 
   AliXiStarpp13TeVEventStruct();
   virtual ~AliXiStarpp13TeVEventStruct();
-  AliXiStarpp13TeVEventStruct(const AliXiStarpp13TeVEventStruct &obj); 
-  AliXiStarpp13TeVEventStruct &operator=(const AliXiStarpp13TeVEventStruct &obj);
+  AliXiStarpp13TeVEventStruct(const AliXiStarpp13TeVEventStruct &obj ); 
+  AliXiStarpp13TeVEventStruct &operator=(const AliXiStarpp13TeVEventStruct &obj );
 
   Int_t fNTracks;// Events track count
   AliXiStarpp13TeVTrackStruct *fTracks;// Events track structure
@@ -74,8 +74,8 @@ class AliXiStarpp13TeVEventCollection {
   AliXiStarpp13TeVEventCollection();
   AliXiStarpp13TeVEventCollection(Short_t);
   virtual ~AliXiStarpp13TeVEventCollection();
-  AliXiStarpp13TeVEventCollection(const AliXiStarpp13TeVEventCollection &obj); 
-  AliXiStarpp13TeVEventCollection &operator=(const AliXiStarpp13TeVEventCollection &obj);
+  AliXiStarpp13TeVEventCollection(const AliXiStarpp13TeVEventCollection &obj ); 
+  AliXiStarpp13TeVEventCollection &operator=(const AliXiStarpp13TeVEventCollection &obj );
   
   Short_t fFIFO; //Size of the Event Storage buffer. FIFO = first-in-first-out
   AliXiStarpp13TeVEventStruct *fEvtStr;// Event structure

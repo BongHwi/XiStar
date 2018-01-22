@@ -53,7 +53,7 @@ AliXiStarpp13TeVTrackStruct::AliXiStarpp13TeVTrackStruct():
   //Default constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVTrackStruct::AliXiStarpp13TeVTrackStruct(const AliXiStarpp13TeVTrackStruct &obj) 
+AliXiStarpp13TeVTrackStruct::AliXiStarpp13TeVTrackStruct(const AliXiStarpp13TeVTrackStruct &obj ) 
   : fStatus(obj.fStatus),
     fFilterMap(obj.fFilterMap),
     fID(obj.fID),
@@ -79,10 +79,10 @@ AliXiStarpp13TeVTrackStruct::AliXiStarpp13TeVTrackStruct(const AliXiStarpp13TeVT
 }
 
 //_____________________________________________________________________________
-AliXiStarpp13TeVTrackStruct &AliXiStarpp13TeVTrackStruct::operator=(const AliXiStarpp13TeVTrackStruct &obj) 
+AliXiStarpp13TeVTrackStruct &AliXiStarpp13TeVTrackStruct::operator=(const AliXiStarpp13TeVTrackStruct &obj ) 
 {
   // Assignment operator  
-  if (this == &obj)
+  if (this == &obj )
     return *this;
   
   fStatus = obj.fStatus;
@@ -132,17 +132,17 @@ AliXiStarpp13TeVEventStruct::AliXiStarpp13TeVEventStruct():
   //Default constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventStruct::AliXiStarpp13TeVEventStruct(const AliXiStarpp13TeVEventStruct &obj) 
+AliXiStarpp13TeVEventStruct::AliXiStarpp13TeVEventStruct(const AliXiStarpp13TeVEventStruct &obj ) 
   :  fNTracks(obj.fNTracks),
      fTracks(obj.fTracks)
 {
   // copy constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventStruct &AliXiStarpp13TeVEventStruct::operator=(const AliXiStarpp13TeVEventStruct &obj) 
+AliXiStarpp13TeVEventStruct &AliXiStarpp13TeVEventStruct::operator=(const AliXiStarpp13TeVEventStruct &obj ) 
 {
   // Assignment operator  
-  if (this == &obj)
+  if (this == &obj )
     return *this;
   
   fNTracks = obj.fNTracks;
@@ -181,17 +181,17 @@ AliXiStarpp13TeVEventCollection::AliXiStarpp13TeVEventCollection(short a):
   
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventCollection::AliXiStarpp13TeVEventCollection(const AliXiStarpp13TeVEventCollection &obj) 
+AliXiStarpp13TeVEventCollection::AliXiStarpp13TeVEventCollection(const AliXiStarpp13TeVEventCollection &obj ) 
   :  fFIFO(obj.fFIFO),
      fEvtStr(obj.fEvtStr)
 {
   // copy constructor
 }
 //_____________________________________________________________________________
-AliXiStarpp13TeVEventCollection &AliXiStarpp13TeVEventCollection::operator=(const AliXiStarpp13TeVEventCollection &obj) 
+AliXiStarpp13TeVEventCollection &AliXiStarpp13TeVEventCollection::operator=(const AliXiStarpp13TeVEventCollection &obj ) 
 {
   // Assignment operator  
-  if (this == &obj)
+  if (this == &obj )
     return *this;
   
   fFIFO = obj.fFIFO;
