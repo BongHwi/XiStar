@@ -4,7 +4,6 @@
 #include "AliAODInputHandler.h"
 #include "AliAnalysisTaskMyTask.h"
 #endif
-
 void runXiStar(const char *dataset = "test1.list") {
     int Nevents=100;
     bool batchmode=kTRUE;  
@@ -107,10 +106,10 @@ void runXiStar(const char *dataset = "test1.list") {
     
     //____________________________________________//
     // Create tasks
-    gROOT->LoadMacro("$ALICE_PHYSICS/PWGLF/RESONANCES/extra/AliXiStarpp13TeVEventCollection.cxx+g");
-    gROOT->LoadMacro("$ALICE_PHYSICS/PWGLF/RESONANCES/extra/AliXiStarpp13TeV.cxx+g");
+    gROOT->LoadMacro("AliXiStarpp13TeVEventCollection.cxx+g");
+    gROOT->LoadMacro("AliXiStarpp13TeV.cxx+g");
     // Add Task
-    gROOT->LoadMacro("$ALICE_PHYSICS/PWGLF/RESONANCES/extra/AddTaskXiStarpp13TeV.C");
+    gROOT->LoadMacro("macros/AddTaskXiStarpp13TeV.C");
     AliXiStarpp13TeV *myTask = AddTaskXiStarpp13TeV(MCcase,AODcase,CutList,DevelopmentMode);
     
     if (!mgr->InitAnalysis()) return;
