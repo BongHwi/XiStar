@@ -17,7 +17,7 @@ AliAnalysisGrid* CreateAlienHandler(bool MCcase)
     // Overwrite all generated files, datasets and output results from a previous session
     plugin->SetOverwriteMode(kTRUE);
     // Set the run mode (can be "full", "test", "offline", "submit" or "terminate")
-    plugin->SetRunMode("full");  // VERY IMPORTANT
+    plugin->SetRunMode("test");  // VERY IMPORTANT
     // Set versions of used packages
     plugin->SetAPIVersion("V1.1x");
     //    plugin->SetROOTVersion("v5-34-05");
@@ -114,10 +114,10 @@ AliAnalysisGrid* CreateAlienHandler(bool MCcase)
     
     // Declare the analysis source files names separated by blancs. To be compiled runtime
     // using ACLiC on the worker nodes.
-    plugin->SetAnalysisSource("AliXiStarpp13TeVEventCollection.cxx AliXiStarpp13TeV.cxx");
+    plugin->SetAnalysisSource("$ALICE_PHYSICS/PWGLF/RESONANCES/extra/AliXiStarpp13TeVEventCollection.cxx A$ALICE_PHYSICS/PWGLF/RESONANCES/extra/liXiStarpp13TeV.cxx");
     // Declare all libraries (other than the default ones for the framework. These will be
     // loaded by the generated analysis macro. Add all extra files (task .cxx/.h) here.
-    plugin->SetAdditionalLibs("AliXiStarpp13TeVEventCollection.h AliXiStarpp13TeVEventCollection.cxx AliXiStarpp13TeV.h AliXiStarpp13TeV.cxx");
+    plugin->SetAdditionalLibs("$ALICE_PHYSICS/PWGLF/RESONANCES/extra/AliXiStarpp13TeVEventCollection.h $ALICE_PHYSICS/PWGLF/RESONANCES/extra/AliXiStarpp13TeVEventCollection.cxx $ALICE_PHYSICS/PWGLF/RESONANCES/extra/AliXiStarpp13TeV.h $ALICE_PHYSICS/PWGLF/RESONANCES/extra/AliXiStarpp13TeV.cxx");
     
     // No need for output file names. Procedure is automatic.
     plugin->SetDefaultOutputs(kTRUE);
