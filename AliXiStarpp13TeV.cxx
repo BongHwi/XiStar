@@ -24,7 +24,7 @@
 //  Modified by: Jihye Song (jihye.song@cern.ch)
 //  Last Modified by: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
 //
-//  Last Modified Date: 2018/01/21
+//  Last Modified Date: 2018/01/27
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -375,7 +375,7 @@ void AliXiStarpp13TeV::XiStarInit()
     fTrackCut->SetRequireTPCRefit(kTRUE);
     fTrackCut->SetMaxChi2PerClusterTPC(4); //From Enrico
     //fTrackCut->SetRequireITSRefit(kTRUE); // Added for 2011 cut
-    fTrackCut->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny); // Added for 2011 cut
+    //fTrackCut->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny); // Added for 2011 cut
     //fTrackCut->SetMaxChi2TPCConstrainedGlobal(36); // Added for 2011 cut
     //fTrackCut->SetMaxChi2PerClusterITS(36); // Added for 2011 cut
 
@@ -1698,7 +1698,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
                     //if(fDecayParameters[8] > fCutValues[cv][8]) continue; // DCAVtx pion third
                     //if(cv!=8 || cv!=21) {if(fDecayParameters[8] > (0.0105 + 0.035/pow((fEvt+EN)->fTracks[l].fPt,1.1))) continue;}// DCAVtx pion third
                     //else {if(fDecayParameters[8] > fCutValues[cv][8]) continue;}
-                    //0.0182 + 0.035/pow((fEvt+EN)->fTracks[l].fPt,1.01 (2010 cut)
+                    //0.0182 + 0.035/pow((fEvt+EN)->fTracks[l].fPt,1.1 (2010 cut)
                     
                     //
                     if(fDecayParameters[9] > fCutValues[cv][9]) continue;// DCAV proton-pion

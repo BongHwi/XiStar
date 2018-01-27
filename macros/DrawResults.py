@@ -4,11 +4,10 @@
 # Author: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
 # 
 # How to use:
-# python DrawResults.py AnalysisResults.root 1 MC
+# python DrawResults.py AnalysisResults.root 1
 # parameters:
 #   - AnalysisResults.root: Input root file
 #   - 1: 1 or 0, 1: save all outputs 0: save only merged one
-#   - MC: MC or blank, MC: make a plot from MC data, or not.
 #
 from ROOT import *
 import numpy as np
@@ -29,16 +28,25 @@ if(len(sys.argv)>=2):
 		InputSaveType = sys.argv[2]
 		print("Outputs will be saved")
 
-		if(len(sys.argv)>=4): 
-			isMC = sys.argv[3]
-			print("MC data mode")
 
-def DrawResults(InputSaveType, Inputfile, isMC):
+#===================
+# Load the input root file
+print("====================")
+print("Load file: "+Inputfile)
+f = TFile(Inputfile)
+mydir = f.Get("PWGLF.outputXiStarAnalysis.root;1")
+mylist = mydir.Get("MyList;1")
+if(mylist.FindObject("fMCinputTotalXiStar3").GetEntries()>0): 
+	isMC="MC"
+	print("MC data mode")
+
+
+def DrawResults(InputSaveType, isMC):
 	#====================
 	# Inputs
-	inputFileName = Inputfile
 	outputFileName = "Analysis_Results_Xi1530_%s.root"%currenttime
-	pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6]
+	if(isMC): outputFileName = "Analysis_Results_Xi1530_MC_%s.root"%currenttime
+	pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.0]
 	massRebin = 10
 	AxisRange = [1.48,1.59]
 	#NormalizeRange = [1.49,1.51] #for LHC15f
@@ -50,7 +58,7 @@ def DrawResults(InputSaveType, Inputfile, isMC):
 	hNames_MCinput = ["fMCinputTotalXiStar3", "fMCinputTotalXiStarbar3"] #generated MC
 	hNames_Mcrecon = ["fMCrecXiMinusPiPlus_0", "fMCrecXiPlusPiMinus_0"] #recon MC
 	Save = InputSaveType #0: skip saving pdf   images, 1: save pdf   images
-	SaveType = "png" #png, pdf
+	SaveType = "pdf" #png, pdf
 	#====================
 	#====================
 	# Default lists
@@ -61,6 +69,9 @@ def DrawResults(InputSaveType, Inputfile, isMC):
 
 	XiStarMCinput = []
 	XiStarMCrecon = []
+	XiStarMCinputpT = []
+	XiStarMCreconpT = []
+	MCEfficiency = []
 
 	integratedNumberforNormalizepT = []
 	integratedNumberforNormalizepT_mix = []
@@ -71,13 +82,6 @@ def DrawResults(InputSaveType, Inputfile, isMC):
 	RawYield = [[0 for col in range(len(pTRange)-1)] for row in range(len(hNames)/4)]
 	
 	#===================
-	#===================
-	# Load the input root file
-	print("====================")
-	print("Load file: "+inputFileName)
-	f = TFile(inputFileName)
-	mydir = f.Get("PWGLF.outputXiStarAnalysis.root;1")
-	mylist = mydir.Get("MyList;1")
 	print("====================")
 	print("Load file: "+outputFileName)
 	fo = TFile(outputFileName,"RECREATE");
@@ -118,25 +122,60 @@ def DrawResults(InputSaveType, Inputfile, isMC):
 		c1.cd() 
 
 		# Generated Xi(1530)
-		temp = TH1F()
-		temp = XiStarMCinput[0].Project3D("X")
-		temp.GetXaxis().SetTitle("pT_Range")
-		temp.SetTitle("Generated Xi(1530)")
+		temp1 = TH1F()
+		temp1 = XiStarMCinput[0].Project3D("X")
+		temp1.GetXaxis().SetTitle("pT_Range")
+		temp1.SetTitle("Generated Xi(1530)")
+		temp1.SetAxisRange(1e-1, 1e6,"Y")
+		temp1.Write("Generated Xi1530")
+		print("Generated Integral: %f"%temp1.Integral(temp1.FindBin(0),temp1.FindBin(8)))
 
 		# Reconstructed Xi(1530)
 		temp2 = TH1F()
 		temp2 = XiStarMCrecon[0].Project3D("X")
 		temp2.GetXaxis().SetTitle("pT_Range")
 		temp2.SetTitle("Reconstructed Xi(1530)")
+		temp2.Write("Reconstructed Xi1530")
+		print("Reconstructed Integral: %f"%temp2.Integral(temp2.FindBin(0),temp2.FindBin(8)))
 
-		temp.Draw("E")
+		temp1.Draw("E")
 		c1.SetLogy()
-		c1.SaveAs("figs/mc/Xi1530_MCQA_NumberWithpT_generated.pdf")
+		c1.Write("Xi1530_MCQA_NumberWithpT_generated")
+		c1.SaveAs("figs/mc/Xi1530_MCQA_NumberWithpT_generated.%s"%SaveType)
 
+		temp2.SetTitle("Reconstructed Xi(1530)")
 		temp2.Draw("E")
 		c1.SetLogy()
-		c1.SaveAs("figs/mc/Xi1530_MCQA_NumberWithpT_reconstructed.pdf")		
+		c1.Write("Xi1530_MCQA_NumberWithpT_reconstructed")
+		c1.SaveAs("figs/mc/Xi1530_MCQA_NumberWithpT_reconstructed.%s"%SaveType)
+
+		temp2.SetLineColor(kRed)
+		temp1.SetTitle("Generated/Reconstructed Xi(1530)")
+		temp1.Draw("E")
+		temp2.Draw("E SAME")
+		c1.Write("Xi1530_MCQA_NumberWithpT_same")
+		c1.SaveAs("figs/mc/Xi1530_MCQA_NumberWithpT_same.%s"%SaveType)
+
+
+		EfficiencyHist = TH1D("Efficiency","", len(pTRange)-1, np.asarray(pTRange, 'd'))
+		EfficiencyHist.GetXaxis().SetTitle("pT_Range")
 		
+		# Get Entries with given pT bin for generated MC
+		for i in range(0,len(pTRange)-1):
+			print("=========MC=========")
+			print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
+			XiStarMCinputpT.append(temp1.Integral(temp1.FindBin(pTRange[i]),temp1.FindBin(pTRange[i+1])))
+			print("Normalizing factor from generated: %f"%XiStarMCinputpT[i])
+			XiStarMCreconpT.append(temp2.Integral(temp2.FindBin(pTRange[i]),temp2.FindBin(pTRange[i+1])))
+			print("Normalizing factor from reconstructed: %f"%XiStarMCreconpT[i])
+			MCEfficiency.append(XiStarMCreconpT[i]/XiStarMCinputpT[i])
+			print("Efficiency: %f"%MCEfficiency[i])
+			EfficiencyHist.SetBinContent(i+1,MCEfficiency[i])
+		EfficiencyHist.Draw("E")
+		c1.Write("Xi1530_MCQA_Efficiency")
+		c1.SaveAs("figs/mc/Xi1530_MCQA_Efficiency.%s"%SaveType)
+
+
 	else: # Data Case
 		i = 0
 		for name in hNames:
@@ -298,9 +337,9 @@ def DrawResults(InputSaveType, Inputfile, isMC):
 				if(Save): c1.SaveAs("figs/Multibin/Xi1530_pT_%.1f_to_%.1f_Multi_%d_to_%d.%s"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
 		
 		#For Result Presensation
-		c2 = TCanvas('c2','Invariant Mass Distribution with pT bins',1440,1080)
+		c2 = TCanvas('c2','Invariant Mass Distribution with pT bins',1920,1080)
 		c2.Clear()
-		c2.Divide(3,3,0.01,0.01)
+		c2.Divide(4,3,0.01,0.01)
 
 		t = TLatex()
 		t.SetNDC()
@@ -352,8 +391,8 @@ def DrawResults(InputSaveType, Inputfile, isMC):
 		c2.SaveAs("figs/Invmass_pT_fitted(dash).%s"%SaveType)
 
 		#For Result Presensation with multiplicity bin
-		c3 = TCanvas('c3','Invariant Mass Distribution with pT bins',1440,1080)
-		c3.Divide(3,3,0.01,0.01)
+		c3 = TCanvas('c3','Invariant Mass Distribution with pT bins',1920,1080)
+		c3.Divide(4,3,0.01,0.01)
 
 		t2 = TLatex()
 		t2.SetNDC()
@@ -369,4 +408,4 @@ def DrawResults(InputSaveType, Inputfile, isMC):
 			c3.SaveAs("figs/Invmass_Multi_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
 
 if __name__ == "__main__":
-		DrawResults(InputSaveType, Inputfile, isMC)
+		DrawResults(InputSaveType, isMC)
