@@ -10,6 +10,7 @@
 #   - 1: 1 or 0, 1: save all outputs 0: save only merged one
 #
 from ROOT import *
+from math import *
 import numpy as np
 import datetime
 import sys
@@ -35,6 +36,7 @@ print("====================")
 print("Load file: "+Inputfile)
 f = TFile(Inputfile)
 mydir = f.Get("PWGLF.outputXiStarAnalysis.root;1")
+mydir.ls()
 mylist = mydir.Get("MyList;1")
 if(mylist.FindObject("fMCinputTotalXiStar3").GetEntries()>0): 
 	isMC="MC"
@@ -46,24 +48,28 @@ def DrawResults(InputSaveType, isMC):
 	# Inputs
 	outputFileName = "Analysis_Results_Xi1530_%s.root"%currenttime
 	if(isMC): outputFileName = "Analysis_Results_Xi1530_MC_%s.root"%currenttime
-	pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8]
+	pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8,15]
 	massRebin = 10
 	AxisRange = [1.48,1.59]
 	#NormalizeRange = [1.49,1.51] #for LHC15f
 	NormalizeRange = [1.56,1.58] #for LHC16k
 	NormalizeRange_L = [1.49,1.51]
 	NormalizeRange_R = [1.56,1.58]
-	fitRange = [1.5,1.55]
-	MultiplicityRage = [0,5,15,30,50,100]
+	fitRange = [1.515,1.55]
+	MultiplicityRage = [0,1,5,15,30,50,100]
 	hNames = ["fXiMinusPiPlus_0", "fXiPlusPiMinus_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
-	hNames_mix = ["fXiMinusPiPlusbkg_0", "fXiPlusPiMinusbkg_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
+	#hNames_mix = ["fXiMinusPiPlusbkg_0", "fXiPlusPiMinusbkg_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
+	hNames_mix = ["fXiMinusPiMinus_0", "fXiPlusPiPlus_0"] # Like sign #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
 	hNames_MCinput = ["fMCinputTotalXiStar3", "fMCinputTotalXiStarbar3"] #generated MC
 	hNames_Mcrecon = ["fMCrecXiMinusPiPlus_0", "fMCrecXiPlusPiMinus_0"] #recon MC
+	QAhisto = ["fMultDist_pp", "hEventSelecInfo", "fCutEvents"] #for QA
 	Save = InputSaveType #0: skip saving pdf   images, 1: save pdf   images
 	SaveType = "pdf" #png, pdf
 	#====================
 	#====================
 	# Default lists
+	QAh = []
+
 	pTCenter=[]
 	pTRange_err = []
 
@@ -77,6 +83,7 @@ def DrawResults(InputSaveType, isMC):
 	XiStarMCinputpT = []
 	XiStarMCreconpT = []
 	MCEfficiency = []
+	MCEfficiency_Error = []
 
 	integratedNumberforNormalizepT = []
 	integratedNumberforNormalizepT_mix = []
@@ -102,6 +109,15 @@ def DrawResults(InputSaveType, isMC):
 	fo.cd()
 	print("====================")
 	#===================
+	# QA Plots
+	c0 = TCanvas('can','canvas',1280,720)
+	c0.SetBorderMode(1)					 
+	c0.cd() 
+	for i in range(0,len(QAhisto)):
+		QAh.append(mylist.FindObject(QAhisto[i]))
+		QAh[i].Write("%s"%QAhisto[i])
+		QAh[i].Draw()
+		c0.SaveAs("figs/QA_%s.%s"%(QAhisto[i],SaveType))
 	#===================
 	if(isMC): #MC Case.
 		i = 0
@@ -196,9 +212,19 @@ def DrawResults(InputSaveType, isMC):
 			XiStarMCreconpT.append(temp2.Integral(temp2.FindBin(pTRange[i]),temp2.FindBin(pTRange[i+1])))
 			print("Normalizing factor from reconstructed: %f"%XiStarMCreconpT[i])
 			MCEfficiency.append(XiStarMCreconpT[i]/XiStarMCinputpT[i])
+			MCEfficiency_Error.append(sqrt(pow(sqrt(XiStarMCreconpT[i])/XiStarMCinputpT[i],2) + pow(sqrt(XiStarMCinputpT[i])*XiStarMCreconpT[i]/pow(XiStarMCinputpT[i],2),2)))
 			print("Efficiency: %f"%MCEfficiency[i])
-			EfficiencyHist.SetBinContent(i+1,MCEfficiency[i])
-		EfficiencyHist.Draw("E")
+			print("Efficiency_Error: %f"%MCEfficiency_Error[i])
+			#EfficiencyHist.SetBinContent(i+1,MCEfficiency[i])
+		gr_Eff = TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
+		gr_Eff.SetMarkerStyle(20)
+		gr_Eff.SetMinimum(0)
+		gr_Eff.SetMaximum(0.4)
+		gr_Eff.SetTitle("")
+		gr_Eff.GetXaxis().SetTitle("p_{T} (GeV/c)")
+		gr_Eff.GetYaxis().SetTitle("Efficiency")
+		gr_Eff.Draw("AP")
+		#EfficiencyHist.Draw("E")
 		c1.Write("Xi1530_MCQA_Efficiency")
 		c1.SaveAs("figs/mc/Xi1530_MCQA_Efficiency.%s"%SaveType)
 
@@ -255,7 +281,9 @@ def DrawResults(InputSaveType, isMC):
 			nbin2 = temp.GetXaxis().FindBin(NormalizeRange_L[1])
 			nbin3 = temp.GetXaxis().FindBin(NormalizeRange_R[0])
 			nbin4 = temp.GetXaxis().FindBin(NormalizeRange_R[1])
-			integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4))
+			integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
+			#integratedNumberforNormalizepT.append(temp.Integral(nbin3,nbin4)) #R
+			#integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)) #L
 			print("Normalizing factor: %f"%integratedNumberforNormalizepT[i])
 			temp.Draw('E')
 			temp.Write("Xi1530_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
@@ -277,7 +305,9 @@ def DrawResults(InputSaveType, isMC):
 			nbin2 = temp.GetXaxis().FindBin(NormalizeRange_L[1])
 			nbin3 = temp.GetXaxis().FindBin(NormalizeRange_R[0])
 			nbin4 = temp.GetXaxis().FindBin(NormalizeRange_R[1])
-			integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4))
+			integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
+			#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin3,nbin4)) #R
+			#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)) #L
 			print("Normalizing factor: %f"%integratedNumberforNormalizepT_mix[i])
 			temp.Draw('E')
 			temp.Write("Xi1530_pT_%.1f_to_%.1f_EventMix"%(pTRange[i],pTRange[i+1]))
@@ -309,42 +339,48 @@ def DrawResults(InputSaveType, isMC):
 			# Reference2: https://github.com/clelange/roofit/blob/master/rf204_extrangefit.py
 			print("==================================================================================%.1f to %.1f case =================================================================================="%(pTRange[i],pTRange[i+1]))
 			mes = RooRealVar("mes", "m_{Xi} (GeV)", AxisRange[0], AxisRange[1])
-			mean1 = RooRealVar("mean1", "mean of gaussians", 1.530,1.48,1.59)
-			sigma1 = RooRealVar("sigma1", "width of gaussians", 0.002,0.00001,0.01)
+			mean1 = RooRealVar("mean1", "mean of gaussians", 1.530,1.525,1.545)
+			sigma1 = RooRealVar("sigma1", "width of gaussians", 0.003,0.000001,0.01)
 			width = RooRealVar("width", "width of voigtian", 0.0091)
 			signal = RooVoigtian("signal", "Signal component 1", mes, mean1, width, sigma1)
 
-			#a0 = RooRealVar("a0","a0",1) ;
-			#a1 = RooRealVar("a1","a1",0,-1,1) ;
-			#a2 = RooRealVar("a2","a2",1,0,10) ;
-			#background = RooPolynomial("p2","p2",mes,RooArgList(a0,a1,a2),0) ;
+			a0 = RooRealVar("a0","a0",1) ;
+			a1 = RooRealVar("a1","a1",0,-1,1) ;
+			a2 = RooRealVar("a2","a2",1,0,10) ;
+			background = RooPolynomial("p2","p2",mes,RooArgList(a0,a1,a2),0) ;
 			
 			# --- Construct signal+background PDF ---
-			#nsig = RooRealVar("nsig","#signal events",200,0.,1000) ;
-			#nbkg = RooRealVar("nbkg","#background events",800,0.,1000) ;
-			#model = RooAddPdf("model","g+a",RooArgList(signal,background),RooArgList(nsig,nbkg))
+			nsig = RooRealVar("nsig","#signal events",200,0.,1000) ;
+			nbkg = RooRealVar("nbkg","#background events",800,0.,1000) ;
+			model = RooAddPdf("model","g+a",RooArgList(signal,background),RooArgList(nsig,nbkg))
 
 			data = RooDataHist("RooDataHist","dataset with Gauss  Fit",RooArgList(mes),temp1)
 
 			c1.cd()
 			gPad.SetTickx(2)
 			xframe = mes.frame()
-			signal.fitTo(data)
-			#modle.fitTo(data,RooFit.Range("fitRange"))
+			signal.fitTo(data,RooFit.Range(1.51,1.55))
+			#signal.fitTo(data)
+			#model.fitTo(data)
+ 			#model.fitTo(data,RooFit.Range(1.52,1.55))
 
 			data.plotOn(xframe)
-			#model.plotOn(xframe,RooFit.Components("sig"),RooFit.LineColor(kRed))
 			signal.plotOn(xframe,RooFit.LineStyle(kDashed))
-			signal.plotOn(xframe,RooFit.Components("background"),RooFit.LineStyle(kDashed))
+			#model.plotOn(xframe)
+			#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineStyle(kDashed))
+			#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineColor(kGreen))
 			#sig.paramOn(xframe, RooFit.Layout(0.6),RooFit.Format("NEU",RooFit.AutoPrecision(1)))
-			xframe.SetMarkerStyle(2)
+			xframe.SetMarkerStyle(1)
 			xframe.Draw("E")		
 			xframe.Write("Xi1530_pT_%.1f_to_%.1f_with_fitting(dash)"%(pTRange[i],pTRange[i+1]))
 			c1.SaveAs("figs/pTBin/fit/Xi1530_pT_%.1f_to_%.1f_with_fitting(dash).%s"%(pTRange[i],pTRange[i+1],SaveType))
 			c1.Clear()
 			data.plotOn(xframe)
 			signal.plotOn(xframe)
-			signal.plotOn(xframe,RooFit.Components("background"),RooFit.LineStyle(kDashed))
+			#model.plotOn(xframe,RooFit.LineStyle(kDashed))
+			#signal.plotOn(xframe,RooFit.Components("background"),RooFit.LineStyle(kDashed))
+			#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineStyle(kDashed))
+			#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineColor(kGreen))
 			#sig.paramOn(xframe, RooFit.Layout(0.6),RooFit.Format("NEU",RooFit.AutoPrecision(1)))
 			xframe.SetMarkerStyle(2)
 			xframe.Draw("E")		
@@ -352,8 +388,8 @@ def DrawResults(InputSaveType, isMC):
 			c1.SaveAs("figs/pTBin/fit/Xi1530_pT_%.1f_to_%.1f_with_fitting.%s"%(pTRange[i],pTRange[i+1],SaveType))
 
 			#chi2/ndf
-			fitChi2ndf.append(xframe.chiSquare(nFloatParam))
-			print("chi2: %.4f"%xframe.chiSquare(nFloatParam))  # NEED TO ADD NDF INFO!!
+			fitChi2ndf.append(xframe.chiSquare())
+			print("chi2: %.4f"%xframe.chiSquare())  # NEED TO ADD NDF INFO!!
 			
 
 			# --- Extract fit parameters ---
