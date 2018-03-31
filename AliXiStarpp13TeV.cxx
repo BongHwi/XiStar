@@ -537,7 +537,7 @@ void AliXiStarpp13TeV::UserCreateOutputObjects()
     fMultDist5->GetXaxis()->SetTitle("Multiplicity");
     fOutputList->Add(fMultDist5);
 
-    TH1F *fMultDist_pp = new TH1F("fMultDist_pp","Multiplicity Distribution of PP",1000,0,1000);
+    TH1F *fMultDist_pp = new TH1F("fMultDist_pp","Multiplicity Distribution of PP",100,0,100);
     fMultDist_pp->GetXaxis()->SetTitle("Multiplicity");
     fOutputList->Add(fMultDist_pp);
 
