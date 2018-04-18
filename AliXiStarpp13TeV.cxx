@@ -24,7 +24,7 @@
 //  Modified by: Jihye Song (jihye.song@cern.ch)
 //  Last Modified by: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
 //
-//  Last Modified Date: 2018/01/29
+//  Last Modified Date: 2018/04/18
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -993,7 +993,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
 
     // ---- AliPIDResponse ---- //
     fPIDResponse = inputHandler->GetPIDResponse();
-    double nSigTPCPID = 100.0;
+    double nSigTPCPID = 3.0;
 
 
     // TClonesArray *mcArray       = 0x0;
@@ -1171,7 +1171,7 @@ void AliXiStarpp13TeV::Exec(Option_t *)
         ((TH2F*)fOutputList->FindObject("hNSig3rdPion"))->Fill(fTPCPIDmom,fPIDResponse->NumberOfSigmasTPC(esdtrack,AliPID::kPion));
 
         //=========selecting 3rd pion using PID=========//
-        /* TPC OFF */   //        if(nsigpi>nSigTPCPID) continue; // last update // 20140715 // TPC
+        if(nsigpi>nSigTPCPID) continue; // last update // 20140715 // TPC
 
         ((TH2F*)fOutputList->FindObject("hQANSig3rdPion"))->Fill(fTPCPIDmom,fPIDResponse->NumberOfSigmasTPC(esdtrack,AliPID::kPion));
 
@@ -1420,9 +1420,9 @@ void AliXiStarpp13TeV::Exec(Option_t *)
         if(fTPCNSigPion2>-nSigTPCPID&&fTPCNSigPion2<nSigTPCPID)((TH2F*)fOutputList->FindObject("hdEdxPion2After"))->Fill(fTPCPIDMomXi[2],fNSigTPCXi[2]);
 
 
-        /* TPC PID OFF */   //    if(fTPCNSigProton<-nSigTPCPID||fTPCNSigProton>nSigTPCPID) continue; // PID for proton
-        /* TPC PID OFF */   //   if(fTPCNSigPion1<-nSigTPCPID||fTPCNSigPion1>nSigTPCPID) continue; // PID for 1st pion
-        /* TPC PID OFF */   //   if(fTPCNSigPion2<-nSigTPCPID||fTPCNSigPion2>nSigTPCPID) continue; // PID for 2nd pion
+        if(fTPCNSigProton<-nSigTPCPID||fTPCNSigProton>nSigTPCPID) continue; // PID for proton
+        if(fTPCNSigPion1<-nSigTPCPID||fTPCNSigPion1>nSigTPCPID) continue; // PID for 1st pion
+        if(fTPCNSigPion2<-nSigTPCPID||fTPCNSigPion2>nSigTPCPID) continue; // PID for 2nd pion
 
         ((TH1F*)fOutputList->FindObject("fQATPCNSigProton"))->Fill(fTPCNSigProton);
         ((TH1F*)fOutputList->FindObject("fQATPCNSigPion1"))->Fill(fTPCNSigPion1);
