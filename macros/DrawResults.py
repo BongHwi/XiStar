@@ -64,7 +64,7 @@ def DrawResults(InputSaveType, isMC):
 	hNames_Mcrecon = ["fMCrecXiMinusPiPlus_0", "fMCrecXiPlusPiMinus_0"] #recon MC
 	QAhisto = ["fMultDist_pp", "hEventSelecInfo", "fCutEvents"] #for QA
 	Save = InputSaveType #0: skip saving pdf   images, 1: save pdf   images
-	SaveType = "pdf" #png, pdf
+	SaveType = "png" #png, pdf
 	#====================
 	#====================
 	# Default lists

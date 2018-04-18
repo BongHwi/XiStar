@@ -24,7 +24,7 @@
 //  Modified by: Jihye Song (jihye.song@cern.ch)
 //  Last Modified by: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
 //
-//  Last Modified Date: 2018/01/29
+//  Last Modified Date: 2018/03/31
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -74,8 +74,7 @@
 
 #include "AliXiStarpp13TeV.h"
 
-#define PI 3.1415927
-
+const Double_t PI = TMath::Pi();
 
 // Author: Bong-Hwi Lim
 
@@ -488,10 +487,14 @@ void AliXiStarpp13TeV::UserCreateOutputObjects()
 {
     XiStarInit();
     // XiStarInit();// Initialize settings original
+    
 
     // Create histograms
     fOutputList = new TList();
     fOutputList->SetOwner();
+
+    fHistos = new THistManager("Xi1530hists");
+    fHistos->CreateTH3("fVertexDist1","Vertex Distribution",20,-1,1, 20,-1,1, 600,-30,30,"s");
 
     TH3F *fVertexDist1 = new TH3F("fVertexDist1","Vertex Distribution",20,-1,1, 20,-1,1, 600,-30,30);
     fVertexDist1->GetXaxis()->SetTitle("X Vertex (cm)");
