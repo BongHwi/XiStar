@@ -58,13 +58,14 @@ def DrawResults(InputSaveType, isMC):
 	fitRange = [1.515,1.55]
 	MultiplicityRage = [0,1,5,15,30,50,100]
 	hNames = ["fXiMinusPiPlus_0", "fXiPlusPiMinus_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
+	hNamesXi = ["",""] # Xi histogram
 	#hNames_mix = ["fXiMinusPiPlusbkg_0", "fXiPlusPiMinusbkg_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
 	hNames_mix = ["fXiMinusPiMinus_0", "fXiPlusPiPlus_0"] # Like sign #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
 	hNames_MCinput = ["fMCinputTotalXiStar3", "fMCinputTotalXiStarbar3"] #generated MC
 	hNames_Mcrecon = ["fMCrecXiMinusPiPlus_0", "fMCrecXiPlusPiMinus_0"] #recon MC
 	QAhisto = ["fMultDist_pp", "hEventSelecInfo", "fCutEvents"] #for QA
 	Save = InputSaveType #0: skip saving pdf   images, 1: save pdf   images
-	SaveType = "pdf" #png, pdf
+	SaveType = "png" #png, pdf
 	#====================
 	#====================
 	# Default lists
@@ -72,6 +73,9 @@ def DrawResults(InputSaveType, isMC):
 
 	pTCenter=[]
 	pTRange_err = []
+
+	Xi = []
+	XipT = []
 
 	XiStar = []
 	XiStar_mix = []
@@ -83,6 +87,10 @@ def DrawResults(InputSaveType, isMC):
 	XiStarMCinputpT = []
 	XiStarMCreconpT = []
 	MCEfficiency = []
+	MCEfficiency_7TeV = [0,0.006,0.0237,0.0433,0.0705,0.1,0.142,0.158,0.157,0,0]
+	MCEfficiency_13TeV_LHC17 = [0, 0.003375927, 0.01433215, 0.03185342, 0.05328012, 0.0841077, 0.114816, 0.1273939, 0.1275806, 0.1091881, 0.0629708]
+	MCEfficiency_13TeV_LHC16 = [0, 0.003411181, 0.01415889, 0.03134302, 0.05217555, 0.08471585, 0.1153396, 0.1278187, 0.1275664, 0.1092717, 0.06316746]
+	MCEfficiency_13TeV_LHC15 = [0.0001308913, 0.004535666, 0.01680443, 0.03632307, 0.05875776, 0.091464, 0.1245708, 0.1364504, 0.1363351, 0.1163355, 0.06741513]
 	MCEfficiency_Error = []
 
 	integratedNumberforNormalizepT = []
@@ -115,9 +123,12 @@ def DrawResults(InputSaveType, isMC):
 	c0.cd() 
 	for i in range(0,len(QAhisto)):
 		QAh.append(mylist.FindObject(QAhisto[i]))
+		if (QAh[i].GetName() == "fMultDist_pp"):
+			QAh[i].SetAxisRange(0,110,"X")
+			#gStyle.SetOptStat(0)
 		QAh[i].Write("%s"%QAhisto[i])
 		QAh[i].Draw()
-		c0.SaveAs("figs/QA_%s.%s"%(QAhisto[i],SaveType))
+		c0.SaveAs("figs/QA/QA_%s.%s"%(QAhisto[i],SaveType))
 	#===================
 	if(isMC): #MC Case.
 		i = 0
@@ -160,7 +171,7 @@ def DrawResults(InputSaveType, isMC):
 		#XiStarMCrecon[0].Add(XiStar[0])
 
 		### Draw MC QA Histos
-		c1 = TCanvas('can','canvas',1280,720)
+		c1 = TCanvas('can1','canvas',1280,720)
 		c1.SetBorderMode(1)					 
 		c1.cd() 
 
@@ -222,13 +233,51 @@ def DrawResults(InputSaveType, isMC):
 		gr_Eff.SetMaximum(0.4)
 		gr_Eff.SetTitle("")
 		gr_Eff.GetXaxis().SetTitle("p_{T} (GeV/c)")
-		gr_Eff.GetYaxis().SetTitle("Efficiency")
+		gr_Eff.GetYaxis().SetTitle("Acceptance x Efficiency x BR")
 		gr_Eff.Draw("AP")
+
+		gr_Eff_7TeV = TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency_7TeV, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
+		gr_Eff_7TeV.SetMarkerStyle(20)
+		gr_Eff_7TeV.SetMarkerColor(2)
+		gr_Eff_7TeV.SetMinimum(0)
+		gr_Eff_7TeV.SetMaximum(0.4)
+		gr_Eff_7TeV.SetTitle("")
+		#gr_Eff_7TeV.Draw("P")
+
+		gr_Eff_13TeV_17 = TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency_13TeV_LHC17, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
+		gr_Eff_13TeV_17.SetMarkerStyle(20)
+		gr_Eff_13TeV_17.SetMarkerColor(3)
+		gr_Eff_13TeV_17.SetMinimum(0)
+		gr_Eff_13TeV_17.SetMaximum(0.4)
+		gr_Eff_13TeV_17.SetTitle("")
+		gr_Eff_13TeV_17.Draw("P")
+
+		gr_Eff_13TeV_16 = TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency_13TeV_LHC16, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
+		gr_Eff_13TeV_16.SetMarkerStyle(20)
+		gr_Eff_13TeV_16.SetMarkerColor(4)
+		gr_Eff_13TeV_16.SetMinimum(0)
+		gr_Eff_13TeV_16.SetMaximum(0.4)
+		gr_Eff_13TeV_16.SetTitle("")
+		gr_Eff_13TeV_16.Draw("P")
+
 		#EfficiencyHist.Draw("E")
+
+		leg = TLegend(.65,.20,.80,.40)
+		leg.SetBorderSize(0)
+		leg.SetFillColor(0)
+		leg.SetFillStyle(0)
+		leg.SetTextFont(42)
+		leg.SetTextSize(0.035)
+		leg.AddEntry(gr_Eff,"13 TeV (LHC15)","P")
+		leg.AddEntry(gr_Eff_13TeV_17,"13 TeV (LHC17)","P")
+		leg.AddEntry(gr_Eff_13TeV_16,"13 TeV (LHC16)","P")
+		#leg.AddEntry(gr_Eff_7TeV,"7 TeV (Old)","P")
+		leg.Draw()
+
 		c1.Write("Xi1530_MCQA_Efficiency")
 		c1.SaveAs("figs/mc/Xi1530_MCQA_Efficiency.%s"%SaveType)
 
-
+	#---------------------------------------------------------------------------------------
 	else: # Data Case
 		i = 0
 		for name in hNames:
@@ -252,8 +301,25 @@ def DrawResults(InputSaveType, isMC):
 			i = i+1
 		print("====================")	
 
-		#Make a Canvas
-		c1 = TCanvas('can','canvas',1280,720)
+		print("Load Histogram: "+"fXi_0")
+		Xi.append(mylist.FindObject("fXi_0"))
+		Xi[0].GetXaxis().SetTitle("p_{T} (GeV/c)")
+		Xi[0].GetYaxis().SetTitle("Multiplicity (%)")
+		Xi[0].GetZaxis().SetTitle("Mass (GeV/c^{2})")
+		print("====================")
+
+		print("Load Histogram: "+"fXibar_0")
+		Xi.append(mylist.FindObject("fXibar_0"))
+		Xi[1].GetXaxis().SetTitle("p_{T} (GeV/c)")
+		Xi[1].GetYaxis().SetTitle("Multiplicity (%)")
+		Xi[1].GetZaxis().SetTitle("Mass (GeV/c^{2})")
+		print("====================")
+
+		Xi[0].Add(Xi[1])
+		Xi[0].Write("Original_Xi_pT_Multi_Mass") #Original 3D histogram
+		
+		# QA Plots
+		c1 = TCanvas('can1','canvas',1280,720)
 		c1.SetBorderMode(1)					 
 		c1.cd() 
 
@@ -267,7 +333,7 @@ def DrawResults(InputSaveType, isMC):
 
 		#Slice Histogram with given pT bin
 		for i in range(0,len(pTRange)-1):
-			print("====================")
+			print("========Xi1530==========")
 			print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
 			XiStarpT.append(XiStar[0].Clone())
 			XiStarpT[i].SetAxisRange(pTRange[i],pTRange[i+1],"X")
@@ -284,11 +350,21 @@ def DrawResults(InputSaveType, isMC):
 			integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
 			#integratedNumberforNormalizepT.append(temp.Integral(nbin3,nbin4)) #R
 			#integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)) #L
+			if (integratedNumberforNormalizepT[i] == 0): integratedNumberforNormalizepT[i] = 1
 			print("Normalizing factor: %f"%integratedNumberforNormalizepT[i])
 			temp.Draw('E')
 			temp.Write("Xi1530_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
 			if(Save): c1.SaveAs("figs/pTBin/sig/Xi1530_pT_%.1f_to_%.1f.%s"%(pTRange[i],pTRange[i+1],SaveType))
-
+			XipT.append(Xi[0].Clone())
+			XipT[i].SetAxisRange(pTRange[i],pTRange[i+1],"X")
+			XipT[i].SetTitle("pT Range %.1f to %.1f"%(pTRange[i],pTRange[i+1]))
+			XipT[i].Write("Xi1530_pT_%.1f_to_%.1f"%(pTRange[i],pTRange[i+1]))
+			temp2 = TH1F()
+			temp2 = XiStarpT[i].Project3D("Z")
+			temp2.Draw('E')
+			temp2.Write("Xi_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
+			if(Save): c1.SaveAs("figs/QA/Xi/pTBin/Xi_pT_%.1f_to_%.1f.%s"%(pTRange[i],pTRange[i+1],SaveType))
+			
 		#Slice Histogram with given pT bin for event mix
 		for i in range(0,len(pTRange)-1):
 			print("=====Event Mixing=====")
@@ -308,6 +384,7 @@ def DrawResults(InputSaveType, isMC):
 			integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
 			#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin3,nbin4)) #R
 			#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)) #L
+			if (integratedNumberforNormalizepT_mix[i] == 0): integratedNumberforNormalizepT_mix[i] = 1
 			print("Normalizing factor: %f"%integratedNumberforNormalizepT_mix[i])
 			temp.Draw('E')
 			temp.Write("Xi1530_pT_%.1f_to_%.1f_EventMix"%(pTRange[i],pTRange[i+1]))
@@ -432,6 +509,17 @@ def DrawResults(InputSaveType, isMC):
 			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
 		c2.Draw()
 		c2.SaveAs("figs/Invmass_pT.%s"%SaveType)
+
+
+		# RAW signal with pT of Xi
+		for i in range(0,len(pTRange)-1):
+			c2.cd(i+1)
+			hist=fo.Get("Xi_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
+			hist.SetTitle("pT %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			hist.Draw('E')
+			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+		c2.Draw()
+		c2.SaveAs("figs/QA/Invmass_pT_Xi.%s"%SaveType)
 
 		# RAW signal+bkg with pT 
 		for i in range(0,len(pTRange)-1):
