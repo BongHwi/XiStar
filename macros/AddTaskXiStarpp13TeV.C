@@ -1,4 +1,4 @@
-AliXiStarpp13TeV *AddTaskXiStarpp13TeV(bool MCcase=kFALSE, bool AODcase=kFALSE, int CutList=0, bool DevelopmentMode=kFALSE) {
+AliXiStarpp13TeV *AddTaskXiStarpp13TeV(Bool_t AODcase=kFALSE, Bool_t MCcase=kFALSE, Int_t CutList=0, Bool_t DevelopmentMode=kFALSE, Bool_t HMTrigger=kFALSE) {
 
   //===========================================================================
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
@@ -9,8 +9,11 @@ AliXiStarpp13TeV *AddTaskXiStarpp13TeV(bool MCcase=kFALSE, bool AODcase=kFALSE, 
 
   //____________________________________________//
   // Create tasks
-  AliXiStarpp13TeV *XiStarTask = new AliXiStarpp13TeV("XiStarTask", AODcase, MCcase, CutList, DevelopmentMode);
-  if(!XiStarTask) exit(-1);
+  AliXiStarpp13TeV *XiStarTask = new AliXiStarpp13TeV("XiStarTask", AODcase, MCcase, CutList, DevelopmentMode, HMTrigger);
+  if(!XiStarTask) {
+    cout << "ERROR !!!!!!!!!!!!!!!!!!!" << endl;
+    exit(-1);
+  }
   mgr->AddTask(XiStarTask);
 
 

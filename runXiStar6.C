@@ -6,21 +6,25 @@
 #include "AliXiStarpp13TeV.h"
 #endif
 
-Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase=kFALSE);
-TChain *CreateChain(const char *fileName, bool AODcase);
+Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase=kFALSE);
+TChain *CreateChain(const char *fileName, Bool_t AODcase);
 
 void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF use.
     int Nevents=100;
-    bool batchmode=kTRUE;
-    bool MCcase=kFALSE;
-    bool AODcase=kFALSE;
-    bool gridTest=kFALSE; // kTRUE for the test mode, kFALSE for the Alien grid mode
-    bool GridMerge=kTRUE; // kTRUE for terminate
-    int CutList = 0;
-    bool DevelopmentMode=kFALSE;
+
+    Bool_t MCcase=kFALSE;
+    Bool_t AODcase=kFALSE;
+    Bool_t HMTrigger=kTRUE; // kTRUE for High Multiplicity trigger mode.
+    
+    Bool_t batchmode=kTRUE;
+    Bool_t gridTest=kFALSE; // kTRUE for the test mode, kFALSE for the Alien grid mode
+    Bool_t GridMerge=kFALSE; // kTRUE for terminate
+
+    Int_t CutList = 0;
+    Bool_t DevelopmentMode=kTRUE;
     TString *Production=new TString("16k");
     const char* collectionfile="collection.xml";
-    const char* working_directory="pp13TeV_LHC16k_2010cut_20180418";
+    const char* working_directory="pp13TeV_LHC16k_HMTrigger_test10";
 
     gSystem->Load("libTree.so");
     gSystem->Load("libGeom.so");
@@ -91,7 +95,8 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
     gInterpreter->LoadMacro("AliXiStarpp13TeVEventCollection.cxx+g");
     gInterpreter->LoadMacro("AliXiStarpp13TeV.cxx+g");
     // AddTask
-    AliXiStarpp13TeV *myTask = reinterpret_cast<AliXiStarpp13TeV*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",MCcase,AODcase,CutList,DevelopmentMode)));
+    AliXiStarpp13TeV *myTask = reinterpret_cast<AliXiStarpp13TeV*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d,%d)",AODcase,MCcase,CutList,DevelopmentMode,HMTrigger)));
+    //AliXiStarpp13TeV *myTask = reinterpret_cast<AliXiStarpp13TeV*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",AODcase,MCcase,CutList,DevelopmentMode)));
 #else
     // ROOT 5 MODE
     //
@@ -115,8 +120,8 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
     gROOT->LoadMacro("AliXiStarpp13TeVEventCollection.cxx+g");
     gROOT->LoadMacro("AliXiStarpp13TeV.cxx+g");
     // Add Task
-    gROOT->LoadMacro("macros/AddTaskXiStarpp13TeV.C");
-    AliXiStarpp13TeV *myTask = AddTaskXiStarpp13TeV(MCcase,AODcase,CutList,DevelopmentMode);
+    gROOT->LoadMacro("AddTaskXiStarpp13TeV.C");
+    AliXiStarpp13TeV *myTask = AddTaskXiStarpp13TeV(AODcase,MCcase,CutList,DevelopmentMode,HMTrigger);
 #endif
     if(!mgr->InitAnalysis()) return;
     mgr->SetDebugLevel(10);
@@ -152,7 +157,7 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
             }
             if(Production->Contains("16k")) { // ESDs
                 plugin->SetGridDataDir("/alice/data/2016/LHC16k");
-                plugin->SetDataPattern("pass1/*AliESDs.root");
+                plugin->SetDataPattern("pass2/*AliESDs.root");
                 totruns += AddGoodRuns(plugin,"LHC16k");
             }
             if(Production->Contains("17k")) { // AODs
@@ -168,11 +173,11 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
             }
         }
 
-        plugin->SetSplitMaxInputFileNumber(200);
+        plugin->SetSplitMaxInputFileNumber(1000);
         plugin->SetExecutable("myTask.sh");
         plugin->SetTTL(10000);
         plugin->SetJDLName("myTask.jdl");
-        plugin->SetOutputToRunNo(kTRUE);
+        //plugin->SetOutputToRunNo(kTRUE);
         plugin->SetKeepLogs(kTRUE);
         plugin->SetMaxMergeStages(3);
         plugin->SetMaxMergeFiles(100);
@@ -202,7 +207,7 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
     }
 
 }
-Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase) {
+Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase) {
     //
     // Adds good runs from the Monalisa Run Condition Table
     //Int_t SetRunNumber = 6;
@@ -248,9 +253,9 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase) {
             }
         } else {
             //data list
-            nruns=1; 
-            Int_t runlist_2[194]={258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258045, 258042, 258041, 258039, 258019, 258017, 258014, 258012, 258008, 258003, 257992, 257989, 257986, 257979, 257963, 257960, 257957, 257939, 257937, 257936, 257892, 257855, 257853, 257851, 257850, 257804, 257803, 257800, 257799, 257798, 257797, 257773, 257765, 257757, 257754, 257737, 257735, 257734, 257733, 257727, 257725, 257724, 257697, 257694, 257692, 257691, 257689, 257688, 257687, 257685, 257684, 257682, 257644, 257642, 257636, 257635, 257632, 257630, 257606, 257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474, 257468, 257457, 257433, 257364, 257358, 257330, 257322, 257320, 257318, 257260, 257224, 257209, 257206, 257204, 257144, 257141, 257139, 257138, 257137, 257136, 257100, 257095, 257092, 257086, 257084, 257082, 257080, 257077, 257028, 257026, 257021, 257012, 257011, 256944, 256942, 256941, 256697, 256695, 256694, 256692, 256691, 256684, 256681, 256677, 256676, 256658, 256620, 256619, 256592, 256591, 256589, 256567, 256565, 256564, 256562, 256560, 256557, 256556, 256554, 256552, 256514, 256512, 256510, 256506, 256504};
-            //Int_t runlist_2[25] = {257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474};
+            nruns=25; 
+            //Int_t runlist_2[194]={258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258045, 258042, 258041, 258039, 258019, 258017, 258014, 258012, 258008, 258003, 257992, 257989, 257986, 257979, 257963, 257960, 257957, 257939, 257937, 257936, 257892, 257855, 257853, 257851, 257850, 257804, 257803, 257800, 257799, 257798, 257797, 257773, 257765, 257757, 257754, 257737, 257735, 257734, 257733, 257727, 257725, 257724, 257697, 257694, 257692, 257691, 257689, 257688, 257687, 257685, 257684, 257682, 257644, 257642, 257636, 257635, 257632, 257630, 257606, 257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474, 257468, 257457, 257433, 257364, 257358, 257330, 257322, 257320, 257318, 257260, 257224, 257209, 257206, 257204, 257144, 257141, 257139, 257138, 257137, 257136, 257100, 257095, 257092, 257086, 257084, 257082, 257080, 257077, 257028, 257026, 257021, 257012, 257011, 256944, 256942, 256941, 256697, 256695, 256694, 256692, 256691, 256684, 256681, 256677, 256676, 256658, 256620, 256619, 256592, 256591, 256589, 256567, 256565, 256564, 256562, 256560, 256557, 256556, 256554, 256552, 256514, 256512, 256510, 256506, 256504};
+            Int_t runlist_2[25] = {257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474};
             //Int_t runlist_2[104] ={258012, 258008, 258003, 257992, 257989, 257986, 257979, 257963, 257960, 257957, 257939, 257937, 257936, 257892, 257855, 257853, 257851, 257850, 257804, 257803, 257800, 257799, 257798, 257797, 257773, 257765, 257757, 257754, 257737, 257735, 257734, 257733, 257727, 257725, 257724, 257697, 257694, 257692, 257691, 257689, 257688, 257687, 257685, 257684, 257682, 257644, 257642, 257636, 257635, 257632, 257630, 257606, 258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258045, 258042, 258041, 258039, 258019, 258017, 258014};
 
             // Total 194 runs
@@ -312,7 +317,7 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,bool MCcase) {
     return ngoodruns;
 }
 //______________________________________________________________________________
-TChain *CreateChain(const char *fileName, bool AODcase)
+TChain *CreateChain(const char *fileName, Bool_t AODcase)
 {
     TString *treename;
     if(AODcase) treename = new TString("aodTree");

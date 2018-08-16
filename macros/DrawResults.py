@@ -16,31 +16,33 @@ import datetime
 import sys
 
 currenttime = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-print("Current time: %s"%currenttime)
+PrintOption = 0 #0 for no print, 1 for print
+
+if(PrintOption == 1): print("Current time: %s"%currenttime)
 
 Inputfile = "AnalysisResults.root"
 InputSaveType = 0
 isMC = 0
 if(len(sys.argv)>=2): 
 	Inputfile = sys.argv[1]
-	print("input file: %s"%(Inputfile))
+	if(PrintOption == 1): print("input file: %s"%(Inputfile))
 
 	if(len(sys.argv)>=3): 
 		InputSaveType = sys.argv[2]
-		print("Outputs will be saved")
+		if(PrintOption == 1): print("Outputs will be saved")
 
 
 #===================
 # Load the input root file
-print("====================")
-print("Load file: "+Inputfile)
+if(PrintOption == 1): print("====================")
+if(PrintOption == 1): print("Load file: "+Inputfile)
 f = TFile(Inputfile)
 mydir = f.Get("PWGLF.outputXiStarAnalysis.root;1")
 mydir.ls()
 mylist = mydir.Get("MyList;1")
 if(mylist.FindObject("fMCinputTotalXiStar3").GetEntries()>0): 
 	isMC="MC"
-	print("MC data mode")
+	if(PrintOption == 1): print("MC data mode")
 
 
 def DrawResults(InputSaveType, isMC):
@@ -56,16 +58,16 @@ def DrawResults(InputSaveType, isMC):
 	NormalizeRange_L = [1.49,1.51]
 	NormalizeRange_R = [1.56,1.58]
 	fitRange = [1.515,1.55]
-	MultiplicityRage = [0,1,5,15,30,50,100]
+	MultiplicityRage = [0,5,15,30,50,100]
 	hNames = ["fXiMinusPiPlus_0", "fXiPlusPiMinus_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
 	hNamesXi = ["",""] # Xi histogram
-	#hNames_mix = ["fXiMinusPiPlusbkg_0", "fXiPlusPiMinusbkg_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
-	hNames_mix = ["fXiMinusPiMinus_0", "fXiPlusPiPlus_0"] # Like sign #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
+	hNames_mix = ["fXiMinusPiPlusbkg_0", "fXiPlusPiMinusbkg_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
+	#hNames_mix = ["fXiMinusPiMinus_0", "fXiPlusPiPlus_0"] # Like sign #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
 	hNames_MCinput = ["fMCinputTotalXiStar3", "fMCinputTotalXiStarbar3"] #generated MC
 	hNames_Mcrecon = ["fMCrecXiMinusPiPlus_0", "fMCrecXiPlusPiMinus_0"] #recon MC
 	QAhisto = ["fMultDist_pp", "hEventSelecInfo", "fCutEvents"] #for QA
 	Save = InputSaveType #0: skip saving pdf   images, 1: save pdf   images
-	SaveType = "png" #png, pdf
+	SaveType = "pdf" #png, pdf
 	#====================
 	#====================
 	# Default lists
@@ -95,15 +97,24 @@ def DrawResults(InputSaveType, isMC):
 
 	integratedNumberforNormalizepT = []
 	integratedNumberforNormalizepT_mix = []
+	integratedNumberforNormalizepT_mult = [[0 for col in range(len(MultiplicityRage)-1)] for row in range(len(pTRange)-1)]
+	integratedNumberforNormalizepT_mult_mix = [[0 for col in range(len(MultiplicityRage)-1)] for row in range(len(pTRange)-1)]
 
 	fitChi2ndf=[]
 	fitParameter_mean = []
 	fitParameter_mean_err = []
 	fitParameter_sigma = []
 	fitParameter_sigma_err = []
+
+	fitChi2ndf_mult=[[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
+	fitParameter_mean_mult = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
+	fitParameter_mean_err_mult = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
+	fitParameter_sigma_mult = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
+	fitParameter_sigma_err_mult = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
 	
-	XiStarpT_Multi = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
-	NormalizationFactor = [[0 for col in range(len(pTRange)-1)] for row in range(len(hNames)/4)]
+	XiStarpT_Multi = [[0 for col in range(len(MultiplicityRage)-1)] for row in range(len(pTRange)-1)]
+	XiStarpT_Multi_mix = [[0 for col in range(len(MultiplicityRage)-1)] for row in range(len(pTRange)-1)]
+	
 	RawYield = [[0 for col in range(len(pTRange)-1)] for row in range(len(hNames)/4)]
 	
 	for i in range(0,len(pTRange)-1):
@@ -111,11 +122,11 @@ def DrawResults(InputSaveType, isMC):
 		pTRange_err.append((pTRange[i+1]-pTRange[i])/2)
 
 	#===================
-	print("====================")
-	print("Load file: "+outputFileName)
+	if(PrintOption == 1): print("====================")
+	if(PrintOption == 1): print("Load file: "+outputFileName)
 	fo = TFile(outputFileName,"RECREATE");
 	fo.cd()
-	print("====================")
+	if(PrintOption == 1): print("====================")
 	#===================
 	# QA Plots
 	c0 = TCanvas('can','canvas',1280,720)
@@ -133,36 +144,36 @@ def DrawResults(InputSaveType, isMC):
 	if(isMC): #MC Case.
 		i = 0
 		for name in hNames_MCinput:
-			print("Load Histogram: "+name)
+			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStarMCinput.append(mylist.FindObject(name))
 			XiStarMCinput[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
 			XiStarMCinput[i].GetYaxis().SetTitle("Multiplicity (%)")
 			XiStarMCinput[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStarMCinput[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
-		print("====================")
+		if(PrintOption == 1): print("====================")
 
 		i = 0
 		for name in hNames_Mcrecon:
-			print("Load Histogram: "+name)
+			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStarMCrecon.append(mylist.FindObject(name))
 			XiStarMCrecon[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
 			XiStarMCrecon[i].GetYaxis().SetTitle("Multiplicity (%)")
 			XiStarMCrecon[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStarMCrecon[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
-		print("====================")
+		if(PrintOption == 1): print("====================")
 
 		i = 0
 		for name in hNames:
-			print("Load Histogram: "+name)
+			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStar.append(mylist.FindObject(name))
 			XiStar[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
 			XiStar[i].GetYaxis().SetTitle("Multiplicity (%)")
 			XiStar[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStar[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
-		print("====================")
+		if(PrintOption == 1): print("====================")
 
 		# Add them each other
 		XiStarMCinput[0].Add(XiStarMCinput[1])
@@ -182,7 +193,7 @@ def DrawResults(InputSaveType, isMC):
 		temp1.SetTitle("Generated Xi(1530)")
 		temp1.SetAxisRange(1e-1, 1e6,"Y")
 		temp1.Write("Generated Xi1530")
-		print("Generated Integral: %f"%temp1.Integral(temp1.FindBin(0),temp1.FindBin(8)))
+		if(PrintOption == 1): print("Generated Integral: %f"%temp1.Integral(temp1.FindBin(0),temp1.FindBin(8)))
 
 		# Reconstructed Xi(1530)
 		temp2 = TH1F()
@@ -190,7 +201,7 @@ def DrawResults(InputSaveType, isMC):
 		temp2.GetXaxis().SetTitle("p_{T} (GeV/c)")
 		temp2.SetTitle("Reconstructed Xi(1530)")
 		temp2.Write("Reconstructed Xi1530")
-		print("Reconstructed Integral: %f"%temp2.Integral(temp2.FindBin(0),temp2.FindBin(8)))
+		if(PrintOption == 1): print("Reconstructed Integral: %f"%temp2.Integral(temp2.FindBin(0),temp2.FindBin(8)))
 
 		temp1.Draw("E")
 		c1.SetLogy()
@@ -216,16 +227,16 @@ def DrawResults(InputSaveType, isMC):
 		
 		# Get Entries with given pT bin for generated MC
 		for i in range(0,len(pTRange)-1):
-			print("=========MC=========")
-			print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
+			if(PrintOption == 1): print("=========MC=========")
+			if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
 			XiStarMCinputpT.append(temp1.Integral(temp1.FindBin(pTRange[i]),temp1.FindBin(pTRange[i+1])))
-			print("Normalizing factor from generated: %f"%XiStarMCinputpT[i])
+			if(PrintOption == 1): print("Normalizing factor from generated: %f"%XiStarMCinputpT[i])
 			XiStarMCreconpT.append(temp2.Integral(temp2.FindBin(pTRange[i]),temp2.FindBin(pTRange[i+1])))
-			print("Normalizing factor from reconstructed: %f"%XiStarMCreconpT[i])
+			if(PrintOption == 1): print("Normalizing factor from reconstructed: %f"%XiStarMCreconpT[i])
 			MCEfficiency.append(XiStarMCreconpT[i]/XiStarMCinputpT[i])
 			MCEfficiency_Error.append(sqrt(pow(sqrt(XiStarMCreconpT[i])/XiStarMCinputpT[i],2) + pow(sqrt(XiStarMCinputpT[i])*XiStarMCreconpT[i]/pow(XiStarMCinputpT[i],2),2)))
-			print("Efficiency: %f"%MCEfficiency[i])
-			print("Efficiency_Error: %f"%MCEfficiency_Error[i])
+			if(PrintOption == 1): print("Efficiency: %f"%MCEfficiency[i])
+			if(PrintOption == 1): print("Efficiency_Error: %f"%MCEfficiency_Error[i])
 			#EfficiencyHist.SetBinContent(i+1,MCEfficiency[i])
 		gr_Eff = TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
 		gr_Eff.SetMarkerStyle(20)
@@ -281,39 +292,39 @@ def DrawResults(InputSaveType, isMC):
 	else: # Data Case
 		i = 0
 		for name in hNames:
-			print("Load Histogram: "+name)
+			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStar.append(mylist.FindObject(name))
 			XiStar[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
 			XiStar[i].GetYaxis().SetTitle("Multiplicity (%)")
 			XiStar[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStar[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
-		print("====================")
+		if(PrintOption == 1): print("====================")
 
 		i = 0
 		for name in hNames_mix:
-			print("Load Histogram: "+name)
+			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStar_mix.append(mylist.FindObject(name))
 			XiStar_mix[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
 			XiStar_mix[i].GetYaxis().SetTitle("Multiplicity (%)")
 			XiStar_mix[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStar_mix[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
-		print("====================")	
+		if(PrintOption == 1): print("====================")	
 
-		print("Load Histogram: "+"fXi_0")
+		if(PrintOption == 1): print("Load Histogram: "+"fXi_0")
 		Xi.append(mylist.FindObject("fXi_0"))
 		Xi[0].GetXaxis().SetTitle("p_{T} (GeV/c)")
 		Xi[0].GetYaxis().SetTitle("Multiplicity (%)")
 		Xi[0].GetZaxis().SetTitle("Mass (GeV/c^{2})")
-		print("====================")
+		if(PrintOption == 1): print("====================")
 
-		print("Load Histogram: "+"fXibar_0")
+		if(PrintOption == 1): print("Load Histogram: "+"fXibar_0")
 		Xi.append(mylist.FindObject("fXibar_0"))
 		Xi[1].GetXaxis().SetTitle("p_{T} (GeV/c)")
 		Xi[1].GetYaxis().SetTitle("Multiplicity (%)")
 		Xi[1].GetZaxis().SetTitle("Mass (GeV/c^{2})")
-		print("====================")
+		if(PrintOption == 1): print("====================")
 
 		Xi[0].Add(Xi[1])
 		Xi[0].Write("Original_Xi_pT_Multi_Mass") #Original 3D histogram
@@ -324,72 +335,73 @@ def DrawResults(InputSaveType, isMC):
 		c1.cd() 
 
 		# Add Antiparticle
-		print("Entry of Xi(1530)       : %d"%XiStar[0].GetEntries())
-		print("Entry of anti-Xi(1530)  : %d"%XiStar[1].GetEntries())
+		if(PrintOption == 1): print("Entry of Xi(1530)       : %d"%XiStar[0].GetEntries())
+		if(PrintOption == 1): print("Entry of anti-Xi(1530)  : %d"%XiStar[1].GetEntries())
 		XiStar[0].Add(XiStar[1])
-		print("Entry of merged Xi(1530): %d"%XiStar[0].GetEntries())
+		XiStar_mix[0].Add(XiStar_mix[1])
+		if(PrintOption == 1): print("Entry of merged Xi(1530): %d"%XiStar[0].GetEntries())
 
 		XiStar[0].Write("Original_Xi1530_pT_Multi_Mass") #Original 3D histogram
-
+		
 		#Slice Histogram with given pT bin
 		for i in range(0,len(pTRange)-1):
-			print("========Xi1530==========")
-			print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
+			if(PrintOption == 1): print("========Xi1530==========")
+			if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
 			XiStarpT.append(XiStar[0].Clone())
 			XiStarpT[i].SetAxisRange(pTRange[i],pTRange[i+1],"X")
-			XiStarpT[i].SetTitle("pT Range %.1f to %.1f"%(pTRange[i],pTRange[i+1]))
-			XiStarpT[i].Write("Xi1530_pT_%.1f_to_%.1f"%(pTRange[i],pTRange[i+1]))
+			XiStarpT[i].SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+			XiStarpT[i].Write("Xi1530_pT_%.1f_to_%.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			temp = TH1F()
 			temp = XiStarpT[i].Project3D("Z")
-			temp.SetTitle("pT Range %.1f to %.1f"%(pTRange[i],pTRange[i+1]))
+			temp.SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			#Normalization Factor
 			nbin1 = temp.GetXaxis().FindBin(NormalizeRange_L[0])
 			nbin2 = temp.GetXaxis().FindBin(NormalizeRange_L[1])
 			nbin3 = temp.GetXaxis().FindBin(NormalizeRange_R[0])
 			nbin4 = temp.GetXaxis().FindBin(NormalizeRange_R[1])
-			integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
+			#integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
 			#integratedNumberforNormalizepT.append(temp.Integral(nbin3,nbin4)) #R
-			#integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)) #L
+			integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)) #L
 			if (integratedNumberforNormalizepT[i] == 0): integratedNumberforNormalizepT[i] = 1
-			print("Normalizing factor: %f"%integratedNumberforNormalizepT[i])
+			if(PrintOption == 1): print("Normalizing factor: %f"%integratedNumberforNormalizepT[i])
 			temp.Draw('E')
 			temp.Write("Xi1530_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
 			if(Save): c1.SaveAs("figs/pTBin/sig/Xi1530_pT_%.1f_to_%.1f.%s"%(pTRange[i],pTRange[i+1],SaveType))
 			XipT.append(Xi[0].Clone())
 			XipT[i].SetAxisRange(pTRange[i],pTRange[i+1],"X")
-			XipT[i].SetTitle("pT Range %.1f to %.1f"%(pTRange[i],pTRange[i+1]))
-			XipT[i].Write("Xi1530_pT_%.1f_to_%.1f"%(pTRange[i],pTRange[i+1]))
+			XipT[i].SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+			XipT[i].Write("Xi1530_pT_%.1f_to_%.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			temp2 = TH1F()
-			temp2 = XiStarpT[i].Project3D("Z")
+			temp2 = XipT[i].Project3D("Z")
 			temp2.Draw('E')
 			temp2.Write("Xi_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
 			if(Save): c1.SaveAs("figs/QA/Xi/pTBin/Xi_pT_%.1f_to_%.1f.%s"%(pTRange[i],pTRange[i+1],SaveType))
-			
+		
 		#Slice Histogram with given pT bin for event mix
 		for i in range(0,len(pTRange)-1):
-			print("=====Event Mixing=====")
-			print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
+			if(PrintOption == 1): print("=====Event Mixing=====")
+			if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
 			XiStarpT_mix.append(XiStar_mix[0].Clone())
 			XiStarpT_mix[i].SetAxisRange(pTRange[i],pTRange[i+1],"X")
-			XiStarpT_mix[i].SetTitle("pT Range %.1f to %.1f"%(pTRange[i],pTRange[i+1]))
-			XiStarpT_mix[i].Write("Xi1530_pT_%.1f_to_%.1f"%(pTRange[i],pTRange[i+1]))
+			XiStarpT_mix[i].SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+			XiStarpT_mix[i].Write("Xi1530_pT_%.1f_to_%.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			temp = TH1F()
 			temp = XiStarpT_mix[i].Project3D("Z")
-			temp.SetTitle("pT Range %.1f to %.1f"%(pTRange[i],pTRange[i+1]))
+			temp.SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			#Normalization Factor
 			nbin1 = temp.GetXaxis().FindBin(NormalizeRange_L[0])
 			nbin2 = temp.GetXaxis().FindBin(NormalizeRange_L[1])
 			nbin3 = temp.GetXaxis().FindBin(NormalizeRange_R[0])
 			nbin4 = temp.GetXaxis().FindBin(NormalizeRange_R[1])
-			integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
+			#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4)) #BOTH
 			#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin3,nbin4)) #R
-			#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)) #L
+			integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)) #L
 			if (integratedNumberforNormalizepT_mix[i] == 0): integratedNumberforNormalizepT_mix[i] = 1
-			print("Normalizing factor: %f"%integratedNumberforNormalizepT_mix[i])
+			if(PrintOption == 1): print("Normalizing factor: %f"%integratedNumberforNormalizepT_mix[i])
 			temp.Draw('E')
 			temp.Write("Xi1530_pT_%.1f_to_%.1f_EventMix"%(pTRange[i],pTRange[i+1]))
 			if(Save): c1.SaveAs("figs/pTBin/bkg/Xi1530_pT_%.1f_to_%.1f_EventMix.%s"%(pTRange[i],pTRange[i+1],SaveType))
-
+		
 		# Draw Together(pT)
 		for i in range(0,len(pTRange)-1):
 			### First, Draw together.
@@ -401,7 +413,7 @@ def DrawResults(InputSaveType, isMC):
 			temp2.Scale(integratedNumberforNormalizepT[i]/integratedNumberforNormalizepT_mix[i])
 			temp2.SetLineColor(kRed)
 			temp2.Draw("E, same")
-			temp2.SetTitle("pT Range %.1f to %.1f"%(pTRange[i],pTRange[i+1]))
+			temp2.SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			c1.Write("Xi1530_pT_%.1f_to_%.1f_with_bkg"%(pTRange[i],pTRange[i+1]))
 			c1.SaveAs("figs/pTBin/same/Xi1530_pT_%.1f_to_%.1f_with_bkg.%s"%(pTRange[i],pTRange[i+1],SaveType))
 
@@ -414,7 +426,7 @@ def DrawResults(InputSaveType, isMC):
 			### Third, Fit it.
 			# Reference1: $ROOTSYS/tutorials/roofit/rf204_extrangefit.C
 			# Reference2: https://github.com/clelange/roofit/blob/master/rf204_extrangefit.py
-			print("==================================================================================%.1f to %.1f case =================================================================================="%(pTRange[i],pTRange[i+1]))
+			if(PrintOption == 1): print("==================================================================================%.1f to %.1f case =================================================================================="%(pTRange[i],pTRange[i+1]))
 			mes = RooRealVar("mes", "m_{Xi} (GeV)", AxisRange[0], AxisRange[1])
 			mean1 = RooRealVar("mean1", "mean of gaussians", 1.530,1.525,1.545)
 			sigma1 = RooRealVar("sigma1", "width of gaussians", 0.003,0.000001,0.01)
@@ -466,30 +478,161 @@ def DrawResults(InputSaveType, isMC):
 
 			#chi2/ndf
 			fitChi2ndf.append(xframe.chiSquare())
-			print("chi2: %.4f"%xframe.chiSquare())  # NEED TO ADD NDF INFO!!
+			if(PrintOption == 1): print("chi2: %.4f"%xframe.chiSquare())  # NEED TO ADD NDF INFO!!
 			
 
 			# --- Extract fit parameters ---
-			#print("Fit Result: Mean: %.3f, Sigma: %.5f"%(mean1.getValV(),sigma1.getValV()))
+			#if(PrintOption == 1): print("Fit Result: Mean: %.3f, Sigma: %.5f"%(mean1.getValV(),sigma1.getValV()))
 			fitParameter_mean.append(mean1.getValV())
 			fitParameter_mean_err.append(mean1.getError())
 			fitParameter_sigma.append(sigma1.getValV())
 			fitParameter_sigma_err.append(sigma1.getError())
-
+			
+		#==========================	MULTIPLICITY============================================
 		#Slice Histogram with given Multiplicity
 		for i in range(0,len(pTRange)-1):
-			print("====================")
-			print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))	
+			if(PrintOption == 1): print("====================")
+			if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))	
 			for j in range(0,len(MultiplicityRage)-1):
-				print("--Multiplicity Rage: "+str(MultiplicityRage[j])+" to "+str(MultiplicityRage[j+1]))
-				XiStarpT_Multi[j][i] = XiStarpT[i].Clone()
-				XiStarpT_Multi[j][i].SetAxisRange(MultiplicityRage[j],MultiplicityRage[j+1],"Y")
+				if(PrintOption == 1): print("--Multiplicity Rage: "+str(MultiplicityRage[j])+" to "+str(MultiplicityRage[j+1]))
+				XiStarpT_Multi[i][j] = XiStarpT[i].Clone()
+				XiStarpT_Multi[i][j].SetAxisRange(MultiplicityRage[j],MultiplicityRage[j+1],"Y")
 				temp = TH1F()
-				temp = XiStarpT_Multi[j][i].Project3D("Z")			
+				temp = XiStarpT_Multi[i][j].Project3D("Z")
+				#Normalization Factor
+				nbin1 = temp.GetXaxis().FindBin(NormalizeRange_L[0])
+				nbin2 = temp.GetXaxis().FindBin(NormalizeRange_L[1])
+				nbin3 = temp.GetXaxis().FindBin(NormalizeRange_R[0])
+				nbin4 = temp.GetXaxis().FindBin(NormalizeRange_R[1])
+				integratedNumberforNormalizepT_mult[i][j] = temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4) #BOTH
+				#integratedNumberforNormalizepT.append(temp.Integral(nbin3,nbin4)) #R
+				#integratedNumberforNormalizepT.append(temp.Integral(nbin1,nbin2)) #L
+				if (integratedNumberforNormalizepT_mult[i][j] == 0): integratedNumberforNormalizepT_mult[i][j] = 1
+				if(PrintOption == 1): print("Normalizing factor: %f"%integratedNumberforNormalizepT_mult[i][j])	
 				temp.SetTitle("Xi1530_pT_%.1f_to_%.1f_Multi_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
 				temp.Draw('E')
 				temp.Write("Xi1530_pT_%.1f_to_%.1f_Multi_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
 				if(Save): c1.SaveAs("figs/Multibin/Xi1530_pT_%.1f_to_%.1f_Multi_%d_to_%d.%s"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+
+		#Slice Histogram with given pT bin for event mix with given Multiplicity
+		for i in range(0,len(pTRange)-1):
+			if(PrintOption == 1): print("====================")
+			if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))	
+			for j in range(0,len(MultiplicityRage)-1):
+				if(PrintOption == 1): print("=====Event Mixing=====")
+				if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
+				XiStarpT_Multi_mix[i][j] = XiStarpT_mix[i].Clone()
+				XiStarpT_Multi_mix[i][j].SetAxisRange(pTRange[i],pTRange[i+1],"X")
+				XiStarpT_Multi_mix[i][j].SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+				XiStarpT_Multi_mix[i][j].Write("Xi1530_pT_%.1f_to_%.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+				temp = TH1F()
+				temp = XiStarpT_Multi_mix[i][j].Project3D("Z")
+				temp.SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+				#Normalization Factor
+				nbin1 = temp.GetXaxis().FindBin(NormalizeRange_L[0])
+				nbin2 = temp.GetXaxis().FindBin(NormalizeRange_L[1])
+				nbin3 = temp.GetXaxis().FindBin(NormalizeRange_R[0])
+				nbin4 = temp.GetXaxis().FindBin(NormalizeRange_R[1])
+				integratedNumberforNormalizepT_mult_mix[i][j] = temp.Integral(nbin1,nbin2)+temp.Integral(nbin3,nbin4) #BOTH
+				#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin3,nbin4)) #R
+				#integratedNumberforNormalizepT_mix.append(temp.Integral(nbin1,nbin2)) #L
+				if (integratedNumberforNormalizepT_mult_mix[i][j] == 0): integratedNumberforNormalizepT_mult_mix[i][j] = 1
+				if(PrintOption == 1): print("Normalizing factor: %f"%integratedNumberforNormalizepT_mult_mix[i][j])
+				temp.SetTitle("Xi1530_pT_%.1f_to_%.1f_Multi_Mix_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				temp.Draw('E')
+				temp.Write("Xi1530_pT_%.1f_to_%.1f_Multi_Mix_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				if(Save): c1.SaveAs("figs/Multibin/Xi1530_pT_%.1f_to_%.1f_Multi_Mix_%d_to_%d.%s"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+		
+		# Draw Together(pT, Mult)
+		for i in range(0,len(pTRange)-1):
+			if(PrintOption == 1): print("====================")
+			if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))	
+			for j in range(0,len(MultiplicityRage)-1):
+				### First, Draw together.
+				c1.cd()
+				temp1 = fo.Get("Xi1530_pT_%.1f_to_%.1f_Multi_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				temp1.SetLineColor(kBlack)
+				temp1.Draw("E")
+				temp2 = fo.Get("Xi1530_pT_%.1f_to_%.1f_Multi_Mix_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				temp2.Scale(integratedNumberforNormalizepT_mult[i][j]/integratedNumberforNormalizepT_mult_mix[i][j])
+				temp2.SetLineColor(kRed)
+				temp2.Draw("E, same")
+				temp2.SetTitle("pT Range %.1f to %.1f GeV/c, Multiplicity %d to %d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				c1.Write("Xi1530_pT_%.1f_to_%.1f_with_bkg_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				c1.SaveAs("figs/pTBin/same/Xi1530_pT_%.1f_to_%.1f_with_bkg_%d_to_%d.%s"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+
+				### Second, Subtract bkg.
+				temp1.Add(temp2,-1)
+				temp1.Draw('E')
+				temp1.Write("Xi1530_pT_%.1f_to_%.1f_with_bkg_substraction_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				temp1.Draw("E")
+				c1.SaveAs("figs/pTBin/sub/Xi1530_pT_%.1f_to_%.1f_with_bkg_substraction_%d_to_%d.%s"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+
+				### Third, Fit it.
+				# Reference1: $ROOTSYS/tutorials/roofit/rf204_extrangefit.C
+				# Reference2: https://github.com/clelange/roofit/blob/master/rf204_extrangefit.py
+				if(PrintOption == 1): print("==================================================================================%.1f to %.1f case =================================================================================="%(pTRange[i],pTRange[i+1]))
+				mes = RooRealVar("mes", "m_{Xi} (GeV)", AxisRange[0], AxisRange[1])
+				mean1 = RooRealVar("mean1", "mean of gaussians", 1.530,1.515,1.555)
+				sigma1 = RooRealVar("sigma1", "width of gaussians", 0.003,0.000001,0.01)
+				width = RooRealVar("width", "width of voigtian", 0.0091)
+				signal = RooVoigtian("signal", "Signal component 1", mes, mean1, width, sigma1)
+
+				a0 = RooRealVar("a0","a0",1) ;
+				a1 = RooRealVar("a1","a1",0,-1,1) ;
+				a2 = RooRealVar("a2","a2",1,0,10) ;
+				background = RooPolynomial("p2","p2",mes,RooArgList(a0,a1,a2),0) ;
+				
+				# --- Construct signal+background PDF ---
+				nsig = RooRealVar("nsig","#signal events",200,0.,1000) ;
+				nbkg = RooRealVar("nbkg","#background events",800,0.,1000) ;
+				model = RooAddPdf("model","g+a",RooArgList(signal,background),RooArgList(nsig,nbkg))
+
+				data = RooDataHist("RooDataHist","dataset with Gauss  Fit",RooArgList(mes),temp1)
+
+				c1.cd()
+				gPad.SetTickx(2)
+				xframe = mes.frame()
+				signal.fitTo(data,RooFit.Range(1.51,1.55))
+				#signal.fitTo(data)
+				#model.fitTo(data)
+	 			#model.fitTo(data,RooFit.Range(1.52,1.55))
+
+				data.plotOn(xframe)
+				signal.plotOn(xframe,RooFit.LineStyle(kDashed))
+				#model.plotOn(xframe)
+				#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineStyle(kDashed))
+				#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineColor(kGreen))
+				#sig.paramOn(xframe, RooFit.Layout(0.6),RooFit.Format("NEU",RooFit.AutoPrecision(1)))
+				xframe.SetMarkerStyle(1)
+				xframe.Draw("E")
+				xframe.Write("Xi1530_pT_%.1f_to_%.1f_with_fitting(dash)_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				c1.SaveAs("figs/pTBin/fit/Xi1530_pT_%.1f_to_%.1f_with_fitting(dash)_%d_to_%d.%s"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+				c1.Clear()
+				data.plotOn(xframe)
+				signal.plotOn(xframe)
+				#model.plotOn(xframe,RooFit.LineStyle(kDashed))
+				#signal.plotOn(xframe,RooFit.Components("background"),RooFit.LineStyle(kDashed))
+				#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineStyle(kDashed))
+				#model.plotOn(xframe,RooFit.Components("p2"),RooFit.LineColor(kGreen))
+				#sig.paramOn(xframe, RooFit.Layout(0.6),RooFit.Format("NEU",RooFit.AutoPrecision(1)))
+				xframe.SetMarkerStyle(2)
+				xframe.Draw("E")		
+				xframe.Write("Xi1530_pT_%.1f_to_%.1f_with_fitting_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				c1.SaveAs("figs/pTBin/fit/Xi1530_pT_%.1f_to_%.1f_with_fitting_%d_to_%d.%s"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+
+							#chi2/ndf
+				fitChi2ndf.append(xframe.chiSquare())
+				if(PrintOption == 1): print("chi2: %.4f"%xframe.chiSquare())  # NEED TO ADD NDF INFO!!
+				
+
+				# --- Extract fit parameters ---
+				#if(PrintOption == 1): print("Fit Result: Mean: %.3f, Sigma: %.5f"%(mean1.getValV(),sigma1.getValV()))
+				fitParameter_mean_mult[j][i] = mean1.getValV()
+				fitParameter_mean_err_mult[j][i] = mean1.getError()
+				fitParameter_sigma_mult[j][i] = sigma1.getValV()
+				fitParameter_sigma_err_mult[j][i] = sigma1.getError()
+
 		
 		#For Result Presensation
 		c2 = TCanvas('c2','Invariant Mass Distribution with pT bins',1920,1080)
@@ -504,9 +647,9 @@ def DrawResults(InputSaveType, isMC):
 		for i in range(0,len(pTRange)-1):
 			c2.cd(i+1)
 			hist=fo.Get("Xi1530_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
-			hist.SetTitle("pT %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			hist.SetTitle("pT %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			hist.Draw('E')
-			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 		c2.Draw()
 		c2.SaveAs("figs/Invmass_pT.%s"%SaveType)
 
@@ -515,9 +658,9 @@ def DrawResults(InputSaveType, isMC):
 		for i in range(0,len(pTRange)-1):
 			c2.cd(i+1)
 			hist=fo.Get("Xi_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
-			hist.SetTitle("pT %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			hist.SetTitle("pT %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			hist.Draw('E')
-			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 		c2.Draw()
 		c2.SaveAs("figs/QA/Invmass_pT_Xi.%s"%SaveType)
 
@@ -531,8 +674,8 @@ def DrawResults(InputSaveType, isMC):
 			temp2.Scale(integratedNumberforNormalizepT[i]/integratedNumberforNormalizepT_mix[i])
 			temp2.SetLineColor(kRed)
 			temp2.Draw("E, same")
-			temp2.SetTitle("pT %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
-			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			temp2.SetTitle("pT %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 		c2.Draw()
 		c2.SaveAs("figs/Invmass_pT_with_bkg.%s"%SaveType)
 		
@@ -540,9 +683,9 @@ def DrawResults(InputSaveType, isMC):
 		for i in range(0,len(pTRange)-1):
 			c2.cd(i+1)
 			hist=fo.Get("Xi1530_pT_%.1f_to_%.1f_with_fitting"%(pTRange[i],pTRange[i+1]))
-			hist.SetTitle("pT %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			hist.SetTitle("pT %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			hist.Draw('E')
-			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			#t.DrawLatex(0.6,0.8,"\chi^{2} / ndf = %.1f"%fitChi2ndf[i])
 		c2.Draw()
 		c2.SaveAs("figs/Invmass_pT_fitted.%s"%SaveType)
@@ -551,12 +694,13 @@ def DrawResults(InputSaveType, isMC):
 		for i in range(0,len(pTRange)-1):
 			c2.cd(i+1)
 			hist=fo.Get("Xi1530_pT_%.1f_to_%.1f_with_fitting(dash)"%(pTRange[i],pTRange[i+1]))
-			hist.SetTitle("pT %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			hist.SetTitle("pT %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			hist.Draw('E')
-			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+			t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			#t.DrawLatex(0.6,0.8,"\chi^{2} / ndf = %.1f"%fitChi2ndf[i])
 		c2.Draw()
 		c2.SaveAs("figs/Invmass_pT_fitted(dash).%s"%SaveType)
+
 
 		c1.cd()
 		# Fit mean value plot with pT
@@ -600,9 +744,84 @@ def DrawResults(InputSaveType, isMC):
 				hist=fo.Get("Xi1530_pT_%.1f_to_%.1f_Multi_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
 				hist.SetTitle("pT %.1f to %.1f with Multiplicity %d - %d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
 				hist.Draw('E')
-				t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f"%(pTRange[i],pTRange[i+1]))
+				t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			c3.Draw()
 			c3.SaveAs("figs/Invmass_Multi_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
 
+		# RAW signal+bkg with pT 
+		t2 = TLatex()
+		t2.SetNDC()
+		t2.SetTextSize(0.075)
+		for j in range(0,len(MultiplicityRage)-1):
+			for i in range(0,len(pTRange)-1):
+				c3.cd(i+1)
+				temp1 = fo.Get("Xi1530_pT_%.1f_to_%.1f_Multi_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				temp1.SetLineColor(kBlack)
+				temp1.Draw("E")
+				temp2 = fo.Get("Xi1530_pT_%.1f_to_%.1f_Multi_Mix_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				temp2.Scale(integratedNumberforNormalizepT_mult[i][j]/integratedNumberforNormalizepT_mult_mix[i][j])
+				temp2.SetLineColor(kRed)
+				temp2.Draw("E, same")
+				temp2.SetTitle("pT Range %.1f to %.1f GeV/c, Multiplicity %d to %d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+			c3.Draw()
+			c3.SaveAs("figs/Invmass_with_bkg_Multi_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+
+		# Fitted plot with pT
+		for j in range(0,len(MultiplicityRage)-1):
+			for i in range(0,len(pTRange)-1):
+				c3.cd(i+1)
+				hist=fo.Get("Xi1530_pT_%.1f_to_%.1f_with_fitting_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				hist.SetTitle("pT %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+				hist.Draw('E')
+				t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+				#t.DrawLatex(0.6,0.8,"\chi^{2} / ndf = %.1f"%fitChi2ndf[i])
+			c3.Draw()
+			c3.SaveAs("figs/Invmass_pT_fitted_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+		
+		# Fitted plot with pT(Dashed)
+		for j in range(0,len(MultiplicityRage)-1):
+			for i in range(0,len(pTRange)-1):
+				c3.cd(i+1)
+				hist=fo.Get("Xi1530_pT_%.1f_to_%.1f_with_fitting(dash)_%d_to_%d"%(pTRange[i],pTRange[i+1],MultiplicityRage[j],MultiplicityRage[j+1]))
+				hist.SetTitle("pT %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+				hist.Draw('E')
+				t.DrawLatex(0.15,0.8,"P_{T}: %.1f - %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
+				#t.DrawLatex(0.6,0.8,"\chi^{2} / ndf = %.1f"%fitChi2ndf[i])
+			c3.Draw()
+			c3.SaveAs("figs/Invmass_pT_fitted(dash)_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+
+		
+		c1.cd()
+		# Fit mean value plot with pT
+		for j in range(0,len(MultiplicityRage)-1):
+			fitMeanAspT_mult = TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(fitParameter_mean_mult[j], 'd') , np.asarray(pTRange_err, 'd'), np.asarray(fitParameter_mean_err_mult[j], 'd'))
+			fitMeanAspT_mult.SetMarkerStyle(20)
+			fitMeanAspT_mult.SetMarkerColor(2)
+			fitMeanAspT_mult.SetTitle("")
+			fitMeanAspT_mult.GetYaxis().SetTitle("Mass (GeV/c^{2})")
+			fitMeanAspT_mult.GetYaxis().SetTitleOffset(1.3)
+			fitMeanAspT_mult.GetXaxis().SetTitle("p_{T} (GeV/c)")
+			fitMeanAspT_mult.Draw("AP")
+			pdg_massline = TF1("pdg_massline","1.53178",-1,10)
+			pdg_massline.Draw("same")
+			
+			c1.Write("Xi1530_fit_mean_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
+			c1.SaveAs("figs/fit_means_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+		
+		# Fit sigma value plot with pT
+		for j in range(0,len(MultiplicityRage)-1):
+			fitSigmaAspT_mult = TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(fitParameter_sigma_mult[j], 'd') , np.asarray(pTRange_err, 'd'), np.asarray(fitParameter_sigma_err_mult[j], 'd'))
+			fitSigmaAspT_mult.SetMarkerStyle(20)
+			fitSigmaAspT_mult.SetMinimum(0);
+			fitSigmaAspT_mult.SetMaximum(0.0050);
+			fitSigmaAspT_mult.SetTitle("")
+			fitSigmaAspT_mult.GetYaxis().SetTitle("#sigma (GeV/c)")
+			fitSigmaAspT_mult.GetXaxis().SetTitle("p_{T} (GeV/c)")
+			fitSigmaAspT_mult.Draw("AP")
+			
+			c1.Write("Xi1530_fit_sigma_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
+			c1.SaveAs("figs/fit_sigma_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+		
 if __name__ == "__main__":
 		DrawResults(InputSaveType, isMC)

@@ -35,50 +35,12 @@ class AliXiStarpp13TeV : public AliAnalysisTaskSE {
 public:
     
     AliXiStarpp13TeV();
-    AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0, Bool_t DevelopmentMode = kFALSE);
+    AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE);
 
     virtual ~AliXiStarpp13TeV();
     AliXiStarpp13TeV(const AliXiStarpp13TeV &obj );
     AliXiStarpp13TeV &operator=(const AliXiStarpp13TeV &obj );
 
-    // Moved to public value
-        struct St_CutType {
-        TH3F *fXi; //!
-        TH3F *fXibar; //!
-        //
-        TH3F *fXiMinusPiPlus; //!
-        TH3F *fXiMinusPiMinus; //!
-        TH3F *fXiPlusPiPlus; //!
-        TH3F *fXiPlusPiMinus; //!
-        
-        TH3F *fXiMinusPiPlusbkg; //!
-        TH3F *fXiMinusPiMinusbkg; //!
-        TH3F *fXiPlusPiPlusbkg; //!
-        TH3F *fXiPlusPiMinusbkg; //!
-        //
-        TH3F *fMCrecXi; //!
-        TH3F *fMCrecXibar; //!
-        
-        TH3F *fMCrecXiMinusPiPlus; //!
-        TH3F *fMCrecXiPlusPiMinus; //!
-       
-    };
-private:
-    
-    virtual void   UserCreateOutputObjects();
-    virtual void   Exec(Option_t *option);
-    virtual void   Terminate(Option_t *);
-    
-    
-    void XiStarInit();// initialization of fixed values
-    Double_t LinearPropagateToDCA(AliESDtrack*, AliESDtrack*, Double_t);// for linear propagation
-    Double_t Det(Double_t, Double_t, Double_t, Double_t) const;// for linear propagation
-    Double_t Det(Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t) const;// for linear propagation
-     ULong64_t GetMCEventNumber();
-    
-    
-    
-    
     enum {
         kNbinsM              = 200, // mult bins for certain histograms //300
         kXiStarCode          = 3324,// Xi(1530)^0 MC code
@@ -89,44 +51,11 @@ private:
         kNCutVariations      = 21,// number of cut variations // 13
         kNCuts               = 13// number of cut types //15
     };
-    
-    const char* fname;// name of class
-   // AliInputEventHandler *fEventHandler;                              //  for ESDs or AODs
-    AliESDEvent            *fESD; //!    // ESD object
-    TList                  *fOutputList; //! Compact Output list
-    AliESDtrackCuts        *fTrackCut; //! ESD track cuts
-    AliPIDResponse         *fPIDResponse; //! PID object
-    
-    AliXiStarpp13TeVEventCollection ***fEC; //! The event collection
-    AliXiStarpp13TeVEventStruct *fEvt; //! The current event type
-    AliXiStarpp13TeVTrackStruct *fTempStruct; //! A temporary track storage.  Eventually put into fEvt
-    
-    //
-    
-    Int_t fZvertexBins;// number of Z-vertex bins for event-mixing
-    Int_t fEventsToMix;// number of maximum events to mix
-    Int_t fMultBins;// number of multiplicity bins for event-mixing
-    Int_t fMultLimits[11+1];// the multiplicity edges of the mult bins
-    Bool_t fMCcase;// switch for MC data or real data
-    Bool_t fAODcase;// switch for AODs or ESDs
-    Bool_t fDevelopeMode;
-    Int_t fEventCounter;// The event counter
-    ULong64_t fEventNumber; // calcuate event number
 
-    // cut list data members
-    Float_t fMaxDecayLength;// max decay length
-    Float_t fMassWindow;// Mass window of acceptance for Lambda and Xi candidates
-    
-    Double_t fCovMatrix[21];// Covarience matrix of track
-    Double_t fTrueMassPr, fTrueMassPi, fTrueMassK, fTrueMassLam, fTrueMassXi;// The PDG mass values
-    Bool_t IsTPC  (AliESDtrack *track);
-
-  
-    
     //=================================================================================//
     //generated Histograms//
     //=================================================================================//
-    /*
+    
     struct St_CutType {
         TH3F *fXi; //!
         TH3F *fXibar; //!
@@ -148,8 +77,57 @@ private:
         TH3F *fMCrecXiPlusPiMinus; //!
        
     };
-    */
     struct St_CutType CutVar[kNCutVariations]; //!
+
+private:
+    
+    virtual void   UserCreateOutputObjects();
+    virtual void   Exec(Option_t *option);
+    virtual void   Terminate(Option_t *);
+    
+    
+    void XiStarInit();// initialization of fixed values
+    Double_t LinearPropagateToDCA(AliESDtrack*, AliESDtrack*, Double_t);// for linear propagation
+    Double_t Det(Double_t, Double_t, Double_t, Double_t) const;// for linear propagation
+    Double_t Det(Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t) const;// for linear propagation
+     ULong64_t GetMCEventNumber();
+    
+    
+    const char* fname;// name of class
+   // AliInputEventHandler *fEventHandler;                              //  for ESDs or AODs
+    AliESDEvent            *fESD; //!    // ESD object
+    TList                  *fOutputList; //! Compact Output list
+    AliESDtrackCuts        *fTrackCut; //! ESD track cuts
+    AliPIDResponse         *fPIDResponse; //! PID object
+    
+    AliXiStarpp13TeVEventCollection ***fEC; //! The event collection
+    AliXiStarpp13TeVEventStruct *fEvt; //! The current event type
+    AliXiStarpp13TeVTrackStruct *fTempStruct; //! A temporary track storage.  Eventually put into fEvt
+    
+    //
+    
+    Int_t fZvertexBins;// number of Z-vertex bins for event-mixing
+    Int_t fEventsToMix;// number of maximum events to mix
+    Int_t fMultBins;// number of multiplicity bins for event-mixing
+    Int_t fMultLimits[11+1];// the multiplicity edges of the mult bins
+    Bool_t fMCcase;// switch for MC data or real data
+    Bool_t fAODcase;// switch for AODs or ESDs
+    Bool_t fDevelopeMode;
+    Bool_t fHMTrigger;
+    Int_t fEventCounter;// The event counter
+    ULong64_t fEventNumber; // calcuate event number
+
+    // cut list data members
+    Float_t fMaxDecayLength;// max decay length
+    Float_t fMassWindow;// Mass window of acceptance for Lambda and Xi candidates
+    
+    Double_t fCovMatrix[21];// Covarience matrix of track
+    Double_t fTrueMassPr, fTrueMassPi, fTrueMassK, fTrueMassLam, fTrueMassXi;// The PDG mass values
+    Bool_t IsTPC  (AliESDtrack *track);
+
+  
+    
+
     
     
     AliESDtrack* fESDTrack4; //! esdtrack for XiStar's daughter pion
