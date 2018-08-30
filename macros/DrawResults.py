@@ -51,7 +51,7 @@ def DrawResults(InputSaveType, isMC):
 	outputFileName = "Analysis_Results_Xi1530_%s.root"%currenttime
 	if(isMC): outputFileName = "Analysis_Results_Xi1530_MC_%s.root"%currenttime
 	pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8,15]
-	massRebin = 10
+	massRebin = 5
 	AxisRange = [1.48,1.59]
 	#NormalizeRange = [1.49,1.51] #for LHC15f
 	NormalizeRange = [1.56,1.58] #for LHC16k
@@ -147,7 +147,7 @@ def DrawResults(InputSaveType, isMC):
 			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStarMCinput.append(mylist.FindObject(name))
 			XiStarMCinput[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
-			XiStarMCinput[i].GetYaxis().SetTitle("Multiplicity (%)")
+			XiStarMCinput[i].GetYaxis().SetTitle("Multiplicity percentile (%)")
 			XiStarMCinput[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStarMCinput[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
@@ -158,7 +158,7 @@ def DrawResults(InputSaveType, isMC):
 			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStarMCrecon.append(mylist.FindObject(name))
 			XiStarMCrecon[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
-			XiStarMCrecon[i].GetYaxis().SetTitle("Multiplicity (%)")
+			XiStarMCrecon[i].GetYaxis().SetTitle("Multiplicity percentile (%)")
 			XiStarMCrecon[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStarMCrecon[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
@@ -169,7 +169,7 @@ def DrawResults(InputSaveType, isMC):
 			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStar.append(mylist.FindObject(name))
 			XiStar[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
-			XiStar[i].GetYaxis().SetTitle("Multiplicity (%)")
+			XiStar[i].GetYaxis().SetTitle("Multiplicity percentile (%)")
 			XiStar[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStar[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
 			i = i+1
@@ -295,9 +295,10 @@ def DrawResults(InputSaveType, isMC):
 			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStar.append(mylist.FindObject(name))
 			XiStar[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
-			XiStar[i].GetYaxis().SetTitle("Multiplicity (%)")
+			XiStar[i].GetYaxis().SetTitle("Multiplicity percentile (%)")
 			XiStar[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStar[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
+			XiStar[i].RebinZ(massRebin)
 			i = i+1
 		if(PrintOption == 1): print("====================")
 
@@ -306,23 +307,24 @@ def DrawResults(InputSaveType, isMC):
 			if(PrintOption == 1): print("Load Histogram: "+name)
 			XiStar_mix.append(mylist.FindObject(name))
 			XiStar_mix[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
-			XiStar_mix[i].GetYaxis().SetTitle("Multiplicity (%)")
+			XiStar_mix[i].GetYaxis().SetTitle("Multiplicity percentile (%)")
 			XiStar_mix[i].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 			XiStar_mix[i].SetAxisRange(AxisRange[0],AxisRange[1],"Z")
+			XiStar_mix[i].RebinZ(massRebin)
 			i = i+1
 		if(PrintOption == 1): print("====================")	
 
 		if(PrintOption == 1): print("Load Histogram: "+"fXi_0")
 		Xi.append(mylist.FindObject("fXi_0"))
 		Xi[0].GetXaxis().SetTitle("p_{T} (GeV/c)")
-		Xi[0].GetYaxis().SetTitle("Multiplicity (%)")
+		Xi[0].GetYaxis().SetTitle("Multiplicity percentile (%)")
 		Xi[0].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 		if(PrintOption == 1): print("====================")
 
 		if(PrintOption == 1): print("Load Histogram: "+"fXibar_0")
 		Xi.append(mylist.FindObject("fXibar_0"))
 		Xi[1].GetXaxis().SetTitle("p_{T} (GeV/c)")
-		Xi[1].GetYaxis().SetTitle("Multiplicity (%)")
+		Xi[1].GetYaxis().SetTitle("Multiplicity percentile (%)")
 		Xi[1].GetZaxis().SetTitle("Mass (GeV/c^{2})")
 		if(PrintOption == 1): print("====================")
 
