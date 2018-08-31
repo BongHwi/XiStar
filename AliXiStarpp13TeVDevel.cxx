@@ -1075,7 +1075,6 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
         if(fDevelopeMode)std::cout << "Reject: IsIncompleteDAQ" << std::endl;;
         return;
     }
-    AliVEvent *vevt = dynamic_cast<AliVEvent *>(fESD->GetRef());
 
     // Muliplicity Check
     AliMultSelection *MultSelection = (AliMultSelection*) fESD->FindListObject("MultSelection");
