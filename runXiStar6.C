@@ -205,9 +205,9 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase) {
 
 
     Int_t nruns=0,ngoodruns=0;
+    Int_t runlist[200];
 #if !defined (__CINT__) || defined (__CLING__)
     // ROOT 6 MODE
-    Int_t runlist[200];
     std::fill_n(runlist, 200, 0);
 #else
     // ROOT 5 MODE
