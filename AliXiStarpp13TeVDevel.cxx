@@ -1075,6 +1075,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
         if(fDevelopeMode)std::cout << "Reject: IsIncompleteDAQ" << std::endl;;
         return;
     }
+    AliVEvent *vevt = dynamic_cast<AliVEvent *>(fESD->GetRef());
 
     // Muliplicity Check
     AliMultSelection *MultSelection = (AliMultSelection*) fESD->FindListObject("MultSelection");
@@ -1101,7 +1102,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
 
     // Pile-Up rejection
     AliAnalysisUtils * utils = new AliAnalysisUtils();
-    if (utils->IsPileUpSPD(vevt)) {
+    if (utils->IsPileUpSPD(fESD)) {
         if(fDevelopeMode)std::cout << "Reject: IsPileUpSPD" << std::endl;;
         return;
     }
