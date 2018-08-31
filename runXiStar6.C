@@ -3,28 +3,26 @@
 #include "AliAnalysisManager.h"
 #include "AliAODInputHandler.h"
 #include "AliESDInputHandler.h"
-#include "AliXiStarpp13TeV.h"
+#include "AliXiStarpp13TeVDevel.h"
 #endif
 
 Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase=kFALSE);
 TChain *CreateChain(const char *fileName, Bool_t AODcase);
 
-void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF use.
+void runXiStar6(const char *mode = "full") { // local/test/full/terminate
     int Nevents=100;
 
     Bool_t MCcase=kFALSE;
     Bool_t AODcase=kFALSE;
-    Bool_t HMTrigger=kTRUE; // kTRUE for High Multiplicity trigger mode.
+    Bool_t HMTrigger=kFALSE; // kTRUE for High Multiplicity trigger mode.
+    Bool_t PIDOption=kTRUE;
     
-    Bool_t batchmode=kTRUE;
-    Bool_t gridTest=kFALSE; // kTRUE for the test mode, kFALSE for the Alien grid mode
-    Bool_t GridMerge=kFALSE; // kTRUE for terminate
 
     Int_t CutList = 0;
-    Bool_t DevelopmentMode=kTRUE;
+    Bool_t DevelopmentMode=kFALSE;
     TString *Production=new TString("16k");
-    const char* collectionfile="collection.xml";
-    const char* working_directory="pp13TeV_LHC16k_HMTrigger_test10";
+    const char* working_directory="pp13TeV_LHC16k_full_Pileup_check";
+    const char *dataset = "test1.list";
 
     gSystem->Load("libTree.so");
     gSystem->Load("libGeom.so");
@@ -86,17 +84,17 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
         return;
     }
     // PID response
-    AliAnalysisTask *fPIDResponse = reinterpret_cast<AliXiStarpp13TeV*>(gInterpreter->ExecuteMacro(Form("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(%d)",MCcase)));
+    AliAnalysisTask *fPIDResponse = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(%d)",MCcase)));
     if(!fPIDResponse) {
         Printf("no fPIDResponse");
         return;
     }
 
-    gInterpreter->LoadMacro("AliXiStarpp13TeVEventCollection.cxx+g");
-    gInterpreter->LoadMacro("AliXiStarpp13TeV.cxx+g");
+    gInterpreter->LoadMacro("AliXiStarpp13TeVDevelEventCollection.cxx+g");
+    gInterpreter->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // AddTask
-    AliXiStarpp13TeV *myTask = reinterpret_cast<AliXiStarpp13TeV*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d,%d)",AODcase,MCcase,CutList,DevelopmentMode,HMTrigger)));
-    //AliXiStarpp13TeV *myTask = reinterpret_cast<AliXiStarpp13TeV*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",AODcase,MCcase,CutList,DevelopmentMode)));
+    AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeVDevel.C(%d,%d,%i,%d,%d,%d)",AODcase,MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption)));
+    //AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",AODcase,MCcase,CutList,DevelopmentMode)));
 #else
     // ROOT 5 MODE
     //
@@ -117,17 +115,17 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
     gROOT->LoadMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
     AliAnalysisTask *fPIDResponse = AddTaskPIDResponse(MCcase); //! PID response object
 
-    gROOT->LoadMacro("AliXiStarpp13TeVEventCollection.cxx+g");
-    gROOT->LoadMacro("AliXiStarpp13TeV.cxx+g");
+    gROOT->LoadMacro("AliXiStarpp13TeVDevelEventCollection.cxx+g");
+    gROOT->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // Add Task
-    gROOT->LoadMacro("AddTaskXiStarpp13TeV.C");
-    AliXiStarpp13TeV *myTask = AddTaskXiStarpp13TeV(AODcase,MCcase,CutList,DevelopmentMode,HMTrigger);
+    gROOT->LoadMacro("AddTaskXiStarpp13TeVDevel.C");
+    AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(AODcase,MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption);
 #endif
     if(!mgr->InitAnalysis()) return;
-    mgr->SetDebugLevel(10);
+    //mgr->SetDebugLevel(10);
     mgr->PrintStatus();
     //mgr->SetUseProgressBar(1, 25);
-    if(batchmode==kFALSE) {// local pc mode; gets AOD or ESD files from my machine
+    if(strcmp(mode,"local")==0) {// local pc mode; gets AOD or ESD files from my machine
         TChain *chain = new TChain("ESDTree");
         chain = CreateChain(dataset,AODcase); // for KIAF use
         mgr->StartAnalysis("local",chain);
@@ -137,11 +135,11 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
         gSystem->Load("libRAliEn.so");
         AliAnalysisAlien *plugin = new AliAnalysisAlien();
 
-        gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
+        //gSystem->Setenv("alien_CLOSE_SE","working_disk_SE");
         plugin->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
 
-        plugin->SetAnalysisSource("AliXiStarpp13TeVEventCollection.cxx AliXiStarpp13TeV.cxx");
-        plugin->SetAdditionalLibs("AliXiStarpp13TeVEventCollection.h AliXiStarpp13TeVEventCollection.cxx AliXiStarpp13TeV.h AliXiStarpp13TeV.cxx");
+        plugin->SetAnalysisSource("AliXiStarpp13TeVDevelEventCollection.cxx AliXiStarpp13TeVDevel.cxx");
+        plugin->SetAdditionalLibs("AliXiStarpp13TeVDevelEventCollection.h AliXiStarpp13TeVDevelEventCollection.cxx AliXiStarpp13TeVDevel.h AliXiStarpp13TeVDevel.cxx");
 
         plugin->SetAliPhysicsVersion("vAN-20180128-1");
         plugin->SetAPIVersion("V1.1x");
@@ -173,7 +171,7 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
             }
         }
 
-        plugin->SetSplitMaxInputFileNumber(1000);
+        plugin->SetSplitMaxInputFileNumber(2000);
         plugin->SetExecutable("myTask.sh");
         plugin->SetTTL(10000);
         plugin->SetJDLName("myTask.jdl");
@@ -190,20 +188,13 @@ void runXiStar6(const char *dataset = "test1.list") { // data set input for KIAF
         plugin->SetUser("blim");
 
         mgr->SetGridHandler(plugin);
-        if(gridTest) {
-            // speficy on how many files you want to run
-            plugin->SetNtestFiles(1);
-            // and launch the analysis
-            plugin->SetRunMode("test");
-            mgr->StartAnalysis("grid");
-        } else {
-            // else launch the full grid analysis
-            if(GridMerge){
-                plugin->SetRunMode("terminate");
-                }
-            else plugin->SetRunMode("full");
-            mgr->StartAnalysis("grid");
-        }
+        
+        // speficy on how many files you want to run
+        if(strcmp(mode,"test")==0)plugin->SetNtestFiles(1);
+
+        plugin->SetRunMode(mode);
+        mgr->StartAnalysis("grid");
+        
     }
 
 }
@@ -253,11 +244,11 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase) {
             }
         } else {
             //data list
-            nruns=25; 
-            //Int_t runlist_2[194]={258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258045, 258042, 258041, 258039, 258019, 258017, 258014, 258012, 258008, 258003, 257992, 257989, 257986, 257979, 257963, 257960, 257957, 257939, 257937, 257936, 257892, 257855, 257853, 257851, 257850, 257804, 257803, 257800, 257799, 257798, 257797, 257773, 257765, 257757, 257754, 257737, 257735, 257734, 257733, 257727, 257725, 257724, 257697, 257694, 257692, 257691, 257689, 257688, 257687, 257685, 257684, 257682, 257644, 257642, 257636, 257635, 257632, 257630, 257606, 257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474, 257468, 257457, 257433, 257364, 257358, 257330, 257322, 257320, 257318, 257260, 257224, 257209, 257206, 257204, 257144, 257141, 257139, 257138, 257137, 257136, 257100, 257095, 257092, 257086, 257084, 257082, 257080, 257077, 257028, 257026, 257021, 257012, 257011, 256944, 256942, 256941, 256697, 256695, 256694, 256692, 256691, 256684, 256681, 256677, 256676, 256658, 256620, 256619, 256592, 256591, 256589, 256567, 256565, 256564, 256562, 256560, 256557, 256556, 256554, 256552, 256514, 256512, 256510, 256506, 256504};
-            Int_t runlist_2[25] = {257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474};
+            nruns=194; 
+            //Int_t runlist_2[1] = {257605};
+            //Int_t runlist_2[4] = {257605, 257604, 257601, 257595};
             //Int_t runlist_2[104] ={258012, 258008, 258003, 257992, 257989, 257986, 257979, 257963, 257960, 257957, 257939, 257937, 257936, 257892, 257855, 257853, 257851, 257850, 257804, 257803, 257800, 257799, 257798, 257797, 257773, 257765, 257757, 257754, 257737, 257735, 257734, 257733, 257727, 257725, 257724, 257697, 257694, 257692, 257691, 257689, 257688, 257687, 257685, 257684, 257682, 257644, 257642, 257636, 257635, 257632, 257630, 257606, 258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258045, 258042, 258041, 258039, 258019, 258017, 258014};
-
+            Int_t runlist_2[194]= {258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258045, 258042, 258041, 258039, 258019, 258017, 258014, 258012, 258008, 258003, 257992, 257989, 257986, 257979, 257963, 257960, 257957, 257939, 257937, 257936, 257892, 257855, 257853, 257851, 257850, 257804, 257803, 257800, 257799, 257798, 257797, 257773, 257765, 257757, 257754, 257737, 257735, 257734, 257733, 257727, 257725, 257724, 257697, 257694, 257692, 257691, 257689, 257688, 257687, 257685, 257684, 257682, 257644, 257642, 257636, 257635, 257632, 257630, 257606, 257605, 257604, 257601, 257595, 257594, 257592, 257590, 257588, 257587, 257566, 257562, 257561, 257560, 257541, 257540, 257539, 257537, 257531, 257530, 257492, 257491, 257490, 257488, 257487, 257474, 257468, 257457, 257433, 257364, 257358, 257330, 257322, 257320, 257318, 257260, 257224, 257209, 257206, 257204, 257144, 257141, 257139, 257138, 257137, 257136, 257100, 257095, 257092, 257086, 257084, 257082, 257080, 257077, 257028, 257026, 257021, 257012, 257011, 256944, 256942, 256941, 256697, 256695, 256694, 256692, 256691, 256684, 256681, 256677, 256676, 256658, 256620, 256619, 256592, 256591, 256589, 256567, 256565, 256564, 256562, 256560, 256557, 256556, 256554, 256552, 256514, 256512, 256510, 256506, 256504};
             // Total 194 runs
             //(52) 258537, 258499, 258477, 258456, 258454, 258452, 258426, 258393, 258391, 258387, 258359, 258336, 258332, 258307, 258306, 258303, 258302, 258301, 258299, 258278, 258274, 258273, 258271, 258270, 258258, 258257, 258256, 258204, 258203, 258202, 258198, 258197, 258178, 258117, 258114, 258113, 258109, 258108, 258107, 258063, 258062, 258060, 258059, 258053, 258049, 258045, 258042, 258041, 258039, 258019, 258017, 258014, 
             

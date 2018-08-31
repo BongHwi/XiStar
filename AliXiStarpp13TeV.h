@@ -35,7 +35,7 @@ class AliXiStarpp13TeV : public AliAnalysisTaskSE {
 public:
     
     AliXiStarpp13TeV();
-    AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE);
+    AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE, Bool_t PIDOption = kFALSE);
 
     virtual ~AliXiStarpp13TeV();
     AliXiStarpp13TeV(const AliXiStarpp13TeV &obj );
@@ -138,7 +138,7 @@ private:
     Float_t fDecayParameters[kNCuts];// array of reconstruction kinematics
     Float_t fCutValues[kNCutVariations][kNCuts];// array of reconstruction kinematics
     
-    ClassDef(AliXiStarpp13TeV, 1); 
+    ClassDef(AliXiStarpp13TeV, 10); 
 };
 
 #endif

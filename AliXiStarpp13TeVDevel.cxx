@@ -24,7 +24,7 @@
 //  Modified by: Jihye Song (jihye.song@cern.ch)
 //  Last Modified by: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
 //
-//  Last Modified Date: 2018/08/29
+//  Last Modified Date: 2018/08/31
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1097,6 +1097,15 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
     }
     if(fDevelopeMode)std::cout << "Multiplicity: " << lPerc << std::endl;
     ((TH1F*)fOutputList->FindObject("fMultDist_pp"))->Fill(lPerc);
+
+
+    // Pile-Up rejection
+    AliAnalysisUtils * utils = new AliAnalysisUtils();
+    if (utils->IsPileUpSPD(vevt)) {
+        if(fDevelopeMode)std::cout << "Reject: IsPileUpSPD" << std::endl;;
+        return;
+    }
+    ((TH1F*)fOutputList->FindObject("fMultDist_pp_afterPileUpReject"))->Fill(lPerc);
 
     // After the AliMulti
     ((TH1F*)fOutputList->FindObject("hNumberOfEvent"))->Fill(1);
