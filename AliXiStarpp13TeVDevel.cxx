@@ -96,6 +96,7 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel():
     fDevelopeMode(0),
     fHMTrigger(0),
     fPIDOption(0),
+    fSetSystematic(0),
 
     fTempStruct(0x0),
     fZvertexBins(0),
@@ -155,7 +156,7 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel():
 
 }
 //________________________________________________________________________
-AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption)
+AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption, Bool_t SetSystematic)
     : AliAnalysisTaskSE(name),
       fname(name),
       fESD(0x0),
@@ -182,6 +183,7 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecisio
       fTrueMassK(0),
       fTrueMassLam(0),
       fTrueMassXi(0),
+      fSetSystematic(SetSystematic),
 
       fESDTrack4(0x0),
       fXiTrack(0x0),
@@ -314,6 +316,7 @@ AliXiStarpp13TeVDevel &AliXiStarpp13TeVDevel::operator=(const AliXiStarpp13TeVDe
     fESDTrack4 = obj.fESDTrack4;
     fXiTrack = obj.fXiTrack;
     fCutList = obj.fCutList;
+    kNCutVariations = obj.kNCutVariations;
 
 
     for (Int_t i=0; i<kNCuts; i++) {
@@ -475,8 +478,6 @@ void AliXiStarpp13TeVDevel::XiStarInit()
     fCutValues[18][10] = 1.41;
     fCutValues[19][11] = 0.99;
     fCutValues[20][12] = 0.985;
-
-
 
 
     // PDG mass values
@@ -820,6 +821,7 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
     fOutputList->Add(fQATPCNSigPion2);
 
 
+    if(SetSystematic) kNCutVariations = 1;
 
     for(Int_t cv=0; cv<kNCutVariations; cv++) {
 
