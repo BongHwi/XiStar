@@ -316,7 +316,6 @@ AliXiStarpp13TeVDevel &AliXiStarpp13TeVDevel::operator=(const AliXiStarpp13TeVDe
     fESDTrack4 = obj.fESDTrack4;
     fXiTrack = obj.fXiTrack;
     fCutList = obj.fCutList;
-    kNCutVariations = obj.kNCutVariations;
 
 
     for (Int_t i=0; i<kNCuts; i++) {
