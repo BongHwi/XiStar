@@ -820,10 +820,8 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
     fOutputList->Add(fQATPCNSigPion2);
 
 
-    if(SetSystematic) kNCutVariations = 1;
-
     for(Int_t cv=0; cv<kNCutVariations; cv++) {
-
+        if(!SetSystematic && cv > 0) continue;
         if(cv==0) {
             TString *nameXi=new TString("fXi_");
             TString *nameXibar=new TString("fXibar_");
@@ -1744,7 +1742,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
                 ((TH1F*)fOutputList->FindObject("fQAXiStarYDist"))->Fill(xiStarY);
 
                 for(int cv=0; cv<kNCutVariations; cv++) {
-
+                    if(SetSystematic && cv > 0) continue;
 
                     if(fDecayParameters[0] < fCutValues[cv][0]) continue;// Nclus proton
                     if(fDecayParameters[1] < fCutValues[cv][1]) continue;// Nclus pion first

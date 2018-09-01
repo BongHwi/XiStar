@@ -48,9 +48,9 @@ public:
         kLambdaCode          = 3122,// Lambda MC code
         kProtonCode          = 2212,// Proton+ MC code
         kPionCode            = 211,// Pion+ MC code
+        kNCutVariations      = 21,// number of cut variations // 13
         kNCuts               = 13// number of cut types //15
     };
-    Int_t kNCutVariations      = 21;// number of cut variations // 13
 
     //=================================================================================//
     //generated Histograms//
