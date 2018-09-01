@@ -546,10 +546,6 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
     fMultDist_pp->GetXaxis()->SetTitle("Multiplicity Percentile");
     fOutputList->Add(fMultDist_pp);
 
-    TH1F *fMultDist_pp_afterPileUpReject = new TH1F("fMultDist_pp_afterPileUpReject","Multiplicity Distribution of PP",300,0,300);
-    fMultDist_pp_afterPileUpReject->GetXaxis()->SetTitle("Multiplicity Percentile");
-    fOutputList->Add(fMultDist_pp_afterPileUpReject);
-
     TH1F *hEventSelecInfo = new TH1F("hEventSelecInfo","hEventSelecInfo",10,0,10);
     fOutputList->Add(hEventSelecInfo);
     hEventSelecInfo->GetXaxis()->SetBinLabel(2,"kMB");
@@ -1096,15 +1092,6 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
     }
     if(fDevelopeMode)std::cout << "Multiplicity: " << lPerc << std::endl;
     ((TH1F*)fOutputList->FindObject("fMultDist_pp"))->Fill(lPerc);
-
-
-    // Pile-Up rejection
-    AliAnalysisUtils * utils = new AliAnalysisUtils();
-    if (utils->IsPileUpSPD(fESD)) {
-        if(fDevelopeMode)std::cout << "Reject: IsPileUpSPD" << std::endl;;
-        return;
-    }
-    ((TH1F*)fOutputList->FindObject("fMultDist_pp_afterPileUpReject"))->Fill(lPerc);
 
     // After the AliMulti
     ((TH1F*)fOutputList->FindObject("hNumberOfEvent"))->Fill(1);
