@@ -142,7 +142,7 @@ private:
     Bool_t fDevelopeMode;
     Bool_t fHMTrigger;
     Bool_t fPIDOption;
-    Bool_t SetSystematic;
+    Bool_t fSetSystematic;
     Int_t fEventCounter;// The event counter
     ULong64_t fEventNumber; // calcuate event number
 
