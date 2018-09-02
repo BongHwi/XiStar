@@ -546,6 +546,7 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
         TH1F *fMultDist_pp = new TH1F("fMultDist_pp","Multiplicity Distribution of PP",200,0,200);
         fMultDist_pp->GetXaxis()->SetTitle("Multiplicity Percentile");
         fOutputList->Add(fMultDist_pp);
+    }
     else{
         TH1F *fMultDist_pp = new TH1F("fMultDist_pp","Multiplicity Distribution of PP",200,0,2);
         fMultDist_pp->GetXaxis()->SetTitle("Multiplicity Percentile");
