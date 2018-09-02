@@ -542,9 +542,15 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
     fMultDist5->GetXaxis()->SetTitle("Multiplicity");
     fOutputList->Add(fMultDist5);
 
-    TH1F *fMultDist_pp = new TH1F("fMultDist_pp","Multiplicity Distribution of PP",300,0,300);
-    fMultDist_pp->GetXaxis()->SetTitle("Multiplicity Percentile");
-    fOutputList->Add(fMultDist_pp);
+    if(!fHMTrigger){
+        TH1F *fMultDist_pp = new TH1F("fMultDist_pp","Multiplicity Distribution of PP",200,0,200);
+        fMultDist_pp->GetXaxis()->SetTitle("Multiplicity Percentile");
+        fOutputList->Add(fMultDist_pp);
+    else{
+        TH1F *fMultDist_pp = new TH1F("fMultDist_pp","Multiplicity Distribution of PP",200,0,2);
+        fMultDist_pp->GetXaxis()->SetTitle("Multiplicity Percentile");
+        fOutputList->Add(fMultDist_pp);
+    }
 
     TH1F *hEventSelecInfo = new TH1F("hEventSelecInfo","hEventSelecInfo",10,0,10);
     fOutputList->Add(hEventSelecInfo);
