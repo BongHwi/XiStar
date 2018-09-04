@@ -22,7 +22,7 @@ void runXiStar6(const char *mode = "full") { // local/test/full/terminate
     Int_t CutList = 0;
     Bool_t DevelopmentMode=kFALSE;
     TString *Production=new TString("16k");
-    const char* working_directory="pp13TeV_LHC16k_HMT";
+    const char* working_directory="pp13TeV_LHC16k_MC";
     const char *dataset = "test1.list";
 
     gSystem->Load("libTree.so");
