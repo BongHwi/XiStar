@@ -166,7 +166,7 @@ void runXiStar6(const char *mode = "full") { // local/test/full/terminate
             }
         } else {// MC data
             if(Production->Contains("16k")) { // AODs
-                plugin->SetGridDataDir("/alice/sim/2017/LHC18c6b2");
+                plugin->SetGridDataDir("/alice/sim/2018/LHC18c6b2");
                 plugin->SetDataPattern("*AliESDs.root");
                 totruns += AddGoodRuns(plugin,"LHC16k", MCcase);
             }
@@ -181,6 +181,7 @@ void runXiStar6(const char *mode = "full") { // local/test/full/terminate
         plugin->SetMaxMergeStages(3);
         plugin->SetMaxMergeFiles(100);
         plugin->SetMergeViaJDL(kTRUE);
+        plugin->SetCheckCopy(kFALSE);
 
         plugin->SetGridWorkingDir(working_directory);
         plugin->SetGridOutputDir("output");
