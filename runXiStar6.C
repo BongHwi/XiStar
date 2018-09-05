@@ -94,7 +94,7 @@ void runXiStar6(const char *mode = "full") { // local/test/full/terminate
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevelEventCollection.cxx+g");
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // AddTask
-    AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeVDevel.C(%d,%d,%i,%d,%d,%d,%d)",AODcase,MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic)));
+    AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeVDevel.C(%d,%d,%i,%d,%d,%d,%d)",MCcase,AODcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic)));
     //AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",AODcase,MCcase,CutList,DevelopmentMode)));
 #else
     // ROOT 5 MODE
@@ -120,7 +120,7 @@ void runXiStar6(const char *mode = "full") { // local/test/full/terminate
     gROOT->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // Add Task
     gROOT->LoadMacro("AddTaskXiStarpp13TeVDevel.C");
-    AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(AODcase,MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic);
+    AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(MCcase,AODcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic);
 #endif
     if(!mgr->InitAnalysis()) return;
     //mgr->SetDebugLevel(10);
