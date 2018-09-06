@@ -37,17 +37,18 @@ void runXiStar6(const char *mode = "full") { // local/test/full/terminate
     gSystem->Load("libANALYSISalice.so");
 
     gSystem->SetIncludePath("-I. -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS -I$ALICE_PHYSICS/include -I$ALICE_ROOT/STEER -I$ALICE_ROOT/ANALYSIS -I$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY -g");
-
 #if !defined (__CINT__) || defined (__CLING__)
     // ROOT 6 MODE
     gInterpreter->ProcessLine(".include $ROOTSYS/include");
     gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
     gInterpreter->ProcessLine(".include $ALICE_PHYSICS/include");
+    if(MCcase) gInterpreter->ProcessLine(".include $ALICE_ROOT/include/Pythia8");
 #else
     // ROOT 5 MODE
     gROOT->ProcessLine(".include $ROOTSYS/include");
     gROOT->ProcessLine(".include $ALICE_ROOT/include");
     gROOT->ProcessLine(".include $ALICE_PHYSICS/include");
+    if(MCcase) gROOT->ProcessLine(".include $ALICE_ROOT/include/Pythia8");
 #endif
 
     // Make the analysis manager
