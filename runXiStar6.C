@@ -22,7 +22,7 @@ void runXiStar6(const char *mode = "test") { // local/test/full/terminate
     Int_t CutList = 0;
     Bool_t DevelopmentMode=kFALSE;
     TString *Production=new TString("16k");
-    const char* working_directory="pp13TeV_LHC16k_MC";
+    const char* working_directory="pp13TeV_LHC16k_MC3";
     const char *dataset = "test1.list";
 
     gSystem->Load("libTree.so");
@@ -35,6 +35,8 @@ void runXiStar6(const char *mode = "test") { // local/test/full/terminate
     gSystem->Load("libANALYSIS.so");
     gSystem->Load("libOADB.so");
     gSystem->Load("libANALYSISalice.so");
+
+    gSystem->ListLibraries();
 
     gSystem->SetIncludePath("-I. -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS -I$ALICE_PHYSICS/include -I$ALICE_ROOT/STEER -I$ALICE_ROOT/ANALYSIS -I$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY -g");
 #if !defined (__CINT__) || defined (__CLING__)
@@ -140,8 +142,7 @@ void runXiStar6(const char *mode = "test") { // local/test/full/terminate
 
         plugin->SetAnalysisSource("AliXiStarpp13TeVDevelEventCollection.cxx AliXiStarpp13TeVDevel.cxx");
         plugin->SetAdditionalLibs("AliXiStarpp13TeVDevelEventCollection.h AliXiStarpp13TeVDevelEventCollection.cxx AliXiStarpp13TeVDevel.h AliXiStarpp13TeVDevel.cxx");
-
-        plugin->SetAliPhysicsVersion("vAN-20180128-1");
+        plugin->SetAliPhysicsVersion("vAN-20180909-1");
         plugin->SetAPIVersion("V1.1x");
         // Data
         if(!MCcase) plugin->SetRunPrefix("000");   // real or MC data
@@ -165,8 +166,8 @@ void runXiStar6(const char *mode = "test") { // local/test/full/terminate
             }
         } else {// MC data
             if(Production->Contains("16k")) { // AODs
-                //plugin->SetGridDataDir("/alice/sim/2018/LHC18c6b2");
-                plugin->SetGridDataDir("/alice/sim/2017/LHC17d20a1");
+                plugin->SetGridDataDir("/alice/sim/2018/LHC18c6b2");
+                //plugin->SetGridDataDir("/alice/sim/2017/LHC17d20a1");
                 plugin->SetDataPattern("*AliESDs.root");
                 totruns += AddGoodRuns(plugin,"LHC16k", MCcase);
             }
