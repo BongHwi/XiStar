@@ -1359,14 +1359,11 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
 
             ((TH1F*)fOutputList->FindObject("fXiStarYDistMC1"))->Fill(mcInputTrackXiStar->Y());
 
-
-
-
             if(mcInputTrackXiStar->GetPdgCode() == +kXiStarCode) {
-                ((TH3F*)fOutputList->FindObject("fMCinputTotalXiStar3"))->Fill(mcInputTrackXiStar->Pt(), mcInputTrackXiStar->Y(), mcInputTrackXiStar->GetCalcMass());
+                ((TH3F*)fOutputList->FindObject("fMCinputTotalXiStar3"))->Fill(mcInputTrackXiStar->Pt(), lperc, mcInputTrackXiStar->GetCalcMass());
             }
             else {
-                ((TH3F*)fOutputList->FindObject("fMCinputTotalXiStarbar3"))->Fill(mcInputTrackXiStar->Pt(), mcInputTrackXiStar->Y(), mcInputTrackXiStar->GetCalcMass());
+                ((TH3F*)fOutputList->FindObject("fMCinputTotalXiStarbar3"))->Fill(mcInputTrackXiStar->Pt(), lperc, mcInputTrackXiStar->GetCalcMass());
 
             }
 
