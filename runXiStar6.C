@@ -9,7 +9,7 @@
 Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase=kFALSE);
 TChain *CreateChain(const char *fileName, Bool_t AODcase);
 
-void runXiStar6(const char *mode = "test") { // local/test/full/terminate
+void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     int Nevents=100;
 
     Bool_t MCcase=kTRUE;
@@ -20,7 +20,7 @@ void runXiStar6(const char *mode = "test") { // local/test/full/terminate
     
 
     Int_t CutList = 0;
-    Bool_t DevelopmentMode=kFALSE;
+    Bool_t DevelopmentMode=kTRUE;
     TString *Production=new TString("16k");
     const char* working_directory="pp13TeV_LHC16k_MC3";
     const char *dataset = "test1.list";
@@ -124,9 +124,9 @@ void runXiStar6(const char *mode = "test") { // local/test/full/terminate
     AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(MCcase,AODcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic);
 #endif
     if(!mgr->InitAnalysis()) return;
-    //mgr->SetDebugLevel(10);
+    mgr->SetDebugLevel(10);
     mgr->PrintStatus();
-    //mgr->SetUseProgressBar(1, 25);
+    mgr->SetUseProgressBar(1, 25);
     if(strcmp(mode,"local")==0) {// local pc mode; gets AOD or ESD files from my machine
         TChain *chain = new TChain("ESDTree");
         chain = CreateChain(dataset,AODcase); // for KIAF use

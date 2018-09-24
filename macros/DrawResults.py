@@ -1,6 +1,3 @@
-#Last Working backup
-
-
 # DrawResults.py
 # Draw histograms with specific criteria and fit
 # 
@@ -20,7 +17,7 @@ import datetime
 import sys
 
 currenttime = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-PrintOption = 1 #0 for no print, 1 for print
+PrintOption = 0 #0 for no print, 1 for print
 
 if(PrintOption == 1): print("Current time: %s"%currenttime)
 
@@ -39,7 +36,7 @@ if(PrintOption == 1): print("Load file: "+Inputfile01)
 f1 = ROOT.TFile(Inputfile01)
 mydir1 = f1.Get("PWGLF.outputXiStarAnalysis.root;1")
 mydir1.ls()
-mylist1 = mydir1.Get("MyList;1")
+mylist1 = mydir1.Get("MyList_0;1")
 if(mylist1.FindObject("fMCinputTotalXiStar3").GetEntries()>0): 
 	f_MC = f1
 	mylist_mc = mylist1
@@ -81,11 +78,15 @@ def DrawResults():
 	# Inputs
 	outputFileName = "Analysis_Results_Xi1530_%s.root"%currenttime
 	
-	pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8,15]
+	#pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8,15] # for study
+	pTRange = [0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8] # for analysis
+	pTRange_draw = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8] # for study
 	#pTRange = [0,30]
-	MultiplicityRage = [0,5,15,30,50,100]
-	#MultiplicityRage = [0,15,50,100]
-	MultiplicitySet = 0 #0 of MB, 1 for Multi add
+
+	MultiplicityRage = [0,5,15,30,50,100] # My own
+	#MultiplicityRage = [0,15,50,100] # Xi1830
+	MultiplicityRage = [0,1,5,10,15,20,30,40,50,70,100] # Default in LF
+	MultiplicitySet = 1 #0 of MB, 1 for Multi add
 	
 	massRebin = 1
 	AxisRange = [1.48,1.59]
@@ -95,6 +96,15 @@ def DrawResults():
 	NormalizeRange_R = [1.56,1.58]
 	fitRange = [1.52,1.55]
 	fitintrange = [1.52,1.55]
+	
+	Fit_type = 0 #0: sigma fit(MB study) 1: width fit
+	FitSigma = 0.0020 #0.0020 for default value
+	Save = 0 #0: skip saving pdf   images, 1: save pdf   images
+	SaveType = "pdf" #png, pdf
+
+	#Colors = ["kRed+2","kRed","kOrange","kSpring+10","kGreen+1","kTeal","kCyan","kAzure-2","kBlue+2","kMagenta+3"]
+	Colors = [634,632,800,830,417,840,432,858,602,619] #for spectra
+
 	hNames = ["fXiMinusPiPlus_0", "fXiPlusPiMinus_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
 	hNamesXi = ["",""] # Xi histogram
 	#hNames_mix = ["fXiMinusPiPlusbkg_0", "fXiPlusPiMinusbkg_0"] #fXiMinusPiPlus_0: Xi(1530), fXiPlusPiMinus_0: Anti-Xi(1530)
@@ -103,10 +113,7 @@ def DrawResults():
 	hNames_MCinput_prePV = ["fMCinputTotalXiStar1", "fMCinputTotalXiStarbar1"] #generated MC pre PV cut
 	hNames_Mcrecon = ["fMCrecXiMinusPiPlus_0", "fMCrecXiPlusPiMinus_0"] #recon MC
 	QAhisto = ["fMultDist_pp", "hEventSelecInfo", "fCutEvents","TPCPID","hdEdxProton","hdEdxPion1","hdEdxPion2","hdEdxProtonAfter","hdEdxPion1After","hdEdxPion2After"] #for QA
-	Fit_type = 0 #0: sigma fit(MB study) 1: width fit
-	FitSigma = 0.0020 #0.0020 for default value
-	Save = 0 #0: skip saving pdf   images, 1: save pdf   images
-	SaveType = "png" #png, pdf
+	
 	#====================
 	#====================
 	# Default lists
@@ -114,7 +121,9 @@ def DrawResults():
 	QAh_mc = []
 
 	pTCenter=[]
+	pTCenter_draw=[]
 	pTRange_err = []
+	pTRange_draw_err = []
 	MultCenter=[]
 	MultRange_err = []
 
@@ -168,14 +177,20 @@ def DrawResults():
 	
 	RawYield = []
 	RawYield_err = []
-	RawYield_Multi = [[0 for col in range(len(MultiplicityRage)-1)] for row in range(len(pTRange)-1)]
-	RawYield_Multi_err = [[0 for col in range(len(MultiplicityRage)-1)] for row in range(len(pTRange)-1)]
-	
+	RawYield_Multi = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
+	RawYield_Multi_err = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
+
+	gr_Eff_mult = []
+	RawYieldAspT_mult = []
+
 	h_Xispectrum_mult = []
 
 	for i in range(0,len(pTRange)-1):
 		pTCenter.append(pTRange[i]+(pTRange[i+1]-pTRange[i])/2)
 		pTRange_err.append((pTRange[i+1]-pTRange[i])/2)
+	for i in range(0,len(pTRange_draw)-1):
+		pTCenter_draw.append(pTRange_draw[i]+(pTRange_draw[i+1]-pTRange_draw[i])/2)
+		pTRange_draw_err.append((pTRange_draw[i+1]-pTRange_draw[i])/2)
 	for i in range(0,len(MultiplicityRage)-1):
 		MultCenter.append(MultiplicityRage[i]+(MultiplicityRage[i+1]-MultiplicityRage[i])/2)
 		MultRange_err.append((MultiplicityRage[i+1]-MultiplicityRage[i])/2)
@@ -210,7 +225,7 @@ def DrawResults():
 				QAh[i].GetXaxis().SetTitle("p (GeV/c)")
 				c0.SetLogx()
 				QAh[i].GetYaxis().SetTitle("dE/dx (arb. units)")
-				ROOT.gStyle.SetPalette(1)
+				ROOT.gStyle.SetPalette(55)
 			QAh[i].Write("%s"%QAhisto[i])
 			QAh[i].Draw("colz")
 			c0.SaveAs("figs/QA/QA_%s.%s"%(QAhisto[i],SaveType))
@@ -232,7 +247,7 @@ def DrawResults():
 		Events_PhysSel.Write("fMultDist1")
 		Events_PhysSel.Draw()
 		c0.SaveAs("figs/QA/QA_Events_PhysSel_mc.%s"%SaveType)
-
+	c0.SetLogx(0) #release.
 	#===================
 	#ROOT.gStyle.SetOptStat(1)
 	try:
@@ -320,7 +335,7 @@ def DrawResults():
 		c1.Write("Xi1530_MCQA_NumberWithpT_reconstructed")
 		c1.SaveAs("figs/mc/Xi1530_MCQA_NumberWithpT_reconstructed.%s"%SaveType)
 
-		temp2.SetLineColor(1)
+		temp2.SetLineColor(Colors[4])
 		temp1.SetTitle("Generated/Reconstructed Xi(1530)")
 		temp1.Draw("E")
 		temp2.Draw("E SAME")
@@ -339,20 +354,21 @@ def DrawResults():
 			MCEfficiency_Error.append(sqrt(pow(sqrt(XiStarMCreconpT[i])/XiStarMCinputpT[i],2) + pow(sqrt(XiStarMCinputpT[i])*XiStarMCreconpT[i]/pow(XiStarMCinputpT[i],2),2)))
 			if(PrintOption == 1): print("Efficiency: %f"%MCEfficiency[i])
 			if(PrintOption == 1): print("Efficiency_Error: %f"%MCEfficiency_Error[i])
-			for j in range(0,len(MultiplicityRage)-1):
-				if(PrintOption == 1): print("=========Mult %d to %d========="%(MultiplicityRage[j],MultiplicityRage[j+1]))
-				if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
-				XiStarMCinputpT_mult[i][j] = XiStarMCinput[0].Integral(XiStarMCinput[0].GetXaxis().FindBin(pTRange[i]),XiStarMCinput[0].GetXaxis().FindBin(pTRange[i+1]),XiStarMCinput[0].GetYaxis().FindBin(MultiplicityRage[j]),XiStarMCinput[0].GetYaxis().FindBin(MultiplicityRage[j+1]),XiStarMCinput[0].GetZaxis().FindBin(fitintrange[0]),XiStarMCinput[0].GetZaxis().FindBin(fitintrange[-1]))
-				if(PrintOption == 1): print("Normalizing factor from generated: %f"%XiStarMCinputpT_mult[i][j])
-				XiStarMCreconpT_mult[i][j] = XiStarMCrecon[0].Integral(XiStarMCrecon[0].GetXaxis().FindBin(pTRange[i]),XiStarMCrecon[0].GetXaxis().FindBin(pTRange[i+1]),XiStarMCrecon[0].GetYaxis().FindBin(MultiplicityRage[j]),XiStarMCrecon[0].GetYaxis().FindBin(MultiplicityRage[j+1]),XiStarMCrecon[0].GetZaxis().FindBin(fitintrange[0]),XiStarMCrecon[0].GetZaxis().FindBin(fitintrange[-1]))
-				if(PrintOption == 1): print("Normalizing factor from reconstructed: %f"%XiStarMCreconpT_mult[i][j])
-				MCEfficiency_mult[i][j] = XiStarMCreconpT_mult[i][j]/XiStarMCinputpT_mult[i][j]
-				MCEfficiency_Error_mult = sqrt(pow(sqrt(XiStarMCreconpT_mult[i][j])/XiStarMCinputpT_mult[i][j],2) + pow(sqrt(XiStarMCinputpT_mult[i][j])*XiStarMCreconpT_mult[i][j]/pow(XiStarMCinputpT_mult[i][j],2),2))
-				if(PrintOption == 1): print("Efficiency: %f"%MCEfficiency[i])
-				if(PrintOption == 1): print("Efficiency_Error: %f"%MCEfficiency_Error[i])
+
+			# For the multiplicity
+			if(MultiplicitySet==1):
+				for j in range(0,len(MultiplicityRage)-1):
+					if(PrintOption == 1): print("=========Mult %d to %d========="%(MultiplicityRage[j],MultiplicityRage[j+1]))
+					if(PrintOption == 1): print("pT Rage: "+str(pTRange[i])+" to "+str(pTRange[i+1]))
+					XiStarMCinputpT_mult[j][i] = XiStarMCinput[0].Integral(XiStarMCinput[0].GetXaxis().FindBin(pTRange[i]),XiStarMCinput[0].GetXaxis().FindBin(pTRange[i+1]),XiStarMCinput[0].GetYaxis().FindBin(MultiplicityRage[j]),XiStarMCinput[0].GetYaxis().FindBin(MultiplicityRage[j+1]),XiStarMCinput[0].GetZaxis().FindBin(fitintrange[0]),XiStarMCinput[0].GetZaxis().FindBin(fitintrange[-1]))
+					if(PrintOption == 1): print("Normalizing factor from generated: %f"%XiStarMCinputpT_mult[j][i])
+					XiStarMCreconpT_mult[j][i] = XiStarMCrecon[0].Integral(XiStarMCrecon[0].GetXaxis().FindBin(pTRange[i]),XiStarMCrecon[0].GetXaxis().FindBin(pTRange[i+1]),XiStarMCrecon[0].GetYaxis().FindBin(MultiplicityRage[j]),XiStarMCrecon[0].GetYaxis().FindBin(MultiplicityRage[j+1]),XiStarMCrecon[0].GetZaxis().FindBin(fitintrange[0]),XiStarMCrecon[0].GetZaxis().FindBin(fitintrange[-1]))
+					if(PrintOption == 1): print("Normalizing factor from reconstructed: %f"%XiStarMCreconpT_mult[j][i])
+					MCEfficiency_mult[j][i] = XiStarMCreconpT_mult[j][i]/XiStarMCinputpT_mult[j][i]
+					MCEfficiency_Error_mult[j][i] = sqrt(pow(sqrt(XiStarMCreconpT_mult[j][i])/XiStarMCinputpT_mult[j][i],2) + pow(sqrt(XiStarMCinputpT_mult[j][i])*XiStarMCreconpT_mult[j][i]/pow(XiStarMCinputpT_mult[j][i],2),2))
+					if(PrintOption == 1): print("Efficiency: %f"%MCEfficiency_mult[j][i])
+					if(PrintOption == 1): print("Efficiency_Error: %f"%MCEfficiency_Error_mult[j][i])
 			
-
-
 		gr_Eff = ROOT.TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
 		gr_Eff.SetMarkerStyle(20)
 		gr_Eff.SetMinimum(0)
@@ -362,7 +378,20 @@ def DrawResults():
 		gr_Eff.GetYaxis().SetTitle("Acceptance x Efficiency x BR")
 		gr_Eff.Draw("AP")
 
-		gr_Eff_7TeV = ROOT.TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency_7TeV, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
+		if(MultiplicitySet==1):
+			for j in range(0,len(MultiplicityRage)-1):
+				gr_Eff_mult.append(ROOT.TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency_mult[j], 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error_mult[j], 'd')))
+				gr_Eff_mult[j].SetMarkerStyle(20)
+				gr_Eff_mult[j].SetMarkerColor(Colors[j])
+				gr_Eff_mult[j].SetLineColor(Colors[j])
+				gr_Eff_mult[j].SetMinimum(0)
+				gr_Eff_mult[j].SetMaximum(0.4)
+				gr_Eff_mult[j].SetTitle("")
+				gr_Eff_mult[j].GetXaxis().SetTitle("p_{T} (GeV/c)")
+				gr_Eff_mult[j].GetYaxis().SetTitle("Acceptance x Efficiency x BR")
+
+
+		gr_Eff_7TeV = ROOT.TGraphErrors(len(pTRange_draw)-1,np.asarray(pTCenter_draw, 'd'),np.asarray(MCEfficiency_7TeV, 'd') , np.asarray(pTRange_draw_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
 		gr_Eff_7TeV.SetMarkerStyle(20)
 		gr_Eff_7TeV.SetMarkerColor(2)
 		gr_Eff_7TeV.SetMinimum(0)
@@ -370,7 +399,7 @@ def DrawResults():
 		gr_Eff_7TeV.SetTitle("")
 		gr_Eff_7TeV.Draw("P")
 
-		gr_Eff_13TeV_17 = ROOT.TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency_13TeV_LHC17, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
+		gr_Eff_13TeV_17 = ROOT.TGraphErrors(len(pTRange_draw)-1,np.asarray(pTCenter_draw, 'd'),np.asarray(MCEfficiency_13TeV_LHC17, 'd') , np.asarray(pTRange_draw_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
 		gr_Eff_13TeV_17.SetMarkerStyle(20)
 		gr_Eff_13TeV_17.SetMarkerColor(3)
 		gr_Eff_13TeV_17.SetMinimum(0)
@@ -378,7 +407,7 @@ def DrawResults():
 		gr_Eff_13TeV_17.SetTitle("")
 		gr_Eff_13TeV_17.Draw("P")
 
-		gr_Eff_13TeV_16 = ROOT.TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(MCEfficiency_13TeV_LHC16, 'd') , np.asarray(pTRange_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
+		gr_Eff_13TeV_16 = ROOT.TGraphErrors(len(pTRange_draw)-1,np.asarray(pTCenter_draw, 'd'),np.asarray(MCEfficiency_13TeV_LHC16, 'd') , np.asarray(pTRange_draw_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
 		gr_Eff_13TeV_16.SetMarkerStyle(20)
 		gr_Eff_13TeV_16.SetMarkerColor(4)
 		gr_Eff_13TeV_16.SetMinimum(0)
@@ -400,6 +429,31 @@ def DrawResults():
 
 		c1.Write("Xi1530_MCQA_Efficiency")
 		c1.SaveAs("figs/mc/Xi1530_MCQA_Efficiency.%s"%SaveType)
+
+
+
+		if(MultiplicitySet==1):
+
+			gr_Eff_mg = ROOT.TMultiGraph()
+			gr_Eff_mg.SetTitle("Efficiency with given multiplicity")
+
+			leg = ROOT.TLegend(.75,.40,.80,.80)
+			leg.SetHeader("V0M Multiplicity","C")
+			leg.SetBorderSize(0)
+			leg.SetFillColor(0)
+			leg.SetFillStyle(0)
+			leg.SetTextFont(42)
+			leg.SetTextSize(0.035)
+
+			for j in range(0,len(MultiplicityRage)-1):
+				gr_Eff_mg.Add(gr_Eff_mult[j])
+				leg.AddEntry(gr_Eff_mult[j],"%d-%d%%"%(MultiplicityRage[j],MultiplicityRage[j+1]),"lp")
+			#RawYieldAspT_mult_mg.SetMinimum(0.1)
+			gr_Eff_mg.Draw("AP")
+
+			leg.Draw()
+			#c1.SetLogy()
+			c1.SaveAs("figs/mc/Xi1530_MCQA_Efficiency_mult.%s"%SaveType)
 		
 	#---------------------------------------------------------------------------------------
 	try:
@@ -628,7 +682,7 @@ def DrawResults():
 
 			
 
-		if(MultiplicitySet=="1"):
+		if(MultiplicitySet==1):
 			#==========================	MULTIPLICITY============================================
 			#Slice Histogram with given Multiplicity
 			for i in range(0,len(pTRange)-1):
@@ -789,9 +843,9 @@ def DrawResults():
 					# Get the raw yield
 					#fitIntegral = signal.createIntegral(mesArgSet,ROOT.RooFit.NormSet(mesArgSet),ROOT.RooFit.Range("IntegralRange"))
 					fitIntegral = model.createIntegral(ROOT.RooArgSet(x),ROOT.RooArgSet(x),"IntegralRange")
-					RawYield_Multi[i][j].append(nsig.getValV()*fitIntegral.getVal())
+					RawYield_Multi[j][i] = nsig.getValV()*fitIntegral.getVal()
 					fitIntegral_err = fitIntegral.getValV()*nsig.getError()/nsig.getValV()
-					RawYield_Multi[i][j].append(fitIntegral_err)
+					RawYield_Multi_err[j][i] = fitIntegral_err
 		
 		#For Result Presensation
 		c2 = ROOT.TCanvas('c2','Invariant Mass Distribution with pT bins',1920,1080)
@@ -875,11 +929,12 @@ def DrawResults():
 		fitMeanAspT.GetYaxis().SetTitle("Mass (GeV/c^{2})")
 		fitMeanAspT.GetYaxis().SetTitleOffset(1.3)
 		fitMeanAspT.GetXaxis().SetTitle("p_{T} (GeV/c)")
+		fitMeanAspT.GetXaxis().SetLimits(0,pTRange[-1])
 		fitMeanAspT.Draw("AP")
 		pdg_massline = ROOT.TF1("pdg_massline","1.53178",-1,pTRange[-1]+1)
 		pdg_massline.Draw("same")
 		
-		c1.Write("Xi1530_fit_mean")
+		fitMeanAspT.Write("Xi1530_fit_mean")
 		c1.SaveAs("figs/fit_means.%s"%SaveType)
 
 		# Fit sigma value plot with pT
@@ -894,12 +949,13 @@ def DrawResults():
 			fitSigmaAspT.GetYaxis().SetTitle("#Gamma (GeV/c^{2})")
 		fitSigmaAspT.SetTitle("")
 		fitSigmaAspT.GetXaxis().SetTitle("p_{T} (GeV/c)")
+		fitSigmaAspT.GetXaxis().SetLimits(0,pTRange[-1])
 		fitSigmaAspT.Draw("AP")
 		if(Fit_type == 1):
 			pdg_widthline = ROOT.TF1("pdg_widthline","0.0091",-1,pTRange[-1]+1)
 			pdg_widthline.Draw("same")
 		
-		c1.Write("Xi1530_fit_sigma")
+		fitSigmaAspT.Write("Xi1530_fit_sigma")
 		c1.SaveAs("figs/fit_sigma.%s"%SaveType)
 
 		# RAW Yield plot with pT
@@ -909,12 +965,13 @@ def DrawResults():
 		RawYieldAspT.GetYaxis().SetTitle("Raw Yield")
 		RawYieldAspT.SetTitle("")
 		RawYieldAspT.GetXaxis().SetTitle("p_{T} (GeV/c)")
+		RawYieldAspT.GetXaxis().SetLimits(0,pTRange[-1])
 		RawYieldAspT.Draw("AP")
 		
-		c1.Write("Xi1530_Raw_Yield")
+		RawYieldAspT.Write("Xi1530_Raw_Yield")
 		c1.SaveAs("figs/Raw_Yield.%s"%SaveType)
 
-		if(MultiplicitySet=="1"):
+		if(MultiplicitySet==1):
 			#For Result Presensation with multiplicity bin
 			c3 = ROOT.TCanvas('c3','Invariant Mass Distribution with pT bins',1920,1080)
 			if(len(pTRange)<3):
@@ -991,11 +1048,12 @@ def DrawResults():
 				fitMeanAspT_mult.GetYaxis().SetTitle("Mass (GeV/c^{2})")
 				fitMeanAspT_mult.GetYaxis().SetTitleOffset(1.3)
 				fitMeanAspT_mult.GetXaxis().SetTitle("p_{T} (GeV/c)")
+				fitMeanAspT_mult.GetXaxis().SetLimits(0,pTRange[-1])
 				fitMeanAspT_mult.Draw("AP")
 				pdg_massline = ROOT.TF1("pdg_massline","1.53178",-1,pTRange[-1]+1)
 				pdg_massline.Draw("same")
 				
-				c1.Write("Xi1530_fit_mean_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
+				fitMeanAspT_mult.Write("Xi1530_fit_mean_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
 				c1.SaveAs("figs/fit_means_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
 			
 			# Fit sigma value plot with pT
@@ -1011,6 +1069,7 @@ def DrawResults():
 					fitSigmaAspT_mult.GetYaxis().SetTitle("#Gamma (GeV/c^{2})")
 				fitSigmaAspT_mult.SetTitle("")
 				fitSigmaAspT_mult.GetXaxis().SetTitle("p_{T} (GeV/c)")
+				fitSigmaAspT_mult.GetXaxis().SetLimits(0,pTRange[-1])
 				fitSigmaAspT_mult.Draw("AP")
 				if(Fit_type == 1):
 					pdg_widthline = ROOT.TF1("pdg_widthline","0.0091",-1,pTRange[-1]+1)
@@ -1019,25 +1078,61 @@ def DrawResults():
 					print(fitParameter_sigma_mult[j])
 					print(fitParameter_sigma_err_mult[j])
 				
-				c1.Write("Xi1530_fit_sigma_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
+				fitSigmaAspT_mult.Write("Xi1530_fit_sigma_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
 				c1.SaveAs("figs/fit_sigma_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
 			#Fit width plot with Multiplicity with full pT range
 			if(Fit_type == 1):
 				fitSigmaAsmult = ROOT.TGraphErrors(len(MultiplicityRage)-1,np.asarray(MultCenter, 'd'),np.asarray(fitParameter_sigma_mult, 'd') , np.asarray(MultRange_err, 'd'), np.asarray(fitParameter_sigma_err_mult, 'd'))
 				fitSigmaAsmult.SetMarkerStyle(20)
 				fitSigmaAsmult.SetMinimum(0);
-				fitSigmaAsmult.SetMaximum(0.020);
+				fitSigmaAsmult.SetMaximum(0.020)
 				fitSigmaAsmult.GetYaxis().SetTitle("#Gamma (GeV/c^{2})")
 				fitSigmaAsmult.SetTitle("")
 				fitSigmaAsmult.GetXaxis().SetTitle("Multiplicity percentile (%)")
+				fitSigmaAsmult.GetXaxis().SetLimits(0,pTRange[-1])
 				fitSigmaAsmult.Draw("AP")
 				pdg_widthline = ROOT.TF1("pdg_widthline","0.0091",-1,MultiplicityRage[-1])
 				pdg_widthline.Draw("same")
 				
-				c1.Write("Xi1530_fit_gamma")
+				fitSigmaAsmult.Write("Xi1530_fit_gamma")
 				c1.SaveAs("figs/fit_gamma.%s"%SaveType)
+
+			# RAW Yield plot with pT with Multiplicity
+			for j in range(0,len(MultiplicityRage)-1):
+				RawYieldAspT_mult.append(ROOT.TGraphErrors(len(pTRange)-1,np.asarray(pTCenter, 'd'),np.asarray(RawYield_Multi[j], 'd') , np.asarray(pTRange_err, 'd'), np.asarray(RawYield_Multi_err[j], 'd')))
+				RawYieldAspT_mult[j].SetMarkerStyle(20)
+				RawYieldAspT_mult[j].SetMarkerColor(Colors[j])
+				RawYieldAspT_mult[j].SetMinimum(0)
+				RawYieldAspT_mult[j].GetYaxis().SetTitle("Raw Yield")
+				RawYieldAspT_mult[j].SetTitle("%d to %d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
+				RawYieldAspT_mult[j].GetXaxis().SetTitle("p_{T} (GeV/c)")
+				RawYieldAspT_mult[j].GetXaxis().SetLimits(0,pTRange[-1])
+				RawYieldAspT_mult[j].Draw("AP")
+				
+				RawYieldAspT_mult[j].Write("Xi1530_Raw_Yield_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
+			
+			RawYieldAspT_mult_mg = ROOT.TMultiGraph()
+			RawYieldAspT_mult_mg.SetTitle("RAW yield with given multiplicity")
+
+			leg2 = ROOT.TLegend(.75,.40,.80,.80)
+			leg2.SetHeader("V0M Multiplicity","C")
+			leg2.SetBorderSize(0)
+			leg2.SetFillColor(0)
+			leg2.SetFillStyle(0)
+			leg2.SetTextFont(42)
+			leg2.SetTextSize(0.035)
+
+			for j in range(0,len(MultiplicityRage)-1):
+				RawYieldAspT_mult_mg.Add(RawYieldAspT_mult[j])
+				leg2.AddEntry(RawYieldAspT_mult[j],"%d-%d%%"%(MultiplicityRage[j],MultiplicityRage[j+1]),"lp")
+			#RawYieldAspT_mult_mg.SetMinimum(0.1)
+			RawYieldAspT_mult_mg.Draw("AP")
+
+			leg2.Draw()
+			#c1.SetLogy()
+			c1.SaveAs("figs/Raw_Yield_mult.%s"%SaveType)
 		#print(RawYield)
-		#print(RawYield_err)
+		print(RawYield_err)
 	try:
 		mylist_data, mylist_mc
 	except NameError:
@@ -1048,30 +1143,37 @@ def DrawResults():
 		
 		# Corrected Yield Spectra in MB
 
-		h_Xispectrum = ROOT.TH1D("h_Xispectrum","Xi spectrum",len(pTRange)-1,np.asarray(pTRange, 'd'))
+		h_Xispectrum = ROOT.TH1D("h_Xispectrum","Xi spectrum",len(pTRange_draw)-1,np.asarray(pTRange_draw, 'd'))
 		h_Xispectrum.SetMarkerStyle(20)
 		h_Xispectrum.SetMarkerSize(1.0)
 		h_Xispectrum.SetTitle("#Xi(1530) spectrum pp #sqrt{s}= 13 TeV")
 		h_Xispectrum.GetXaxis().SetTitle("p_{T} (GeV/c)")
-		h_Xispectrum.GetYaxis().SetTitle("1/N_{E}d^{2}N/dydp_{T} (GeV/c)^{-1}")
+		h_Xispectrum.GetYaxis().SetTitle("1/N_{event}d^{2}N/(dydp_{T}) (GeV/c)^{-1}")
 		h_Xispectrum.SetMinimum(3.0e-6)
-		h_Xispectrum.SetMaximum(0.2)
+		h_Xispectrum.SetMaximum(20)
 		#h_Xispectrum.GetXaxis().SetLimits(0,5.6)
 
 		h_Xispectrum.SetBinContent(1,+100)
-		for pT in range(1,len(pTRange)-1):
-			if(pT == len(pTRange)-2):
-				continue
+		for pT in range(0,len(pTRange)-1):
+			#if(pT == len(pTRange)-2):
+			#	continue
 			#base = MCEfficiency[ptbin]*LostRatio*(raprange[1]-raprange[0])*(2*pt_points_e[ptbin])*Events_PhysSel->GetEntries()/0.852
 			#LostRatio -> Calculated the ratio between prePV cut and after. in this case, it was 1.
 			#raprange -> -0.5 to 0.5 -> 1
 			#pt_points_e
 			#print(pT)
 			base = MCEfficiency[pT]*(2*pTRange_err[pT])*Events_PhysSel.GetEntries()/0.9
-			h_Xispectrum.SetBinContent(pT+1, RawYield[pT]/base)
+			h_Xispectrum.SetBinContent(pT+2, RawYield[pT]/base)
 			#print(RawYield[pT]/base)
-			h_Xispectrum.SetBinError(pT+1, RawYield_err[pT]/base)
-		h_Xispectrum.Draw()
+			print("base: %f"%base)
+
+			err = pow(RawYield_err[pT]/base,2)
+			err = err + pow(RawYield_err[pT]/base*MCEfficiency_Error[pT]/MCEfficiency[pT],2)
+			err = sqrt(err)
+			print("Y Error: %f"%(err))
+			h_Xispectrum.SetBinError(pT+2, err)
+		h_Xispectrum.Draw("E")
+		h_Xispectrum.Write("Xi1530_spectra_origin")
 		c0.SaveAs("figs/Xi1530_spectra.%s"%SaveType)
 
 		#Levy fit
@@ -1095,41 +1197,75 @@ def DrawResults():
 		#legend->SetLineColor(0)
 		legend.SetFillColor(0)
 
-		legend.AddEntry(h_Xispectrum,"(#Xi(1530) + cc)/2","p");
-		legend.AddEntry(Levyfit,"Levy","l");
+		legend.AddEntry(h_Xispectrum,"(#Xi(1530) + cc)/2","p")
+		legend.AddEntry(Levyfit,"Levy","l")
 		c0.SaveAs("figs/Xi1530_spectra_levy.%s"%SaveType)
 
 		#Do same thing in several multiplicities
 
-		for i in range(0,len(MultiplicityRage)-1):
-			# Corrected Yield Spectra in Mutli
+		if(MultiplicitySet==1):
+			print("===Multi==")
+			leg = ROOT.TLegend(.55,.63,.90,.88)
+			leg.SetHeader("V0M Multiplicity","C")
+			leg.SetNColumns(2)
+			leg.SetBorderSize(0)
+			leg.SetFillColor(0)
+			leg.SetFillStyle(0)
+			leg.SetTextFont(42)
+			leg.SetTextSize(0.035)
 
-			h_Xispectrum_mult.append(ROOT.TH1D("h_Xispectrum","Xi spectrum",len(pTRange)-1,np.asarray(pTRange, 'd')))
-			h_Xispectrum_mult[i].SetMarkerStyle(20)
-			h_Xispectrum_mult[i].SetMarkerSize(1.0)
-			h_Xispectrum_mult[i].SetTitle("#Xi(1530) spectrum pp #sqrt{s}= 13 TeV")
-			h_Xispectrum_mult[i].GetXaxis().SetTitle("p_{T} (GeV/c)")
-			h_Xispectrum_mult[i].GetYaxis().SetTitle("1/N_{E}d^{2}N/dydp_{T} (GeV/c)^{-1}")
-			h_Xispectrum_mult[i].SetMinimum(3.0e-6)
-			h_Xispectrum_mult[i].SetMaximum(0.2)
-			#h_Xispectrum_mult[i].GetXaxis().SetLimits(0,5.6)
+			for j in range(0,len(MultiplicityRage)-1):
+				# Corrected Yield Spectra in Mutli
+				h_Xispectrum_mult.append(ROOT.TH1D("h_Xispectrum_mult_%d_tp_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]),"Xi spectrum",len(pTRange_draw)-1,np.asarray(pTRange_draw, 'd')))
+				h_Xispectrum_mult[j].SetMarkerStyle(20)
+				h_Xispectrum_mult[j].SetMarkerSize(1.0)
+				h_Xispectrum_mult[j].SetMarkerColor(Colors[j])
+				h_Xispectrum_mult[j].SetLineColor(Colors[j])
+				h_Xispectrum_mult[j].SetTitle("#Xi(1530) spectrum pp #sqrt{s}= 13 TeV")
+				h_Xispectrum_mult[j].GetXaxis().SetTitle("p_{T} (GeV/c)")
+				h_Xispectrum_mult[j].GetYaxis().SetTitle("1/N_{event}d^{2}N/(dydp_{T}) (GeV/c)^{-1}")
+				h_Xispectrum_mult[j].SetMinimum(3e-7)
+				h_Xispectrum_mult[j].SetMaximum(20)
+				#h_Xispectrum_mult[j].GetXaxis().SetLimits(0,5.6)
 
-			h_Xispectrum_mult[i].SetBinContent(1,+100)
-			for pT in range(1,len(pTRange)-1):
-				if(pT == len(pTRange)-2):
-					continue
-				#base = MCEfficiency[ptbin]*LostRatio*(raprange[1]-raprange[0])*(2*pt_points_e[ptbin])*Events_PhysSel->GetEntries()/0.852
-				#LostRatio -> Calculated the ratio between prePV cut and after. in this case, it was 1.
-				#raprange -> -0.5 to 0.5 -> 1
-				#pt_points_e
-				#print(pT)
-				base = MCEfficiency[pT]*(2*pTRange_err[pT])*Events_PhysSel.GetEntries()/0.9
-				h_Xispectrum_mult[i].SetBinContent(pT+1, RawYield[pT]/base)
-				#print(RawYield[pT]/base)
-				h_Xispectrum_mult[i].SetBinError(pT+1, RawYield_err[pT]/base)
-			h_Xispectrum_mult[i].Draw()
-			c0.SaveAs("figs/Xi1530_spectra_%d_to_%d.%s"%(MultiplicityRage[i],MultiplicityRage[i+1],SaveType))
+				h_Xispectrum_mult[j].SetBinContent(1,+1000)
+				h_Xispectrum_mult[j].SetStats(0)
+				for pT in range(0,len(pTRange)-1):
+					#if(pT == len(pTRange)-2):
+					#	continue
+					#base = MCEfficiency[ptbin]*LostRatio*(raprange[1]-raprange[0])*(2*pt_points_e[ptbin])*Events_PhysSel->GetEntries()/0.852
+					#LostRatio -> Calculated the ratio between prePV cut and after. in this case, it was 1.
+					#raprange -> -0.5 to 0.5 -> 1
+					#pt_points_e
+					#print(pT)
+					base = MCEfficiency_mult[j][pT]*(2*pTRange_err[pT])*((MultiplicityRage[j+1]-MultiplicityRage[j]))*Events_PhysSel.GetEntries()/0.9
+					print("base: %f"%base)
+					#base = MCEfficiency[pT]*(2*pTRange_err[pT])*Events_PhysSel.GetEntries()/0.9 #just for trial
+					h_Xispectrum_mult[j].SetBinContent(pT+2, RawYield_Multi[j][pT]/base)
+					#print(RawYield[pT]/base)
+					print("Y Error: %f"%(RawYield_Multi_err[j][pT]/base))
+					h_Xispectrum_mult[j].SetBinError(pT+2, RawYield_Multi_err[j][pT]/base)
+				h_Xispectrum_mult[j].Draw("E")
+				h_Xispectrum_mult[j].Write("Xi1530_spectra_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
+				c0.SaveAs("figs/Xi1530_spectra_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))
+			c5 = ROOT.TCanvas('can5','canvas',1280,720)
+			c5.SetBorderMode(1)
+			c5.SetLogy()				 
+			c5.cd()
+			h_Xispectrum_mult[0].Scale(pow(2,9))
+			h_Xispectrum_mult[0].SetMinimum(3e-7)
+			h_Xispectrum_mult[0].SetMaximum(2e2)
+			h_Xispectrum_mult[0].Draw("E")
+			leg.AddEntry(h_Xispectrum_mult[0],"%d-%d%% (x2^{9})"%(MultiplicityRage[0],MultiplicityRage[1]),"lp")
 
+			for j in range(1,len(MultiplicityRage)-1):
+				h_Xispectrum_mult[j].SetMinimum(3e-7)
+				h_Xispectrum_mult[j].SetMaximum(2e1)
+				h_Xispectrum_mult[j].Scale(pow(2,9-j))
+				h_Xispectrum_mult[j].Draw("same")
+				leg.AddEntry(h_Xispectrum_mult[j],"%d-%d%% (x2^{%i})"%(MultiplicityRage[j],MultiplicityRage[j+1],9-j),"lp")
+			leg.Draw()
+			c5.SaveAs("figs/Xi1530_spectra_mult.%s"%SaveType)
 
 
 if __name__ == "__main__":
