@@ -758,6 +758,7 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
     // Create histograms
     fOutputList = new TList();
     fOutputList->SetOwner();
+    if (fDevelopeMode)std::cout << "MC Mode?(UserCreate): " << fMCcase << std::endl;
     if (fMCcase) {
         // For trigger efficiency
         htotalEvent = new TH1F("htotalEvent", "Number of Events", 10, 0, 10);
