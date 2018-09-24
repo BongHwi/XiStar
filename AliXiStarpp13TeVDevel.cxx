@@ -633,7 +633,7 @@ void AliXiStarpp13TeVDevel::XiStarInit()
     //
     fEventCounter = 0; // event counter initialization
     if (fDevelopeMode)std::cout << "AliXiStarpp13TeVDevel XiStarInit() call" << std::endl;
-
+    if (fDevelopeMode)std::cout << "MC Mode?: " << fMCcase << std::endl;
 
     ///////////////////////////////////////////////
     // Track Cuts for ESD analysis
