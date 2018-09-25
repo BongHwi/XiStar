@@ -1,4 +1,4 @@
-AliXiStarpp13TeVDevel *AddTaskXiStarpp13TeVDevel(bool MCcase=kFALSE, bool AODcase=kFALSE, int CutList=0, bool DevelopmentMode=kFALSE, bool HMTrigger=kFALSE, bool PIDOption=kFALSE, bool SetSystematic=kTRUE) {
+AliXiStarpp13TeVDevel *AddTaskXiStarpp13TeVDevel(bool MCcase=kFALSE, int CutList=0, bool DevelopmentMode=kFALSE, bool HMTrigger=kFALSE, bool PIDOption=kFALSE, bool SetSystematic=kTRUE) {
 
   //===========================================================================
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
@@ -9,9 +9,13 @@ AliXiStarpp13TeVDevel *AddTaskXiStarpp13TeVDevel(bool MCcase=kFALSE, bool AODcas
 
   //____________________________________________//
   // Create tasks
-  AliXiStarpp13TeVDevel *XiStarTask = new AliXiStarpp13TeVDevel("XiStarTask", AODcase, CutList, DevelopmentMode, HMTrigger, PIDOption, SetSystematic);
+  AliXiStarpp13TeVDevel *XiStarTask = new AliXiStarpp13TeVDevel("XiStarTask", CutList);
   if(!XiStarTask) exit(-1);
+  XiStarTask->SetDevelSetup(DevelopmentMode);
   XiStarTask->SetMCSetup(MCcase);
+  XiStarTask->SetHMTSetup(HMTrigger);
+  XiStarTask->SetPIDSetup(HMTrigger);
+  XiStarTask->SetSystematicSetup(SetSystematic);
   mgr->AddTask(XiStarTask);
 
 

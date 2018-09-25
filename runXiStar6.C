@@ -1,19 +1,17 @@
 #if !defined (__CINT__) || defined (__CLING__)
 #include "AliAnalysisAlien.h"
 #include "AliAnalysisManager.h"
-#include "AliAODInputHandler.h"
 #include "AliESDInputHandler.h"
 #include "AliXiStarpp13TeVDevel.h"
 #endif
 
 Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase=kFALSE);
-TChain *CreateChain(const char *fileName, Bool_t AODcase);
+TChain *CreateChain(const char *fileName);
 
 void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     int Nevents=100;
 
     Bool_t MCcase=kTRUE;
-    Bool_t AODcase=kFALSE;
     Bool_t HMTrigger=kFALSE; // kTRUE for High Multiplicity trigger mode.
     Bool_t PIDOption=kTRUE;
     Bool_t SetSystematic = kFALSE; //
@@ -31,7 +29,6 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     gSystem->Load("libPhysics.so");
     gSystem->Load("libSTEERBase. so");
     gSystem->Load("libESD.so");
-    gSystem->Load("libAOD.so");
     gSystem->Load("libANALYSIS.so");
     gSystem->Load("libOADB.so");
     gSystem->Load("libANALYSISalice.so");
@@ -55,18 +52,12 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     AliAnalysisManager *mgr = new AliAnalysisManager("My Manager","My Manager");
 
     // Event Handler
-    if(AODcase) { // AOD Case
-        AliAODInputHandler *aodH = new AliAODInputHandler();
-        mgr->SetInputEventHandler(aodH);
-    }
-    else {  // ESD Case
-        AliVEventHandler* esdH = new AliESDInputHandler();
-        ((AliESDInputHandler *) esdH)->SetReadFriends(kFALSE);
-        mgr->SetInputEventHandler(esdH);
-        if(MCcase) {
-            AliMCEventHandler *mcHandler  = new AliMCEventHandler();
-            mgr->SetMCtruthEventHandler(mcHandler);
-        }
+    AliVEventHandler* esdH = new AliESDInputHandler();
+    ((AliESDInputHandler *) esdH)->SetReadFriends(kFALSE);
+    mgr->SetInputEventHandler(esdH);
+    if(MCcase) {
+        AliMCEventHandler *mcHandler  = new AliMCEventHandler();
+        mgr->SetMCtruthEventHandler(mcHandler);
     }
 
     // compile the class and load the add task macro
@@ -95,20 +86,20 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevelEventCollection.cxx+g");
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // AddTask
-    AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeVDevel.C(%d,%d,%i,%d,%d,%d,%d)",MCcase,AODcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic)));
-    //AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",AODcase,MCcase,CutList,DevelopmentMode)));
+    AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeVDevel.C(%d,%i,%d,%d,%d,%d)",MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic)));
+    //AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",MCcase,CutList,DevelopmentMode)));
 #else
     // ROOT 5 MODE
     //
     // Physics Selection
-    if(!AODcase) {
-        gROOT->LoadMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
-        AliPhysicsSelectionTask *physSelTask = AddTaskPhysicsSelection(MCcase);
-        if(!physSelTask) {
-            Printf("no physSelTask");
-            return;
-        }
+    
+    gROOT->LoadMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
+    AliPhysicsSelectionTask *physSelTask = AddTaskPhysicsSelection(MCcase);
+    if(!physSelTask) {
+        Printf("no physSelTask");
+        return;
     }
+
     // Multiplicity selection
     gROOT->LoadMacro("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
     AliMultSelectionTask *MultSlection = AddTaskMultSelection();
@@ -121,7 +112,7 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     gROOT->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // Add Task
     gROOT->LoadMacro("AddTaskXiStarpp13TeVDevel.C");
-    AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(MCcase,AODcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic);
+    AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic);
 #endif
     if(!mgr->InitAnalysis()) return;
     mgr->SetDebugLevel(10);
@@ -129,7 +120,7 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     mgr->SetUseProgressBar(1, 25);
     if(strcmp(mode,"local")==0) {// local pc mode; gets AOD or ESD files from my machine
         TChain *chain = new TChain("ESDTree");
-        chain = CreateChain(dataset,AODcase); // for KIAF use
+        chain = CreateChain(dataset); // for KIAF use
         mgr->StartAnalysis("local",chain);
     } else {// alien mode
         gSystem->Load("libNetx.so") ;
@@ -317,11 +308,10 @@ Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase) {
     return ngoodruns;
 }
 //______________________________________________________________________________
-TChain *CreateChain(const char *fileName, Bool_t AODcase)
+TChain *CreateChain(const char *fileName)
 {
     TString *treename;
-    if(AODcase) treename = new TString("aodTree");
-    else treename = new TString("esdTree");
+    treename = new TString("esdTree");
 
     TChain* chainGood = new TChain(treename->Data());
     TChain* chainNull = new TChain(treename->Data());
@@ -340,8 +330,7 @@ TChain *CreateChain(const char *fileName, Bool_t AODcase)
         inputstream.getline(line,500);
         name = new TString(line);
 
-        if(AODcase) name->Append("/AliAOD.root");
-        else name->Append("/AliESDs.root");
+        name->Append("/AliESDs.root");
 
         if(!inputstream.eof()) chainGood->Add(name->Data());
 

@@ -65,10 +65,6 @@
 #include "AliESDTZERO.h"
 //#include "AliTriggerAnalysis.h"
 
-#include "AliAODEvent.h"
-#include "AliAODInputHandler.h"
-#include "AliAODMCParticle.h"
-#include "AliAODcascade.h"
 #include "AliESDcascade.h"
 #include "AliV0vertexer.h"
 #include "AliCascadeVertexer.h"
@@ -103,7 +99,6 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel():
     fEventsToMix(0),
     fMultBins(0),
     fMCcase(0),
-    fAODcase(0),
     fEventCounter(0),
     fEventNumber(0),
 
@@ -286,7 +281,7 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel():
 
 }
 //________________________________________________________________________
-AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption, Bool_t SetSystematic)
+AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Int_t CutListOption)
     : AliAnalysisTaskSE(name),
       fname(name),
       fESD(0x0),
@@ -295,15 +290,14 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecisio
       fPIDResponse(0x0),
       fEC(0x0),
       fEvt(0x0),
-      fDevelopeMode(DevelopmentMode),
-      fHMTrigger(HMTrigger),
-      fPIDOption(PIDOption),
+      fDevelopeMode(kFALSE),
+      fHMTrigger(kFALSE),
+      fPIDOption(kTRUE),
       fTempStruct(0x0),
       fZvertexBins(0),
       fEventsToMix(0),
       fMultBins(0),
       fMCcase(kFALSE),
-      fAODcase(AODdecision),
       fEventCounter(0),
       fEventNumber(0),
       fMaxDecayLength(0),
@@ -313,7 +307,7 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecisio
       fTrueMassK(0),
       fTrueMassLam(0),
       fTrueMassXi(0),
-      fSetSystematic(SetSystematic),
+      fSetSystematic(kTRUE),
 
       fESDTrack4(0x0),
       fXiTrack(0x0),

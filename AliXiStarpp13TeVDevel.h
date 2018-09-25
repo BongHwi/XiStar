@@ -23,7 +23,6 @@ class AliESDpid;
 
 #include "AliAnalysisTask.h"
 #include "AliAnalysisTaskSE.h"
-#include "AliAODPid.h"
 #include "AliESDpid.h"
 #include "AliXiStarpp13TeVDevelEventCollection.h"
 #include "AliESDVZERO.h"
@@ -35,12 +34,17 @@ class AliXiStarpp13TeVDevel : public AliAnalysisTaskSE {
 public:
 
     AliXiStarpp13TeVDevel();
-    AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision, Int_t CutListOption = 0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE, Bool_t fPIDOption = kFALSE, Bool_t SetSystematic = kTRUE);
+    AliXiStarpp13TeVDevel(const char *name, Int_t CutListOption = 0);
 
     virtual ~AliXiStarpp13TeVDevel();
     AliXiStarpp13TeVDevel(const AliXiStarpp13TeVDevel &obj );
     AliXiStarpp13TeVDevel &operator=(const AliXiStarpp13TeVDevel &obj );
+
+    void SetDevelSetup(Bool_t const devset) {this->fDevelopeMode = devset;};
     void SetMCSetup(Bool_t const mcset) {this->fMCcase = mcset;};
+    void SetHMTSetup(Bool_t const hmset) {this->fHMTrigger = hmset;};
+    void SetPIDSetup(Bool_t const pidset) {this->fPIDOption = pidset;};
+    void SetSystematicSetup(Bool_t const sysset) {this->fSetSystematic = sysset;};
 
     enum {
         kNbinsM              = 200, // mult bins for certain histograms //300
@@ -252,7 +256,6 @@ private:
     Int_t fMultBins; //! number of multiplicity bins for event-mixing
     Int_t fMultLimits[11 + 1]; //! the multiplicity edges of the mult bins
     Bool_t fMCcase; //! switch for MC data or real data
-    Bool_t fAODcase; //! switch for AODs or ESDs
     Bool_t fDevelopeMode; //!
     Bool_t fHMTrigger; //!
     Bool_t fPIDOption; //!
@@ -281,7 +284,7 @@ private:
     Float_t fDecayParameters[kNCuts]; //! array of reconstruction kinematics
     Float_t fCutValues[kNCutVariations][kNCuts]; //! array of reconstruction kinematics
 
-    ClassDef(AliXiStarpp13TeVDevel, 20);
+    ClassDef(AliXiStarpp13TeVDevel, 30);
 };
 
 #endif
