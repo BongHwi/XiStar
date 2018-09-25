@@ -14,8 +14,16 @@ AliXiStarpp13TeVDevel *AddTaskXiStarpp13TeVDevel(bool MCcase=kFALSE, int CutList
   XiStarTask->SetDevelSetup(DevelopmentMode);
   XiStarTask->SetMCSetup(MCcase);
   XiStarTask->SetHMTSetup(HMTrigger);
-  XiStarTask->SetPIDSetup(HMTrigger);
+  XiStarTask->SetPIDSetup(PIDOption);
   XiStarTask->SetSystematicSetup(SetSystematic);
+
+  if(DevelopmentMode){
+    std::cout << "MC Check: " << MCcase << std::endl;
+    std::cout << "HMTrigger Check: " << HMTrigger << std::endl;
+    std::cout << "PID Check: " << PIDOption << std::endl;
+    std::cout << "Systemtaic Check: " << SetSystematic << std::endl;  
+  }
+
   mgr->AddTask(XiStarTask);
 
 

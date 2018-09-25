@@ -83,7 +83,7 @@ def DrawResults():
 	pTRange_draw = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8] # for study
 	#pTRange = [0,30]
 
-	MultiplicityRage = [0,5,15,30,50,100] # My own
+	#MultiplicityRage = [0,5,15,30,50,100] # My own
 	#MultiplicityRage = [0,15,50,100] # Xi1830
 	MultiplicityRage = [0,1,5,10,15,20,30,40,50,70,100] # Default in LF
 	MultiplicitySet = 1 #0 of MB, 1 for Multi add
@@ -184,6 +184,9 @@ def DrawResults():
 	RawYieldAspT_mult = []
 
 	h_Xispectrum_mult = []
+	base = []
+	base_mult = [[0 for col in range(len(pTRange)-1)] for row in range(len(MultiplicityRage)-1)]
+	h_base_mult = []
 
 	for i in range(0,len(pTRange)-1):
 		pTCenter.append(pTRange[i]+(pTRange[i+1]-pTRange[i])/2)
@@ -389,6 +392,7 @@ def DrawResults():
 				gr_Eff_mult[j].SetTitle("")
 				gr_Eff_mult[j].GetXaxis().SetTitle("p_{T} (GeV/c)")
 				gr_Eff_mult[j].GetYaxis().SetTitle("Acceptance x Efficiency x BR")
+				gr_Eff_mult[j].Write("Eff_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
 
 
 		gr_Eff_7TeV = ROOT.TGraphErrors(len(pTRange_draw)-1,np.asarray(pTCenter_draw, 'd'),np.asarray(MCEfficiency_7TeV, 'd') , np.asarray(pTRange_draw_err, 'd'), np.asarray(MCEfficiency_Error, 'd'))
@@ -1141,6 +1145,20 @@ def DrawResults():
 		c0.cd()
 		c0.SetLogy()
 		
+
+		# base denominator for corrected spectra
+		h_base = ROOT.TH1D("h_base","base with pT",len(pTRange_draw)-1,np.asarray(pTRange_draw, 'd'))
+		h_base.SetMarkerStyle(20)
+		h_base.SetMarkerSize(1.0)
+		h_base.GetXaxis().SetTitle("p_{T} (GeV/c)")
+		h_base.SetBinContent(1,+100)
+		for pT in range(0,len(pTRange)-1):
+			# base = MCefficiency[pTbin]*PVCutLostRatio*RapidityRange*pTbinsize*TotalEventEntries/TriggerEfficiency
+			# PVCutLostRatio -> will be added in 
+			base.append(MCEfficiency[pT]*(2*pTRange_err[pT])*Events_PhysSel.GetEntries()/0.9)
+			h_base.SetBinContent(pT+2,base[pT])
+		h_base.Write("Xi1530_MB_base")
+
 		# Corrected Yield Spectra in MB
 
 		h_Xispectrum = ROOT.TH1D("h_Xispectrum","Xi spectrum",len(pTRange_draw)-1,np.asarray(pTRange_draw, 'd'))
@@ -1162,12 +1180,11 @@ def DrawResults():
 			#raprange -> -0.5 to 0.5 -> 1
 			#pt_points_e
 			#print(pT)
-			base = MCEfficiency[pT]*(2*pTRange_err[pT])*Events_PhysSel.GetEntries()/0.9
-			h_Xispectrum.SetBinContent(pT+2, RawYield[pT]/base)
+			h_Xispectrum.SetBinContent(pT+2, RawYield[pT]/base[pT])
 			#print(RawYield[pT]/base)
 			print("base: %f"%base)
 
-			err = pow(RawYield_err[pT]/base,2)
+			err = pow(RawYield_err[pT]/base[pT],2)
 			err = err + pow(RawYield_err[pT]/base*MCEfficiency_Error[pT]/MCEfficiency[pT],2)
 			err = sqrt(err)
 			print("Y Error: %f"%(err))
@@ -1215,6 +1232,13 @@ def DrawResults():
 			leg.SetTextSize(0.035)
 
 			for j in range(0,len(MultiplicityRage)-1):
+				# base denominator for corrected spectra in mult
+				h_base_mult.append(ROOT.TH1D("h_base_mult_%d_tp_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]),"h_base_mult",len(pTRange_draw)-1,np.asarray(pTRange_draw, 'd')))
+				h_base_mult[j].SetMarkerStyle(20)
+				h_base_mult[j].SetMarkerSize(1.0)
+				h_base_mult[j].GetXaxis().SetTitle("p_{T} (GeV/c)")
+				h_base_mult[j].SetBinContent(1,+100)
+
 				# Corrected Yield Spectra in Mutli
 				h_Xispectrum_mult.append(ROOT.TH1D("h_Xispectrum_mult_%d_tp_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]),"Xi spectrum",len(pTRange_draw)-1,np.asarray(pTRange_draw, 'd')))
 				h_Xispectrum_mult[j].SetMarkerStyle(20)
@@ -1240,11 +1264,13 @@ def DrawResults():
 					#print(pT)
 					base = MCEfficiency_mult[j][pT]*(2*pTRange_err[pT])*((MultiplicityRage[j+1]-MultiplicityRage[j]))*Events_PhysSel.GetEntries()/0.9
 					print("base: %f"%base)
+					h_base_mult[j].SetBinContent(pT+2,base)
 					#base = MCEfficiency[pT]*(2*pTRange_err[pT])*Events_PhysSel.GetEntries()/0.9 #just for trial
 					h_Xispectrum_mult[j].SetBinContent(pT+2, RawYield_Multi[j][pT]/base)
 					#print(RawYield[pT]/base)
 					print("Y Error: %f"%(RawYield_Multi_err[j][pT]/base))
 					h_Xispectrum_mult[j].SetBinError(pT+2, RawYield_Multi_err[j][pT]/base)
+				h_base_mult[j].Write("Xi1530_MB_base_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
 				h_Xispectrum_mult[j].Draw("E")
 				h_Xispectrum_mult[j].Write("Xi1530_spectra_%d_to_%d"%(MultiplicityRage[j],MultiplicityRage[j+1]))
 				c0.SaveAs("figs/Xi1530_spectra_%d_to_%d.%s"%(MultiplicityRage[j],MultiplicityRage[j+1],SaveType))

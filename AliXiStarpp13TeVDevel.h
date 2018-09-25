@@ -255,11 +255,11 @@ private:
     Int_t fEventsToMix; //! // number of maximum events to mix
     Int_t fMultBins; //! number of multiplicity bins for event-mixing
     Int_t fMultLimits[11 + 1]; //! the multiplicity edges of the mult bins
-    Bool_t fMCcase; //! switch for MC data or real data
-    Bool_t fDevelopeMode; //!
-    Bool_t fHMTrigger; //!
-    Bool_t fPIDOption; //!
-    Bool_t fSetSystematic; //!
+    Bool_t fMCcase; // switch for MC data or real data
+    Bool_t fDevelopeMode; //
+    Bool_t fHMTrigger; //
+    Bool_t fPIDOption; //
+    Bool_t fSetSystematic; //
     Int_t fEventCounter; //! The event counter
     ULong64_t fEventNumber; //! calcuate event number
 
