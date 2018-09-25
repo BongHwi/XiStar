@@ -95,147 +95,146 @@ private:
     Double_t Det(Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t, Double_t) const;// for linear propagation
     ULong64_t GetMCEventNumber();
 
-    TH1F *htotalEvent; //! for trigger efficiency study
-    TH1F *htriggered_INELg0_tracklet; //! for trigger efficiency study
-    TH1F *htriggered_CINT7_tracklet; //! for trigger efficiency study
-    TH1F *htriggered_CINT7_VOM; //! for trigger efficiency study
-    TH1F *htriggered_AliMult_VOM; //! for trigger efficiency study
-    TH1F *fMultDist_MCpp; //!
-    TH1F *fMultDist_MCpp_selected; //!
+    TH1F *htotalEvent; // for trigger efficiency study
+    TH1F *htriggered_INELg0_tracklet; // for trigger efficiency study
+    TH1F *htriggered_CINT7_tracklet; // for trigger efficiency study
+    TH1F *htriggered_CINT7_VOM; // for trigger efficiency study
+    TH1F *htriggered_AliMult_VOM; // for trigger efficiency study
+    TH1F *fMultDist_MCpp; //
+    TH1F *fMultDist_MCpp_selected; //
 
 
-    TH3F *fVertexDist1; //!
-    TH3F *fVertexDist3; //!
-    TH2F *fDCADist; //!
-    TH3F *fMultDist3d; //!
-    TH1F *fMultDist1; //!
-    TH1F *fMultDist2; //!
-    TH1F *fMultDist3; //!
-    TH1F *fMultDist4; //!
-    TH1F *fMultDist5; //!
-    TH1F *fMultDist_pp; //!
-    TH1F *hEventSelecInfo; //!
-    TH1F *hNumberOfEvent; //!
-    TH1F *a; //!
+    TH3F *fVertexDist1; //
+    TH3F *fVertexDist3; //
+    TH2F *fDCADist; //
+    TH3F *fMultDist3d; //
+    TH1F *fMultDist1; //
+    TH1F *fMultDist2; //
+    TH1F *fMultDist3; //
+    TH1F *fMultDist4; //
+    TH1F *fMultDist5; //
+    TH1F *fMultDist_pp; //
+    TH1F *hEventSelecInfo; //
+    TH1F *hNumberOfEvent; //
 
-    TH1F *fPtDist; //!
-    TH1F *fPhiDist; //!
-    TH1F *fEtaDist; //!
-    TH1F *fXiStarYDist; //!
-    TH1F *fQAXiStarYDist; //!
+    TH1F *fPtDist; //
+    TH1F *fPhiDist; //
+    TH1F *fEtaDist; //
+    TH1F *fXiStarYDist; //
+    TH1F *fQAXiStarYDist; //
 
-    TH1F *fXiStarYDistMC; //!
-    TH1F *fXiYDistMC1; //!
-    TH1F *fXiStarYDistMC1; //!
-    TH1F *fXiYDistMCout; //!
-    TH1F *fXiStarYDistMCout; //!
-    TH1F *fCutEvents; //!
+    TH1F *fXiStarYDistMC; //
+    TH1F *fXiYDistMC1; //
+    TH1F *fXiStarYDistMC1; //
+    TH1F *fXiYDistMCout; //
+    TH1F *fXiStarYDistMCout; //
+    TH1F *fCutEvents; //
 
-    TH1F *fTPCNcls_p; //!
-    TH1F *fTPCNcls_pi1; //!
-    TH1F *fTPCNcls_pi2; //!
-    TH1F *fTPCNcls_pi3; //!
+    TH1F *fTPCNcls_p; //
+    TH1F *fTPCNcls_pi1; //
+    TH1F *fTPCNcls_pi2; //
+    TH1F *fTPCNcls_pi3; //
 
-    TH1F *fQATPCNcls_p; //!
-    TH1F *fQATPCNcls_pi1; //!
-    TH1F *fQATPCNcls_pi2; //!
-    TH1F *fQATPCNcls_pi3; //!
+    TH1F *fQATPCNcls_p; //
+    TH1F *fQATPCNcls_pi1; //
+    TH1F *fQATPCNcls_pi2; //
+    TH1F *fQATPCNcls_pi3; //
 
-    TH1F *fQATPCNcls_p_L; //!
-    TH1F *fQATPCNcls_pi1_L; //!
-    TH1F *fQATPCNcls_pi2_L; //!
-    TH1F *fQATPCNcls_pi3_L; //!
+    TH1F *fQATPCNcls_p_L; //
+    TH1F *fQATPCNcls_pi1_L; //
+    TH1F *fQATPCNcls_pi2_L; //
+    TH1F *fQATPCNcls_pi3_L; //
 
-    TH1F *fQATPCNcls_p_T; //!
-    TH1F *fQATPCNcls_pi1_T; //!
-    TH1F *fQATPCNcls_pi2_T; //!
-    TH1F *fQATPCNcls_pi3_T; //!
+    TH1F *fQATPCNcls_p_T; //
+    TH1F *fQATPCNcls_pi1_T; //
+    TH1F *fQATPCNcls_pi2_T; //
+    TH1F *fQATPCNcls_pi3_T; //
 
-    TH1F *fDCADist_p; //!
-    TH1F *fDCADist_pi1; //!
-    TH1F *fDCADist_pi2; //!
+    TH1F *fDCADist_p; //
+    TH1F *fDCADist_pi1; //
+    TH1F *fDCADist_pi2; //
 
-    TH1F *fQADCADist_p; //!
-    TH1F *fQADCADist_pi1; //!
-    TH1F *fQADCADist_pi2; //!
+    TH1F *fQADCADist_p; //
+    TH1F *fQADCADist_pi1; //
+    TH1F *fQADCADist_pi2; //
 
-    TH1F *fQADCADist_p_L; //!
-    TH1F *fQADCADist_pi1_L; //!
-    TH1F *fQADCADist_pi2_L; //!
+    TH1F *fQADCADist_p_L; //
+    TH1F *fQADCADist_pi1_L; //
+    TH1F *fQADCADist_pi2_L; //
 
-    TH1F *fQADCADist_p_T; //!
-    TH1F *fQADCADist_pi1_T; //!
-    TH1F *fQADCADist_pi2_T; //!
+    TH1F *fQADCADist_p_T; //
+    TH1F *fQADCADist_pi1_T; //
+    TH1F *fQADCADist_pi2_T; //
 
-    TH1F *fDCADist_lambda; //!
-    TH1F *fDCADist_3rd_pi; //!
-    TH1F *fDCADist_pi_p; //!
-    TH1F *fDCADist_pi_lambda; //!
+    TH1F *fDCADist_lambda; //
+    TH1F *fDCADist_3rd_pi; //
+    TH1F *fDCADist_pi_p; //
+    TH1F *fDCADist_pi_lambda; //
 
-    TH1F *fQADCADist_lambda; //!
-    TH1F *fQADCADist_3rd_pi; //!
-    TH1F *fQADCADist_pi_p; //!
-    TH1F *fQADCADist_pi_lambda; //!
+    TH1F *fQADCADist_lambda; //
+    TH1F *fQADCADist_3rd_pi; //
+    TH1F *fQADCADist_pi_p; //
+    TH1F *fQADCADist_pi_lambda; //
 
-    TH1F *fQADCADist_lambda_L; //!
-    TH1F *fQADCADist_3rd_pi_L; //!
-    TH1F *fQADCADist_pi_p_L; //!
-    TH1F *fQADCADist_pi_lambda_L; //!
+    TH1F *fQADCADist_lambda_L; //
+    TH1F *fQADCADist_3rd_pi_L; //
+    TH1F *fQADCADist_pi_p_L; //
+    TH1F *fQADCADist_pi_lambda_L; //
 
-    TH1F *fQADCADist_lambda_T; //!
-    TH1F *fQADCADist_3rd_pi_T; //!
-    TH1F *fQADCADist_pi_p_T; //!
-    TH1F *fQADCADist_pi_lambda_T; //!
+    TH1F *fQADCADist_lambda_T; //
+    TH1F *fQADCADist_3rd_pi_T; //
+    TH1F *fQADCADist_pi_p_T; //
+    TH1F *fQADCADist_pi_lambda_T; //
 
-    TH1F *fCosPA_lambda; //!
-    TH1F *fCosPA_Xi; //!
+    TH1F *fCosPA_lambda; //
+    TH1F *fCosPA_Xi; //
 
-    TH1F *fQACosPA_lambda; //!
-    TH1F *fQACosPA_Xi; //!
+    TH1F *fQACosPA_lambda; //
+    TH1F *fQACosPA_Xi; //
 
-    TH1F *fQACosPA_lambda_L; //!
-    TH1F *fQACosPA_Xi_L; //!
+    TH1F *fQACosPA_lambda_L; //
+    TH1F *fQACosPA_Xi_L; //
 
-    TH1F *fQACosPA_lambda_T; //!
-    TH1F *fQACosPA_Xi_T; //!
+    TH1F *fQACosPA_lambda_T; //
+    TH1F *fQACosPA_Xi_T; //
 
-    TH1F *hXiInvMass; //!
-    TH1F *hQAXiInvMass; //!
+    TH1F *hXiInvMass; //
+    TH1F *hQAXiInvMass; //
 
-    TH2F *hTPCPID; //!
-    TH2F *hTPCPIDpi; //!
-    TH2F *hTPCPIDk; //!
-    TH2F *hTPCPIDp; //!
+    TH2F *hTPCPID; //
+    TH2F *hTPCPIDpi; //
+    TH2F *hTPCPIDk; //
+    TH2F *hTPCPIDp; //
 
 
-    TH2F *hdEdxProton; //!
-    TH2F *hdEdxPion1; //!
-    TH2F *hdEdxPion2; //!
+    TH2F *hdEdxProton; //
+    TH2F *hdEdxPion1; //
+    TH2F *hdEdxPion2; //
 
-    TH2F *hdEdxProtonAfter; //!
-    TH2F *hdEdxPion1After; //!
-    TH2F *hdEdxPion2After; //!
+    TH2F *hdEdxProtonAfter; //
+    TH2F *hdEdxPion1After; //
+    TH2F *hdEdxPion2After; //
 
-    TH2F *hNSig3rdPion; //!
-    TH2F *hQANSig3rdPion; //!
+    TH2F *hNSig3rdPion; //
+    TH2F *hQANSig3rdPion; //
 
-    TH1F *hTPCNSigProton; //!
-    TH1F *hTPCNSigPion1; //!
-    TH1F *hTPCNSigPion2; //!
+    TH1F *hTPCNSigProton; //
+    TH1F *hTPCNSigPion1; //
+    TH1F *hTPCNSigPion2; //
 
-    TH1F *hQATPCNSigProton; //!
-    TH1F *hQATPCNSigPion1; //!
-    TH1F *hQATPCNSigPion2; //!
+    TH1F *hQATPCNSigProton; //
+    TH1F *hQATPCNSigPion1; //
+    TH1F *hQATPCNSigPion2; //
 
-    TH3F *hMCinputTotalXiStar1; //!
-    TH3F *hMCinputTotalXiStarbar1; //!
-    TH3F *hMCinputTotalXi1; //!
-    TH3F *hMCinputTotalXibar1; //!
+    TH3F *hMCinputTotalXiStar1; //
+    TH3F *hMCinputTotalXiStarbar1; //
+    TH3F *hMCinputTotalXi1; //
+    TH3F *hMCinputTotalXibar1; //
 
-    TH3F *hMCinputTotalXiStar3; //!
-    TH3F *hMCinputTotalXiStarbar3; //!
-    TH3F *hMCinputTotalXi3; //!
-    TH3F *hMCinputTotalXibar3; //!
+    TH3F *hMCinputTotalXiStar3; //
+    TH3F *hMCinputTotalXiStarbar3; //
+    TH3F *hMCinputTotalXi3; //
+    TH3F *hMCinputTotalXibar3; //
 
 
     const char* fname; //! // name of class

@@ -82,6 +82,15 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
         Printf("no fPIDResponse");
         return;
     }
+    //gROOT->LoadMacro("$ALICE_PHYSICS/PWGLF/STRANGENESS/Cascades/Run2/macros/AddTaskWeakDecayVertexer.C");
+    //AliAnalysisTaskWeakDecayVertexer *taskWDV = AddTaskWeakDecayVertexer();
+    //taskWDV->SetRunV0Vertexer(kTRUE);
+    //taskWDV->SetRunCascadeVertexer(kFALSE);
+    //taskWDV -> SetDoImprovedCascadeVertexFinding(kTRUE);
+    //taskWDV -> SetDoImprovedDCAV0DauPropagation(kTRUE);
+    //taskWDV -> SetDoImprovedCascadePosition(kTRUE);
+    //taskWDV->SetOnlyCombineMCTrue(kTRUE);
+    //taskWDV -> SetCentralityInterval(0,0.5);
 
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevelEventCollection.cxx+g");
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");

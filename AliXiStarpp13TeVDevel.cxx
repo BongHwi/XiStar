@@ -44,12 +44,9 @@
 #include "TH3D.h"
 #include "TProfile.h"
 #include "TCanvas.h"
-
 #include "AliAnalysisTask.h"
 #include "AliAnalysisManager.h"
 #include "AliAnalysisUtils.h"
-
-
 #include "AliESDEvent.h"
 #include "AliESDInputHandler.h"
 #include "AliESDtrackCuts.h"
@@ -59,23 +56,16 @@
 #include "AliCentrality.h"
 #include "AliVertex.h"
 #include "AliMultSelection.h"
-//#include "AliOADBCentrality.h"
-//#include "AliOADBPhysicsSelection.h"
 #include "AliESDVZERO.h"
 #include "AliESDTZERO.h"
-//#include "AliTriggerAnalysis.h"
-
 #include "AliESDcascade.h"
 #include "AliV0vertexer.h"
 #include "AliCascadeVertexer.h"
-
 #include "AliXiStarpp13TeVDevel.h"
 
 #define PI 3.1415927
 
-
 // Author: Bong-Hwi Lim
-
 ClassImp(AliXiStarpp13TeVDevel)
 
 //________________________________________________________________________
@@ -2259,29 +2249,14 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
 
                                     if (fXiTrack->Charge() == -1 &&  fESDTrack4->Charge() == +1) CutVar[cv].fMCrecXiMinusPiPlus->Fill(xiStarPt, lPerc, xiStarMass);
                                     if (fXiTrack->Charge() == +1 &&  fESDTrack4->Charge() == -1) CutVar[cv].fMCrecXiPlusPiMinus->Fill(xiStarPt, lPerc, xiStarMass);
-
                                 }
                             }
                         }
                     }
-
-
                 }// Cut Variation loop
             }// 3rd pion loop
-
-
         }// Event mixing loop
-
-
-
-
-
-
-
     }// Xi loop
-
-
-
     // Post output data.
     PostData(1, fOutputList);
 
