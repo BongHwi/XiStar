@@ -24,7 +24,7 @@
 //  Modified by: Jihye Song (jihye.song@cern.ch)
 //  Last Modified by: Bong-Hwi Lim (bong-hwi.lim@cern.ch)
 //
-//  Last Modified Date: 2018/09/24
+//  Last Modified Date: 2018/09/25
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -286,7 +286,7 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel():
 
 }
 //________________________________________________________________________
-AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption, Bool_t SetSystematic)
+AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption, Bool_t SetSystematic)
     : AliAnalysisTaskSE(name),
       fname(name),
       fESD(0x0),
@@ -302,7 +302,7 @@ AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecisio
       fZvertexBins(0),
       fEventsToMix(0),
       fMultBins(0),
-      fMCcase(MCdecision),
+      fMCcase(kFALSE),
       fAODcase(AODdecision),
       fEventCounter(0),
       fEventNumber(0),

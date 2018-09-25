@@ -35,11 +35,12 @@ class AliXiStarpp13TeVDevel : public AliAnalysisTaskSE {
 public:
 
     AliXiStarpp13TeVDevel();
-    AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption = 0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE, Bool_t fPIDOption = kFALSE, Bool_t SetSystematic = kTRUE);
+    AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision, Int_t CutListOption = 0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE, Bool_t fPIDOption = kFALSE, Bool_t SetSystematic = kTRUE);
 
     virtual ~AliXiStarpp13TeVDevel();
     AliXiStarpp13TeVDevel(const AliXiStarpp13TeVDevel &obj );
     AliXiStarpp13TeVDevel &operator=(const AliXiStarpp13TeVDevel &obj );
+    void SetMCSetup(Bool_t const mcset) {this->fMCcase = mcset;};
 
     enum {
         kNbinsM              = 200, // mult bins for certain histograms //300
