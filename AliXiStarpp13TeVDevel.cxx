@@ -940,6 +940,12 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
      */
     
     ///////////////////////////////////
+    TH1F *fDCADist_Lambda_MC = new TH1F("fDCADist_Lambda_MC","DCA distribution Lambda to PV",200,0, 0.5); //par 4
+    fOutputList->Add(fDCADist_Lambda_MC);
+    TH1F *fDCADist_Xi_MC = new TH1F("fDCADist_Xi_MC","DCA distribution Xi to PV",200,0, 0.5); //par 4
+    fOutputList->Add(fDCADist_Lambda_MC);
+    
+    
     PostData(1, fOutputList);
     
     
@@ -1852,7 +1858,8 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
                                 if(abs(MCXiStaresd->GetPdgCode())==kXiStarCode) {
                                     
                                     ((TH1F*)fOutputList->FindObject("fXiStarYDistMCout"))->Fill(xiStarY);
-                                    
+                                    ((TH1F*)fOutputList->FindObject("fDCADist_Lambda_MC"))->Fill(xiStarY);
+                                    ((TH1F*)fOutputList->FindObject("fDCADist_Xi_MC"))->Fill(xiStarY);
                                     
                                     if(fXiTrack->Charge() == -1 &&  fESDTrack4->Charge() == +1) CutVar[cv].fMCrecXiMinusPiPlus->Fill(xiStarPt, lPerc, xiStarMass);
                                     if(fXiTrack->Charge() == +1 &&  fESDTrack4->Charge() == -1) CutVar[cv].fMCrecXiPlusPiMinus->Fill(xiStarPt, lPerc, xiStarMass);
