@@ -942,6 +942,12 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
      */
     
     ///////////////////////////////////
+    TH1F *fDCADist_Lambda_full = new TH1F("fDCADist_Lambda_full","DCA distribution Lambda to PV",500,0, 0.5); //par 4
+    fOutputList->Add(fDCADist_Lambda_full);
+    TH1F *fDCADist_Xi_full = new TH1F("fDCADist_Xi_full","DCA distribution Xi to PV",500,0, 0.5); //par 4
+    fOutputList->Add(fDCADist_Xi_full);
+    
+    
     TH1F *fDCADist_Lambda_MC = new TH1F("fDCADist_Lambda_MC","DCA distribution Lambda to PV",500,0, 0.5); //par 4
     fOutputList->Add(fDCADist_Lambda_MC);
     TH1F *fDCADist_Xi_MC = new TH1F("fDCADist_Xi_MC","DCA distribution Xi to PV",500,0, 0.5); //par 4
@@ -1511,6 +1517,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
         fDecayParameters[7] = fabs(Xicandidate->GetD(primaryVtx[0],primaryVtx[1],primaryVtx[2]));// DCA Vtx Lambda
         XiIP = fabs(Xicandidate->GetDcascade(primaryVtx[0],primaryVtx[1],primaryVtx[2]));// DCA Vtx Xi
         ((TH1F*)fOutputList->FindObject("fDCADist_lambda"))->Fill(fDecayParameters[7]);
+        ((TH1F*)fOutputList->FindObject("fDCADist_Xi_full"))->Fill(XiIP);
         fDecayParameters[9] = fabs(Xicandidate->GetDcaV0Daughters());// DCA proton-pion
         ((TH1F*)fOutputList->FindObject("fDCADist_pi_p"))->Fill(fDecayParameters[9]);
         fDecayParameters[10] = fabs(Xicandidate->GetDcaXiDaughters());// DCA Lambda-pion
@@ -1573,7 +1580,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
         if(fDecayParameters[6] < fCutValues[0][6]) StandardXi=kFALSE;// DCAVtx pion second
         if(StandardXi)((TH1F*)fOutputList->FindObject("fCutEvents"))->Fill(7,1);
         
-        if(fDecayParameters[7] < fCutValues[0][7]) StandardXi=kFALSE;// DCAVtx Lambda
+        //if(fDecayParameters[7] < fCutValues[0][7]) StandardXi=kFALSE;// DCAVtx Lambda
         if(StandardXi)((TH1F*)fOutputList->FindObject("fCutEvents"))->Fill(8,1);
         
         //
@@ -1761,7 +1768,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
                     if(fDecayParameters[4] < fCutValues[cv][4]) continue;// DCAVtx proton
                     if(fDecayParameters[5] < fCutValues[cv][5]) continue;// DCAVtx pion first
                     if(fDecayParameters[6] < fCutValues[cv][6]) continue;// DCAVtx pion second
-                    if(fDecayParameters[7] < fCutValues[cv][7]) continue;// DCAVtx Lambda
+                    //if(fDecayParameters[7] < fCutValues[cv][7]) continue;// DCAVtx Lambda
                     //if(fDecayParameters[8] > fCutValues[cv][8]) continue; // DCAVtx pion third
                     if(fDecayParameters[8] > (0.0105 + 0.035/pow((fEvt+EN)->fTracks[l].fPt,1.1))) continue;   // DCAVtx pion third
                     //0.0182 + 0.035/pow((fEvt+EN)->fTracks[l].fPt,1.1 (2010 cut)
