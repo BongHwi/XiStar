@@ -103,7 +103,6 @@ fZvertexBins(0),
 fEventsToMix(0),
 fMultBins(0),
 fMCcase(0),
-fAODcase(0),
 fEventCounter(0),
 fEventNumber(0),
 
@@ -153,7 +152,7 @@ fCutList(0)
     
 }
 //________________________________________________________________________
-AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption, Bool_t SetSystematic)
+AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Int_t CutListOption)
 : AliAnalysisTaskSE(name),
 fname(name),
 fESD(0x0),
@@ -170,7 +169,6 @@ fZvertexBins(0),
 fEventsToMix(0),
 fMultBins(0),
 fMCcase(MCdecision),
-fAODcase(AODdecision),
 fEventCounter(0),
 fEventNumber(0),
 fMaxDecayLength(0),
