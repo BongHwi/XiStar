@@ -8,7 +8,7 @@
 Int_t AddGoodRuns(AliAnalysisAlien* plugin,TString lhcPeriod,Bool_t MCcase=kFALSE);
 TChain *CreateChain(const char *fileName);
 
-void runXiStar6(const char *mode = "local") { // local/test/full/terminate
+void runXiStar6(const char *mode = "test") { // local/test/full/terminate
     int Nevents=100;
 
     Bool_t MCcase=kTRUE;
