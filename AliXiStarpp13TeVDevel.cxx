@@ -942,9 +942,9 @@ void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
      */
     
     ///////////////////////////////////
-    TH1F *fDCADist_Lambda_MC = new TH1F("fDCADist_Lambda_MC","DCA distribution Lambda to PV",200,0, 0.5); //par 4
+    TH1F *fDCADist_Lambda_MC = new TH1F("fDCADist_Lambda_MC","DCA distribution Lambda to PV",500,0, 0.5); //par 4
     fOutputList->Add(fDCADist_Lambda_MC);
-    TH1F *fDCADist_Xi_MC = new TH1F("fDCADist_Xi_MC","DCA distribution Xi to PV",200,0, 0.5); //par 4
+    TH1F *fDCADist_Xi_MC = new TH1F("fDCADist_Xi_MC","DCA distribution Xi to PV",500,0, 0.5); //par 4
     fOutputList->Add(fDCADist_Xi_MC);
     
     
