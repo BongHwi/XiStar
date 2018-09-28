@@ -36,7 +36,7 @@ if(PrintOption == 1): print("Load file: "+Inputfile01)
 f1 = ROOT.TFile(Inputfile01)
 mydir1 = f1.Get("PWGLF.outputXiStarAnalysis.root;1")
 mydir1.ls()
-mylist1 = mydir1.Get("MyList_0;1")
+mylist1 = mydir1.Get("MyList;1")
 if(mylist1.FindObject("fMCinputTotalXiStar3").GetEntries()>0): 
 	f_MC = f1
 	mylist_mc = mylist1
@@ -78,17 +78,18 @@ def DrawResults():
 	# Inputs
 	outputFileName = "Analysis_Results_Xi1530_%s.root"%currenttime
 	
-	#pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8,15] # for study
-	pTRange = [0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8] # for analysis
+	pTRange = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8,15] # for study
+    #pTRange = [0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8] # for analysis
+	#pTRange_draw = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8] # for analysis
 	pTRange_draw = [0, 0.8, 1.2, 1.6, 2.0, 2.4, 3.2, 4.0, 4.8, 5.6, 8.8] # for study
 	#pTRange = [0,30]
 
-	#MultiplicityRage = [0,5,15,30,50,100] # My own
+	MultiplicityRage = [0,5,15,30,50,100] # My own
 	#MultiplicityRage = [0,15,50,100] # Xi1830
-	MultiplicityRage = [0,1,5,10,15,20,30,40,50,70,100] # Default in LF
-	MultiplicitySet = 1 #0 of MB, 1 for Multi add
+    #MultiplicityRage = [0,1,5,10,15,20,30,40,50,70,100] # Default in LF
+	MultiplicitySet = 0 #0 of MB, 1 for Multi add
 	
-	massRebin = 1
+	massRebin = 2
 	AxisRange = [1.48,1.59]
 	#NormalizeRange = [1.49,1.51] #for LHC15f
 	NormalizeRange = [1.56,1.58] #for LHC16k
@@ -584,11 +585,13 @@ def DrawResults():
 			### First, Draw together.
 			c1.cd()
 			temp1 = fo.Get("Xi1530_pT_%.1f_to_%.1f_projected"%(pTRange[i],pTRange[i+1]))
-			temp1.SetLineColor(0)
+			temp1.SetLineColor(1)
+			temp1.SetAxisRange(AxisRange[0],AxisRange[1],"X")
 			temp1.Draw("E")
 			temp2 = fo.Get("Xi1530_pT_%.1f_to_%.1f_EventMix"%(pTRange[i],pTRange[i+1]))
 			temp2.Scale(integratedNumberforNormalizepT[i]/integratedNumberforNormalizepT_mix[i])
-			temp2.SetLineColor(1)
+			temp2.SetLineColor(632)
+			temp2.SetAxisRange(AxisRange[0],AxisRange[1],"X")
 			temp2.Draw("E, same")
 			temp2.SetTitle("pT Range %.1f to %.1f GeV/c"%(pTRange[i],pTRange[i+1]))
 			c1.Write("Xi1530_pT_%.1f_to_%.1f_with_bkg"%(pTRange[i],pTRange[i+1]))
