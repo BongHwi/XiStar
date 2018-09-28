@@ -1670,9 +1670,9 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
         //////////////////////////////////////////////////////////
         // Reconstruct Xi(1530)
         for(Int_t EN=0; EN<fEventsToMix+1; EN++) { // Event buffer loop
-            
+            if(fDevelopeMode)std::cout<<"003: " << EN <<std::endl;
             for(Int_t l=0; l<(fEvt+EN)->fNTracks; l++) { // Present(EN=0) and Past(EN from 1 to fEventsToMix) event track loop
-                
+                if(fDevelopeMode)std::cout<<"003: " << EN << ", l: " << l <<std::endl;
                 if(EN==0) {
                     if((fEvt+EN)->fTracks[l].fID == pTrackXi->GetID()) continue;
                     if((fEvt+EN)->fTracks[l].fID == nTrackXi->GetID()) continue;
@@ -1750,6 +1750,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
                 ((TH1F*)fOutputList->FindObject("fQAXiStarYDist"))->Fill(xiStarY);
                 
                 for(int cv=0; cv<kNCutVariations; cv++) {
+                    if(fDevelopeMode)std::cout<<"003: " << EN << ", l: " << l << ", cv: " << cv <<std::endl;
                     if(!fSetSystematic && cv > 0) continue;
                     
                     if(fDecayParameters[0] < fCutValues[cv][0]) continue;// Nclus proton
@@ -1862,9 +1863,10 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
                                 if(abs(MCXiStaresd->GetPdgCode())==kXiStarCode) {
                                     
                                     ((TH1F*)fOutputList->FindObject("fXiStarYDistMCout"))->Fill(xiStarY);
+                                    if(fDevelopeMode)std::cout<<"004" <<std::endl;
                                     ((TH1F*)fOutputList->FindObject("fDCADist_Lambda_MC"))->Fill(fDecayParameters[7]);
                                     ((TH1F*)fOutputList->FindObject("fDCADist_Xi_MC"))->Fill(XiIP);
-                                    
+                                    if(fDevelopeMode)std::cout<<"005" <<std::endl;
                                     if(fXiTrack->Charge() == -1 &&  fESDTrack4->Charge() == +1) CutVar[cv].fMCrecXiMinusPiPlus->Fill(xiStarPt, lPerc, xiStarMass);
                                     if(fXiTrack->Charge() == +1 &&  fESDTrack4->Charge() == -1) CutVar[cv].fMCrecXiPlusPiMinus->Fill(xiStarPt, lPerc, xiStarMass);
                                     
