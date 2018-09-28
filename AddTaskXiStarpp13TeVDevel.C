@@ -9,7 +9,7 @@ AliXiStarpp13TeVDevel *AddTaskXiStarpp13TeVDevel(bool MCcase=kFALSE, bool AODcas
     
     //____________________________________________//
     // Create tasks
-    AliXiStarpp13TeVDevelDevel *XiStarTask = new AliXiStarpp13TeVDevel("XiStarTask", AODcase, MCcase, CutList, DevelopmentMode, HMTrigger, PIDOption, SetSystematic);
+    AliXiStarpp13TeVDevel *XiStarTask = new AliXiStarpp13TeVDevel("XiStarTask", AODcase, MCcase, CutList, DevelopmentMode, HMTrigger, PIDOption, SetSystematic);
     if(!XiStarTask) exit(-1);
     mgr->AddTask(XiStarTask);
     
