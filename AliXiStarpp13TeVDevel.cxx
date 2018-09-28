@@ -1517,6 +1517,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
         fDecayParameters[7] = fabs(Xicandidate->GetD(primaryVtx[0],primaryVtx[1],primaryVtx[2]));// DCA Vtx Lambda
         XiIP = fabs(Xicandidate->GetDcascade(primaryVtx[0],primaryVtx[1],primaryVtx[2]));// DCA Vtx Xi
         ((TH1F*)fOutputList->FindObject("fDCADist_lambda"))->Fill(fDecayParameters[7]);
+        ((TH1F*)fOutputList->FindObject("fDCADist_Lambda_full"))->Fill(fDecayParameters[7]);
         ((TH1F*)fOutputList->FindObject("fDCADist_Xi_full"))->Fill(XiIP);
         fDecayParameters[9] = fabs(Xicandidate->GetDcaV0Daughters());// DCA proton-pion
         ((TH1F*)fOutputList->FindObject("fDCADist_pi_p"))->Fill(fDecayParameters[9]);
