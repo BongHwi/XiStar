@@ -73,17 +73,17 @@
 #include "AliV0vertexer.h"
 #include "AliCascadeVertexer.h"
 
-#include "AliXiStarpp13TeV.h"
+#include "AliXiStarpp13TeVDevel.h"
 
 #define PI 3.1415927
 
 
 // Author: Bong-Hwi Lim
 
-ClassImp(AliXiStarpp13TeV)
+ClassImp(AliXiStarpp13TeVDevel)
 
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp13TeV():
+AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel():
 AliAnalysisTaskSE(),
 fname(0),
 fESD(0x0),
@@ -156,7 +156,7 @@ fCutList(0)
     
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp13TeV(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption, Bool_t SetSystematic)
+AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision,  Bool_t MCdecision, Int_t CutListOption, Bool_t DevelopmentMode, Bool_t HMTrigger, Bool_t PIDOption, Bool_t SetSystematic)
 : AliAnalysisTaskSE(name),
 fname(name),
 fESD(0x0),
@@ -233,7 +233,7 @@ fCutList(CutListOption)
     
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::AliXiStarpp13TeV(const AliXiStarpp13TeV &obj )
+AliXiStarpp13TeVDevel::AliXiStarpp13TeVDevel(const AliXiStarpp13TeVDevel &obj )
 : AliAnalysisTaskSE(obj.fname),
 fname(obj.fname),
 fESD(obj.fESD),
@@ -278,7 +278,7 @@ fCutList(obj.fCutList)
 }
 //________________________________________________________________________
 
-AliXiStarpp13TeV &AliXiStarpp13TeV::operator=(const AliXiStarpp13TeV &obj )
+AliXiStarpp13TeVDevel &AliXiStarpp13TeVDevel::operator=(const AliXiStarpp13TeVDevel &obj )
 {
     // Assignment operator
     if (this == &obj )
@@ -329,7 +329,7 @@ AliXiStarpp13TeV &AliXiStarpp13TeV::operator=(const AliXiStarpp13TeV &obj )
     return (*this);
 }
 //________________________________________________________________________
-AliXiStarpp13TeV::~AliXiStarpp13TeV()
+AliXiStarpp13TeVDevel::~AliXiStarpp13TeVDevel()
 {
     // Destructor
     
@@ -365,13 +365,13 @@ AliXiStarpp13TeV::~AliXiStarpp13TeV()
     
 }
 //________________________________________________________________________
-void AliXiStarpp13TeV::XiStarInit()
+void AliXiStarpp13TeVDevel::XiStarInit()
 {
     //
     //Inits cuts and analysis settings
     //
     fEventCounter=0;// event counter initialization
-    if(fDevelopeMode)std::cout<<"AliXiStarpp13TeV XiStarInit() call"<<std::endl;
+    if(fDevelopeMode)std::cout<<"AliXiStarpp13TeVDevel XiStarInit() call"<<std::endl;
     
     
     ///////////////////////////////////////////////
@@ -386,7 +386,7 @@ void AliXiStarpp13TeV::XiStarInit()
     ////////////////////////////////////////////////
     
     fZvertexBins = 20;
-    fMultBins = 11;// This must also be set in AliXiStarpp13TeV.h
+    fMultBins = 11;// This must also be set in AliXiStarpp13TeVDevel.h
     if(fMCcase) fEventsToMix = 0;
     else fEventsToMix = 10; // original 40 jisong
     
@@ -395,18 +395,18 @@ void AliXiStarpp13TeV::XiStarInit()
     fMultLimits[6]=30, fMultLimits[7]=35, fMultLimits[8]=40, fMultLimits[9]=45, fMultLimits[10]=50, fMultLimits[11]=150;
     
     
-    fEC = new AliXiStarpp13TeVEventCollection **[fZvertexBins];
+    fEC = new AliXiStarpp13TeVDevelEventCollection **[fZvertexBins];
     for(unsigned short i=0; i<fZvertexBins; i++) {
         
-        fEC[i] = new AliXiStarpp13TeVEventCollection *[fMultBins];
+        fEC[i] = new AliXiStarpp13TeVDevelEventCollection *[fMultBins];
         
         for(unsigned short j=0; j<fMultBins; j++) {
             
-            fEC[i][j] = new AliXiStarpp13TeVEventCollection(fEventsToMix+1);
+            fEC[i][j] = new AliXiStarpp13TeVDevelEventCollection(fEventsToMix+1);
         }
     }
     
-    fTempStruct = new AliXiStarpp13TeVTrackStruct[kNbinsM*8];
+    fTempStruct = new AliXiStarpp13TeVDevelTrackStruct[kNbinsM*8];
     fESDTrack4 = new AliESDtrack();
     fXiTrack = new AliESDtrack();
     
@@ -489,7 +489,7 @@ void AliXiStarpp13TeV::XiStarInit()
     
 }
 //________________________________________________________________________
-void AliXiStarpp13TeV::UserCreateOutputObjects()
+void AliXiStarpp13TeVDevel::UserCreateOutputObjects()
 {
     XiStarInit();
     // XiStarInit();// Initialize settings original
@@ -946,7 +946,7 @@ void AliXiStarpp13TeV::UserCreateOutputObjects()
 }
 
 //________________________________________________________________________
-void AliXiStarpp13TeV::Exec(Option_t *)
+void AliXiStarpp13TeVDevel::Exec(Option_t *)
 {
     
     //  fMCcase = kTRUE;
@@ -1884,13 +1884,13 @@ void AliXiStarpp13TeV::Exec(Option_t *)
     
 }
 //________________________________________________________________________
-void AliXiStarpp13TeV::Terminate(Option_t *)
+void AliXiStarpp13TeVDevel::Terminate(Option_t *)
 {
     //if(fDevelopeMode)std::cout<<"Done"<<std::endl;
 }
 //________________________________________________________________________
 /*
- Double_t AliXiStarpp13TeV::LinearPropagateToDCA(AliESDtrack *v, AliESDtrack *t, Double_t b) {// Adapted from AliCascadeVertexer.cxx
+ Double_t AliXiStarpp13TeVDevel::LinearPropagateToDCA(AliESDtrack *v, AliESDtrack *t, Double_t b) {// Adapted from AliCascadeVertexer.cxx
  //--------------------------------------------------------------------
  // This function returns the DCA between the V0 and the track
  //--------------------------------------------------------------------
@@ -1928,7 +1928,7 @@ void AliXiStarpp13TeV::Terminate(Option_t *)
  */
 
 //________________________________________________________________________
-Double_t AliXiStarpp13TeV::Det(Double_t a00, Double_t a01, Double_t a10, Double_t a11) const {
+Double_t AliXiStarpp13TeVDevel::Det(Double_t a00, Double_t a01, Double_t a10, Double_t a11) const {
     // Taken from AliCascadeVertexer
     //--------------------------------------------------------------------
     // This function calculates locally a 2x2 determinant
@@ -1936,7 +1936,7 @@ Double_t AliXiStarpp13TeV::Det(Double_t a00, Double_t a01, Double_t a10, Double_
     return a00*a11 - a01*a10;
 }
 //________________________________________________________________________
-Double_t AliXiStarpp13TeV::Det(Double_t a00,Double_t a01,Double_t a02,
+Double_t AliXiStarpp13TeVDevel::Det(Double_t a00,Double_t a01,Double_t a02,
                                Double_t a10,Double_t a11,Double_t a12,
                                Double_t a20,Double_t a21,Double_t a22) const {
     // Taken from AliCascadeVertexer

@@ -1,9 +1,9 @@
 #ifndef ALIXISTARPP13TEV_H
 #define ALIXISTARPP13TEV_H
 //
-// Class AliXiStarpp13TeV
+// Class AliXiStarpp13TeVDevel
 //
-// AliXiStarpp13TeV
+// AliXiStarpp13TeVDevel
 // author:
 //  (Original Code) Dhevan Gangadharan (dhevan.raja.gangadharan@cern.ch)
 //  (1st Modification) Jihye Song (jihye.song@cern.ch)
@@ -25,21 +25,21 @@ class AliESDpid;
 #include "AliAnalysisTaskSE.h"
 #include "AliAODPid.h"
 #include "AliESDpid.h"
-#include "AliXiStarpp13TeVEventCollection.h"
+#include "AliXiStarpp13TeVDevelEventCollection.h"
 #include "AliESDVZERO.h"
 #include "AliESDTZERO.h"
 #include "AliVertex.h"
 
 
-class AliXiStarpp13TeV : public AliAnalysisTaskSE {
+class AliXiStarpp13TeVDevel : public AliAnalysisTaskSE {
 public:
     
-    AliXiStarpp13TeV();
-    AliXiStarpp13TeV(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE, Bool_t fPIDOption = kFALSE, Bool_t SetSystematic = kTRUE);
+    AliXiStarpp13TeVDevel();
+    AliXiStarpp13TeVDevel(const char *name, Bool_t AODdecision, Bool_t MCdecision, Int_t CutListOption=0, Bool_t DevelopmentMode = kFALSE, Bool_t fHMTrigger = kFALSE, Bool_t fPIDOption = kFALSE, Bool_t SetSystematic = kTRUE);
     
-    virtual ~AliXiStarpp13TeV();
-    AliXiStarpp13TeV(const AliXiStarpp13TeV &obj );
-    AliXiStarpp13TeV &operator=(const AliXiStarpp13TeV &obj );
+    virtual ~AliXiStarpp13TeVDevel();
+    AliXiStarpp13TeVDevel(const AliXiStarpp13TeVDevel &obj );
+    AliXiStarpp13TeVDevel &operator=(const AliXiStarpp13TeVDevel &obj );
     
     enum {
         kNbinsM              = 200, // mult bins for certain histograms //300
@@ -125,9 +125,9 @@ private:
     AliESDtrackCuts        *fTrackCut; //! ESD track cuts
     AliPIDResponse         *fPIDResponse; //! PID object
     
-    AliXiStarpp13TeVEventCollection ***fEC; //! The event collection
-    AliXiStarpp13TeVEventStruct *fEvt; //! The current event type
-    AliXiStarpp13TeVTrackStruct *fTempStruct; //! A temporary track storage.  Eventually put into fEvt
+    AliXiStarpp13TeVDevelEventCollection ***fEC; //! The event collection
+    AliXiStarpp13TeVDevelEventStruct *fEvt; //! The current event type
+    AliXiStarpp13TeVDevelTrackStruct *fTempStruct; //! A temporary track storage.  Eventually put into fEvt
     
     //
     
@@ -165,7 +165,7 @@ private:
     Float_t fDecayParameters[kNCuts];// array of reconstruction kinematics
     Float_t fCutValues[kNCutVariations][kNCuts];// array of reconstruction kinematics
     
-    ClassDef(AliXiStarpp13TeV, 2);
+    ClassDef(AliXiStarpp13TeVDevel, 2);
 };
 
 #endif
