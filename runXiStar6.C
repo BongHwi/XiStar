@@ -15,6 +15,7 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     Bool_t HMTrigger=kFALSE; // kTRUE for High Multiplicity trigger mode.
     Bool_t PIDOption=kTRUE;
     Bool_t SetSystematic = kFALSE; //
+    Bool_t AODcase = kFALSE;
     
 
     Int_t CutList = 0;
@@ -95,7 +96,7 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevelEventCollection.cxx+g");
     gInterpreter->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // AddTask
-    AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeVDevel.C(%d,%i,%d,%d,%d,%d)",MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic)));
+    AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeVDevel.C(%d,%d,%i,%d,%d,%d,%d)",MCcase,AODcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic)));
     //AliXiStarpp13TeVDevel *myTask = reinterpret_cast<AliXiStarpp13TeVDevel*>(gInterpreter->ExecuteMacro(Form("AddTaskXiStarpp13TeV.C(%d,%d,%i,%d)",MCcase,CutList,DevelopmentMode)));
 #else
     // ROOT 5 MODE
@@ -121,7 +122,7 @@ void runXiStar6(const char *mode = "local") { // local/test/full/terminate
     gROOT->LoadMacro("AliXiStarpp13TeVDevel.cxx+g");
     // Add Task
     gROOT->LoadMacro("AddTaskXiStarpp13TeVDevel.C");
-    AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(MCcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic);
+    AliXiStarpp13TeVDevel *myTask = AddTaskXiStarpp13TeVDevel(MCcase,AODcase,CutList,DevelopmentMode,HMTrigger,PIDOption,SetSystematic);
 #endif
     if(!mgr->InitAnalysis()) return;
     mgr->SetDebugLevel(10);
