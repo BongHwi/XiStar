@@ -1251,7 +1251,7 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
         ((TH2F*)fOutputList->FindObject("hNSig3rdPion"))->Fill(fTPCPIDmom,fPIDResponse->NumberOfSigmasTPC(esdtrack,AliPID::kPion));
         
         //=========selecting 3rd pion using PID=========//
-        /* TPC OFF */   //        if(nsigpi>nSigTPCPID) continue; // last update // 20140715 // TPC
+        if(nsigpi>nSigTPCPID) continue; // last update // 20140715 // TPC
         
         ((TH2F*)fOutputList->FindObject("hQANSig3rdPion"))->Fill(fTPCPIDmom,fPIDResponse->NumberOfSigmasTPC(esdtrack,AliPID::kPion));
         
@@ -1615,8 +1615,6 @@ void AliXiStarpp13TeVDevel::Exec(Option_t *)
                 ((TH1F*)fOutputList->FindObject("hXiInvMass"))->Fill(xiMass);
             }
         }
-        
-        
         
         if(fDevelopeMode)std::cout<<"001"<<std::endl;
         // MC associaton

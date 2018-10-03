@@ -167,7 +167,7 @@ void runXiStar6(const char *mode = "test") { // local/test/full/terminate
             }
         } else {// MC data
             if(Production->Contains("16k")) { // AODs
-                plugin->SetGridDataDir("/alice/sim/2018/LHC18c6b2");
+                plugin->SetGridDataDir("/alice/sim/2018/LHC18c6b4");
                 //plugin->SetGridDataDir("/alice/sim/2017/LHC17d20a1");
                 plugin->SetDataPattern("*AliESDs.root");
                 totruns += AddGoodRuns(plugin,"LHC16k", MCcase);
